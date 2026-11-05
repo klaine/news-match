@@ -8,6 +8,8 @@ file in the repo root holds that domain for Pages: keep it.
 - `index.html` is the whole game (inline CSS and JS, no build, no dependencies). It loads only
   `rounds.json`, same-origin. Serve locally with `python3 -m http.server` from this folder (it
   can't fetch from `file://`).
+- `404.html` sends any path that doesn't exist to `/` (Pages serves it for every 404, still with
+  status 404). `python3 -m http.server` doesn't use it: open `/404.html` to try it locally.
 - `fetch_news.py` writes `rounds.json`, using only the standard library. Browsers can't read most RSS
   feeds (no CORS), so nothing is fetched from the page. `--debug` prints each group, which is
   how to tune it. It refuses to overwrite `rounds.json` when fewer than `MIN_ROUNDS_TO_WRITE` rounds
