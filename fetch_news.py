@@ -6,7 +6,8 @@ Usage: python3 fetch_news.py [--out rounds.json] [--hours 48] [--debug]
 Standard library only. Each outlet's RSS/Atom feeds are fetched in parallel, cleaned (HTML
 stripped, outlet names masked so they can't give the answer away), and grouped by TF-IDF cosine
 similarity of title + summary. A group keeps at most one article per outlet; groups with at
-least MIN_OUTLETS outlets become game rounds. If too few rounds come out (feeds down, network
+least MIN_OUTLETS outlets become game rounds of up to MAX_PER_ROUND articles, each with one
+right- and one left-leaning outlet where the group has them (LEAN). If too few rounds come out (feeds down, network
 gone), the existing rounds.json is left untouched and the script exits with status 1.
 """
 
@@ -18,6 +19,7 @@ import html
 import json
 import math
 import os
+import random
 import re
 import sys
 import unicodedata
@@ -117,11 +119,20 @@ OUTLETS = [
     ], ["South China Morning Post", "SCMP"], ["the Post"]),
 ]
 
+# How each outlet's news coverage is commonly rated (broadly AllSides' and Ad Fontes Media's
+# ratings). Every round tries to include one "right" and one "left" outlet. Outlets not listed
+# count as centre and are picked like any other.
+LEAN = {
+    "fox": "right", "breitbart": "right", "nypost": "right", "dailymail": "right",
+    "guardian": "left", "npr": "left", "nyt": "left", "cbs": "left", "nbc": "left",
+    "abc": "left", "latimes": "left",
+}
+
 USER_AGENT = "Mozilla/5.0 (compatible; news-match/1.0)"
 MASK = "[outlet]"
 SUMMARY_MAX = 300       # characters shown per summary
 MIN_OUTLETS = 3         # a round needs at least this many outlets
-MAX_PER_ROUND = 5       # and shows at most this many
+MAX_PER_ROUND = 4       # and shows at most this many
 MAX_ROUNDS = 24
 MIN_ROUNDS_TO_WRITE = 3
 PAIR_MIN = 0.24         # cosine similarity that starts or joins a group (best pair first)
@@ -383,21 +394,42 @@ def cluster(articles, sims):
     return [sorted(g) for g in groups.values()], sim
 
 
+def pick_articles(articles, ranked):
+    """Choose a round's articles from a group ranked by centrality: the most central right-leaning
+    and left-leaning ones, then random others. Wire copy (the same AP/Reuters headline at several
+    outlets) is skipped, because no one could tell those apart. The shuffle is seeded by the
+    group, so an unchanged group gives the same round (and round id) on every run."""
+    keep, kept_words = [], []
+
+    def add(i):
+        words = set(tokens(articles[i]["title"]))
+        if i in keep or any(len(words & w) / (len(words | w) or 1) >= WIRE_OVERLAP for w in kept_words):
+            return False
+        keep.append(i)
+        kept_words.append(words)
+        return True
+
+    for side in ("right", "left"):
+        for i in ranked:
+            if LEAN.get(articles[i]["outlet"]) == side and add(i):
+                break
+    rest = list(ranked)
+    seed = hashlib.sha1("\n".join(sorted(articles[i]["url"] for i in ranked)).encode()).digest()
+    random.Random(seed).shuffle(rest)
+    for i in rest:
+        if len(keep) >= MAX_PER_ROUND:
+            break
+        add(i)
+    return keep
+
+
 def rounds_from(articles, groups, sim, vecs):
     rounds = []
     for g in groups:
         if len(g) < MIN_OUTLETS:
             continue
         centrality = {i: sum(sim(i, j) for j in g if j != i) / (len(g) - 1) for i in g}
-        keep, kept_words = [], []
-        for i in sorted(g, key=lambda i: -centrality[i]):
-            # Wire copy (the same AP/Reuters headline at several outlets) can't be told apart.
-            words = set(tokens(articles[i]["title"]))
-            if any(len(words & w) / (len(words | w) or 1) >= WIRE_OVERLAP for w in kept_words):
-                continue
-            keep.append(i)
-            kept_words.append(words)
-        keep = keep[:MAX_PER_ROUND]
+        keep = pick_articles(articles, sorted(g, key=lambda i: -centrality[i]))
         if len(keep) < MIN_OUTLETS:
             continue
         pairs = [(i, j) for x, i in enumerate(keep) for j in keep[x + 1:]]
@@ -406,14 +438,17 @@ def rounds_from(articles, groups, sim, vecs):
         for i in keep:
             topic.update({t: x for t, x in vecs[i].items() if " " not in t})
         rid = hashlib.sha1("\n".join(sorted(articles[i]["url"] for i in keep)).encode()).hexdigest()[:10]
+        leans = {LEAN.get(articles[i]["outlet"]) for i in keep}
         rounds.append({
             "id": rid,
+            "balance": ("right" in leans) + ("left" in leans),
             "topic": [t for t, _ in topic.most_common(4)],
             "cohesion": round(cohesion, 3),
             "articles": [{k: articles[i][k] for k in ("outlet", "title", "summary", "url", "published")}
                          for i in keep],
         })
-    rounds.sort(key=lambda r: (-len(r["articles"]), -r["cohesion"]))
+    # Rounds with both a right- and a left-leaning outlet first: the page plays the first ones.
+    rounds.sort(key=lambda r: (-r["balance"], -len(r["articles"]), -r["cohesion"]))
     return rounds[:MAX_ROUNDS]
 
 
@@ -470,9 +505,9 @@ def main():
 
     if args.debug:
         for r in rounds:
-            print(f"\n== {' '.join(r['topic'])}  cohesion {r['cohesion']}", file=sys.stderr)
+            print(f"\n== {' '.join(r['topic'])}  cohesion {r['cohesion']}  balance {r['balance']}", file=sys.stderr)
             for a in r["articles"]:
-                print(f"   {a['outlet']:10s} {a['title'][:100]}", file=sys.stderr)
+                print(f"   {a['outlet']:10s} {LEAN.get(a['outlet'], ''):5s} {a['title'][:95]}", file=sys.stderr)
 
     if len(rounds) < MIN_ROUNDS_TO_WRITE:
         print(f"only {len(rounds)} rounds; keeping the existing {args.out}", file=sys.stderr)

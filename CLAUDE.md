@@ -1,6 +1,6 @@
 # News Match
 
-Browser game: each round is one news event covered by 3–5 outlets, and the player draws lines from
+Browser game: each round is one news event covered by 3–4 outlets, and the player draws lines from
 each article to the outlet that published it. Published with GitHub Pages from the root of `main`.
 
 - `index.html` is the whole game (inline CSS and JS, no build, no dependencies). It loads only
@@ -17,10 +17,16 @@ each article to the outlet that published it. Published with GitHub Pages from t
   "The Times". The page renders `[outlet]` as a chip.
 - Grouping: TF-IDF over title (×2, plus title bigrams) and summary, then greedy average-linkage,
   best pairs first (`PAIR_MIN`, `LINK_MIN`). A group holds one article per outlet. A second article
-  from an outlet already in a group is absorbed so it can't seed a near-duplicate round, and wire
-  copy (`WIRE_OVERLAP`, the same AP headline at several outlets) is dropped from a round. Check
+  from an outlet already in a group is absorbed so it can't seed a near-duplicate round. Check
   changes with `--debug` against a live run: thresholds that are too low merge unrelated stories
-  under broad words like "midterm".
+  under broad words like "midterm". Known weakness: same-shaped stories in different places (two
+  helicopter crashes) can still group, because the words match and nothing knows about places.
+- Picking a round (`pick_articles`): at most `MAX_PER_ROUND` (4) articles. First the most central
+  right-leaning and left-leaning ones (`LEAN`, broadly AllSides' and Ad Fontes Media's ratings;
+  unlisted outlets count as centre), then random others, seeded by the group so an unchanged group
+  gives the same round. Wire copy (`WIRE_OVERLAP`, the same AP headline at several outlets) is
+  skipped. Rounds with both leanings sort first (`balance` in `rounds.json`), and the page plays
+  the first unplayed rounds, so those are what players get.
 - Round ids hash the round's URLs, so they're stable across refreshes that keep the same articles.
   The page stores played ids and lifetime stats in `localStorage` under `news-match:v1`. That
   origin is shared with every klaine.github.io page, so touch only this key.
