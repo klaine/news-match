@@ -51,6 +51,7 @@ button { font: inherit; color: inherit; }
 .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
 
 header.top { padding-top: 44px; padding-bottom: 22px; }
+.dateline { margin-bottom: 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spacing: -.035em; font-weight: 750; }
 .lede { margin-top: 10px; max-width: 60ch; font-size: 17px; color: var(--muted); }
 .edition { margin-top: 10px; font-size: 13.5px; color: var(--muted); }
@@ -224,6 +225,7 @@ footer p + p { margin-top: 4px; }
 </head>
 <body>
 <header class="top wrap">
+  <p class="dateline"><time id="today"></time></p>
   <h1>News Match</h1>
   <p class="lede">Same story, different newsroom. Connect each article to the outlet that published it: <span class="only-wide">drag a line between the dots, or tap one and then the other.</span><span class="only-narrow">tap an article, then the outlet you think wrote it.</span></p>
   <p class="edition" id="edition"></p>
@@ -320,7 +322,16 @@ function setMasked(node, text) {
 
 // ------------------------------------------------------------------ loading
 
+// Today's date above the title, so a screenshot shows when it was played.
+function showToday() {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  $('today').dateTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  $('today').textContent = now.toLocaleDateString(undefined, { dateStyle: 'full' });
+}
+
 async function load() {
+  showToday();
   try {
     const r = await fetch('rounds.json', { cache: 'no-cache' });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -343,6 +354,7 @@ async function load() {
 }
 
 function newGame() {
+  showToday();  // a tab left open overnight
   const seen = new Set(readStore().seen || []);
   const fresh = data.rounds.filter((r) => !seen.has(r.id));
   const old = shuffle(data.rounds.filter((r) => seen.has(r.id)));
