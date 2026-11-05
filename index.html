@@ -176,16 +176,46 @@ footer { margin: 36px auto 40px; font-size: 13px; color: var(--muted); }
 footer p + p { margin-top: 4px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+.slot, .only-narrow { display: none; }
+
 @media (max-width: 640px) {
   header.top { padding-top: 28px; padding-bottom: 16px; }
   .lede { font-size: 15.5px; }
-  .board { grid-template-columns: minmax(0, 1fr) 34px minmax(96px, 34%); }
-  .card .pick { padding: 11px 16px 11px 12px; }
-  .reveal { margin: 0 16px 0 12px; font-size: 13px; }
+  .only-wide { display: none; }
+  .only-narrow { display: inline; }
+
+  /* Phones: no lines, which get too cramped to follow. The outlets are a bar that stays on
+     screen, and each card shows its pick in its own colour, also filled into the outlet's dot. */
+  .board { display: flex; flex-direction: column; }
+  .wires, .port { display: none; }
+  .outlets {
+    order: -1; position: sticky; top: 0; z-index: 3;
+    flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 8px;
+    margin: 0 -16px 12px; padding: 10px 16px;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .outlet .pick { display: inline-flex; align-items: center; gap: 7px; width: auto; padding: 8px 13px 8px 11px; font-size: 13.5px; }
+  .outlet .pick::before, .slot::before {
+    content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%;
+    box-sizing: border-box; border: 2px solid var(--c, var(--muted));
+  }
+  .outlet.linked .pick::before, .card.linked .slot::before { background: var(--c); }
+  .outlet.ok .pick::before { border-color: var(--ok); background: var(--ok); }
+  .outlet.bad .pick::before { border-color: var(--bad); background: var(--bad); }
+  .card .pick { padding: 12px 14px 8px; }
+  .slot {
+    display: flex; align-items: center; gap: 8px; margin: 0 14px; padding: 9px 0 11px;
+    border-top: 1px dashed var(--line); font-size: 13.5px; color: var(--muted);
+  }
+  .card.linked .slot { color: var(--text); font-weight: 650; }
+  .card.selected .slot { color: var(--accent); }
+  .checked .slot { display: none; }
+  .reveal { margin: 0 14px; font-size: 13px; }
   .card .title { font-size: 15.5px; }
   .card .summary { font-size: 13px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
   .checked .card .summary { -webkit-line-clamp: unset; }
-  .outlet .pick { padding: 9px 10px 9px 15px; border-radius: 12px; font-size: 13px; }
   .dots { margin-left: 0; width: 100%; }
   .dots i { flex: 1; }
 }
@@ -195,7 +225,7 @@ footer p + p { margin-top: 4px; }
 <body>
 <header class="top wrap">
   <h1>News Match</h1>
-  <p class="lede">Same story, different newsroom. Connect each article to the outlet that published it: drag a line between the dots, or tap one and then the other.</p>
+  <p class="lede">Same story, different newsroom. Connect each article to the outlet that published it: <span class="only-wide">drag a line between the dots, or tap one and then the other.</span><span class="only-narrow">tap an article, then the outlet you think wrote it.</span></p>
   <p class="edition" id="edition"></p>
 </header>
 
@@ -216,7 +246,7 @@ footer p + p { margin-top: 4px; }
     <div class="actions">
       <button class="btn primary" id="check" disabled>Check</button>
       <button class="btn" id="next" hidden>Next story</button>
-      <button class="btn" id="clear">Clear lines</button>
+      <button class="btn" id="clear"><span class="only-wide">Clear lines</span><span class="only-narrow">Clear picks</span></button>
       <span class="status" id="status" aria-live="polite"></span>
     </div>
   </section>
@@ -244,6 +274,7 @@ footer p + p { margin-top: 4px; }
 const STORE_KEY = 'news-match:v1';   // shared origin with the other klaine.github.io pages
 const PER_GAME = 8;
 const WIRES = 5;                     // --w0 … --w4
+const narrow = window.matchMedia('(max-width: 640px)');  // phones: labels instead of lines
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -355,7 +386,7 @@ function startRound() {
       setMasked(sum, a.summary);
       btn.append(sum);
     }
-    li.append(btn, el('span', 'port'));
+    li.append(btn, el('span', 'slot'), el('span', 'port'));
     list.append(li);
   });
 
@@ -421,6 +452,14 @@ function update() {
     li.classList.toggle('linked', linked);
     li.classList.toggle('selected', !!sel && sel.side === side && sel.key === key);
     li.querySelector('.pick').setAttribute('aria-pressed', String(!!sel && sel.side === side && sel.key === key));
+    if (side === 'a') {
+      const o = cur.links.get(key);
+      li.querySelector('.slot').textContent =
+        o !== undefined ? outletName(o) :
+        sel && sel.side === 'o' ? `Tap to pick ${outletName(sel.key)}` :
+        sel && sel.key === key ? 'Now tap an outlet above' :
+        'Tap, then choose an outlet';
+    }
     if (side === 'o') {
       const i = articleFor(key);
       if (i === undefined) li.style.removeProperty('--c');
@@ -450,6 +489,10 @@ function curve(a, b) {
 
 function draw() {
   const svg = $('wires');
+  if (narrow.matches) {
+    svg.replaceChildren();
+    return;
+  }
   const box = $('board').getBoundingClientRect();
   svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
   const cards = $('articles').children;
@@ -493,7 +536,7 @@ function setDrop(li) {
 }
 
 $('board').addEventListener('pointerdown', (e) => {
-  if (!cur || cur.checked || e.button > 0) return;
+  if (!cur || cur.checked || e.button > 0 || narrow.matches) return;
   const li = e.target.closest('[data-side]');
   if (!li) return;
   const onPort = !!e.target.closest('.port');
@@ -548,6 +591,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 new ResizeObserver(() => { if (cur) draw(); }).observe($('board'));
+narrow.addEventListener('change', () => { if (cur) update(); });
 
 $('clear').addEventListener('click', () => {
   cur.links.clear();
@@ -609,7 +653,7 @@ function check() {
   $('next').focus({ preventScroll: true });
   $('status').innerHTML = '';
   $('status').append(el('b', '', `${right} of ${cur.arts.length} right.`),
-    right === cur.arts.length ? ' Clean sweep.' : ' Dotted green lines show the right outlet.');
+    right === cur.arts.length ? ' Clean sweep.' : narrow.matches ? ' Each card now names its outlet.' : ' Dotted green lines show the right outlet.');
   renderDots();
   update();
 }

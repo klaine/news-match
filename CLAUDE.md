@@ -43,5 +43,9 @@ file in the repo root holds that domain for Pages: keep it.
   card still scrolls), and a click or tap selects one side and then the other. A click that ends a
   drag is suppressed. Lines are an SVG over the board, redrawn from the dots' positions by a
   `ResizeObserver`.
+- Phones (`narrow`, max-width 640px, the same breakpoint as the CSS): no lines or dragging, which
+  were too cramped to follow. The outlets become a sticky bar above full-width cards, each card's
+  `.slot` names its pick, and its colour fills the chosen outlet's dot. `.only-wide` and
+  `.only-narrow` swap the instructions and labels that mention lines.
 - Try a grouping change without overwriting `rounds.json`:
   `python3 fetch_news.py --out /tmp/x.json --debug`.
