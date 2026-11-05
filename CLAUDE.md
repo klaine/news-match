@@ -19,8 +19,14 @@ each article to the outlet that published it. Published with GitHub Pages from t
   best pairs first (`PAIR_MIN`, `LINK_MIN`). A group holds one article per outlet. A second article
   from an outlet already in a group is absorbed so it can't seed a near-duplicate round. Check
   changes with `--debug` against a live run: thresholds that are too low merge unrelated stories
-  under broad words like "midterm". Known weakness: same-shaped stories in different places (two
-  helicopter crashes) can still group, because the words match and nothing knows about places.
+  under broad words like "midterm".
+- Places: `places.txt` maps place names, demonyms and big cities to a country, or to a US state,
+  Canadian province or Australian state. Two sides merge only if `places_compatible`: they share a
+  country, and where both name regions of it, at least one region. That keeps same-shaped stories
+  apart (a Miami and an Everest helicopter crash, Guam vs San Diego rescues). An article naming no
+  known place fits anything. Aliases are case-sensitive. Leave out names that are mostly
+  something else (Jordan, Chad, Georgia), because a wrong place splits real stories. To test a
+  change, run the old and new script on the same fetched feeds and diff the groups.
 - Picking a round (`pick_articles`): at most `MAX_PER_ROUND` (4) articles. First the most central
   right-leaning and left-leaning ones (`LEAN`, broadly AllSides' and Ad Fontes Media's ratings;
   unlisted outlets count as centre), then random others, seeded by the group so an unchanged group
@@ -30,6 +36,8 @@ each article to the outlet that published it. Published with GitHub Pages from t
 - Round ids hash the round's URLs, so they're stable across refreshes that keep the same articles.
   The page stores played ids and lifetime stats in `localStorage` under `news-match:v1`. That
   origin is shared with every klaine.github.io page, so touch only this key.
+- The results screen lists every story played (`game.played`, filled in `check()`): each
+  article's headline, outlet, publish time and the player's guess, oldest first.
 - Input: a drag starting on a dot draws a line (touch drags only from the dot, so a finger on a
   card still scrolls), and a click or tap selects one side and then the other. A click that ends a
   drag is suppressed. Lines are an SVG over the board, redrawn from the dots' positions by a

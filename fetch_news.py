@@ -350,8 +350,62 @@ def similarities(vecs, outlets):
     return sims
 
 
+# ---------------------------------------------------------------- places
+
+def load_places(path):
+    """places.txt: "country[/region]: alias, alias" -> {alias: (country, region)} and a regex."""
+    aliases = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.split("#", 1)[0].strip()
+            if not line:
+                continue
+            key, names = line.split(":", 1)
+            country, _, region = key.strip().partition("/")
+            for name in names.split(","):
+                if name.strip():
+                    aliases[name.strip()] = (country, region)
+    alts = "|".join(re.escape(a) for a in sorted(aliases, key=len, reverse=True))
+    return aliases, re.compile(rf"(?<![\w.])({alts})(?:s|'s|’s)?(?!\w)")
+
+
+PLACE_ALIASES, PLACE_RE = load_places(os.path.join(os.path.dirname(os.path.abspath(__file__)), "places.txt"))
+
+
+def places_of(text):
+    """{country: {regions}} named in the text; regions only for US states and the like."""
+    found = {}
+    for m in PLACE_RE.finditer(text):
+        country, region = PLACE_ALIASES[m.group(1)]
+        found.setdefault(country, set())
+        if region:
+            found[country].add(region)
+    return found
+
+
+def places_compatible(p, q):
+    """Two sets of places fit one story unless both name places and share no country, or every
+    shared country has regions named on both sides with none in common (Florida vs California).
+    A side that names no place fits anything."""
+    if not p or not q:
+        return True
+    return any(not p[c] or not q[c] or p[c] & q[c] for c in p.keys() & q.keys())
+
+
+def merge_places(members, places):
+    out = {}
+    for k in members:
+        for country, regions in places[k].items():
+            out.setdefault(country, set()).update(regions)
+    return out
+
+
 def cluster(articles, sims):
-    """Greedy average-linkage grouping, best pairs first, one article per outlet per group."""
+    """Greedy average-linkage grouping, best pairs first, one article per outlet per group, and
+    only between articles whose places fit (places_compatible): same words in different places,
+    like two helicopter crashes, are different stories."""
+    places = [places_of(a["title"] + " " + a["summary"]) for a in articles]
+
     def sim(i, j):
         return sims.get((i, j) if i < j else (j, i), 0.0)
 
@@ -368,6 +422,8 @@ def cluster(articles, sims):
         a = groups[gi] if gi is not None else {i}
         b = groups[gj] if gj is not None else {j}
         if link(a, b) < LINK_MIN:
+            continue
+        if not places_compatible(merge_places(a, places), merge_places(b, places)):
             continue
         if {articles[k]["outlet"] for k in a} & {articles[k]["outlet"] for k in b}:
             # Same story, but this outlet is already in the group. Absorb a lone article so it

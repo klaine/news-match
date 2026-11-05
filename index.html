@@ -139,7 +139,8 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 .status { font-size: 14px; color: var(--muted); }
 .status b { color: var(--text); }
 
-.end { max-width: 560px; padding: 8px 0 20px; }
+.end { max-width: 760px; padding: 8px 0 20px; }
+.end .rows { max-width: 560px; }
 .end h2 { margin: 0; font-size: clamp(26px, 4vw, 36px); letter-spacing: -.03em; line-height: 1.1; }
 .end .verdict { margin-top: 8px; font-size: 17px; color: var(--muted); }
 .end h3 { margin: 28px 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
@@ -148,6 +149,25 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 .rows .meter i { display: block; height: 100%; background: var(--ok); border-radius: 4px; }
 .rows .n { color: var(--muted); font-variant-numeric: tabular-nums; }
 .note { margin-top: 18px; font-size: 14px; color: var(--muted); }
+
+/* The end-of-game recap: every story played, each outlet's headline, when it ran, and the guess. */
+.recap { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.story { padding: 12px 18px 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+.story-head { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.story-head .done { color: var(--ok); }
+.story-head .part { color: var(--w4); }
+.story-head .miss { color: var(--bad); }
+.arts { list-style: none; margin: 4px 0 0; padding: 0; }
+.arts li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.arts li:first-child { border-top: 0; }
+.arts .mark { font-weight: 700; line-height: 1.4; }
+.arts .ok .mark { color: var(--ok); }
+.arts .bad .mark { color: var(--bad); }
+.arts .headline { font: 600 15.5px/1.35 Georgia, "Iowan Old Style", "Times New Roman", serif; text-decoration: none; }
+.arts .headline:hover { text-decoration: underline; text-underline-offset: 2px; }
+.art-meta { margin-top: 3px; font-size: 13px; color: var(--muted); }
+.art-meta b { font-weight: 650; color: var(--text); }
+.art-meta .said { color: var(--bad); }
 
 .message { padding: 40px 0; font-size: 16px; color: var(--muted); }
 .message code { font-size: 14px; }
@@ -204,16 +224,19 @@ footer p + p { margin-top: 4px; }
   <section class="end" id="end" hidden>
     <h2 id="end-score"></h2>
     <p class="verdict" id="end-verdict"></p>
+    <div class="actions"><button class="btn primary" id="again">Play again</button></div>
     <h3>By outlet</h3>
     <div class="rows" id="end-rows"></div>
     <p class="note" id="end-note"></p>
-    <div class="actions"><button class="btn primary" id="again">Play again</button></div>
+    <h3>The stories you played</h3>
+    <ol class="recap" id="end-recap"></ol>
+    <div class="actions"><button class="btn" id="again-bottom">Play again</button></div>
   </section>
 </main>
 
 <footer class="wrap">
   <p>Headlines and summaries come from each outlet's public RSS feed. Outlet names in the text are hidden, and every article links to its original.</p>
-  <p>Stories refresh a few times a day. Made by <a href="https://klaine.github.io/">klaine</a>.</p>
+  <p>Stories refresh a few times a day.</p>
 </footer>
 
 <script>
@@ -295,6 +318,7 @@ function newGame() {
   game = {
     rounds: shuffle(fresh.slice(0, PER_GAME).concat(old).slice(0, PER_GAME)),
     idx: 0, matched: 0, total: 0, byOutlet: {}, results: [],
+    played: [],  // per round: its articles, each with the outlet the player picked as `guess`
   };
   $('end').hidden = true;
   $('game').hidden = false;
@@ -566,6 +590,7 @@ function check() {
   game.matched += right;
   game.total += cur.arts.length;
   game.results[game.idx] = right === cur.arts.length ? 'done' : right ? 'part' : 'miss';
+  game.played[game.idx] = cur.arts.map((a, i) => ({ ...a, guess: cur.links.get(i) }));
 
   const store = readStore();
   const seen = (store.seen || []).filter((id) => id !== cur.round.id);
@@ -646,11 +671,49 @@ function finish() {
     (life.games > 1 ? `All-time: ${life.matched} of ${life.total} over ${life.games} games. ` : '') +
     (unseen ? `${unseen} more ${unseen === 1 ? 'story' : 'stories'} you haven't played in this edition.`
             : 'You have played every story in this edition. New ones arrive in a few hours.');
+  renderRecap();
   $('again').focus({ preventScroll: true });
   window.scrollTo({ top: 0 });
 }
 
+const timeFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+// Every story played, its articles in publishing order, with outlet, time, link and the guess.
+function renderRecap() {
+  const list = $('end-recap');
+  list.textContent = '';
+  game.played.forEach((arts, n) => {
+    if (!arts) return;
+    const right = arts.filter((a) => a.guess === a.outlet).length;
+    const head = el('div', 'story-head');
+    head.append(el('span', '', `Story ${n + 1}`), el('span', game.results[n], `${right} of ${arts.length} right`));
+    const ul = el('ul', 'arts');
+    [...arts].sort((a, b) => a.published.localeCompare(b.published)).forEach((a) => {
+      const ok = a.guess === a.outlet;
+      const li = el('li', ok ? 'ok' : 'bad');
+      const link = el('a', 'headline');
+      link.href = a.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      setMasked(link, a.title);
+      const when = el('time', '', timeFmt.format(new Date(a.published)));
+      when.dateTime = a.published;
+      const meta = el('div', 'art-meta');
+      meta.append(el('b', '', outletName(a.outlet)), ' · ', when);
+      if (!ok) meta.append(' · ', el('span', 'said', `you said ${outletName(a.guess)}`));
+      const body = el('div');
+      body.append(link, meta);
+      li.append(el('span', 'mark', ok ? '✓' : '✗'), body);
+      ul.append(li);
+    });
+    const story = el('li', 'story');
+    story.append(head, ul);
+    list.append(story);
+  });
+}
+
 $('again').addEventListener('click', newGame);
+$('again-bottom').addEventListener('click', newGame);
 
 load();
 </script>

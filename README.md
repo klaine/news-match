@@ -21,7 +21,9 @@ library.
 
 `fetch_news.py` reads about 45 feeds from 20 outlets, strips the HTML, and hides each outlet's name
 wherever it appears in the text. It then groups articles from the last 48 hours by word similarity
-(TF-IDF cosine over headline and summary), at most one article per outlet. Groups with at least
+(TF-IDF cosine over headline and summary), at most one article per outlet. Articles set in
+different places don't group, even when the words match: `places.txt` lists the countries, US
+states and cities it knows. Groups with at least
 three outlets become rounds of up to four articles. Each round tries to include one outlet commonly
 rated right-leaning (Fox News, Breitbart, New York Post, Daily Mail) and one rated left-leaning
 (the Guardian, NPR, the New York Times, CBS, NBC, ABC, the LA Times); the other picks are random.

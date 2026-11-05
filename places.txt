@@ -1,0 +1,218 @@
+# Places fetch_news.py recognises, so two stories set in different places don't group.
+# "key: alias, alias". A key is a country, or country/region for US states, Canadian provinces
+# and Australian states. Aliases are case-sensitive and also match with a trailing s or 's.
+# Leave out names that are often something else (Jordan, Chad, Georgia, Victoria, Sofia).
+
+us: United States, U.S., US, USA, America, American, Washington, D.C., White House, Pentagon
+us/al: Alabama
+us/ak: Alaska, Anchorage
+us/az: Arizona, Phoenix, Tucson
+us/ar: Arkansas
+us/ca: California, Californian, Los Angeles, San Francisco, San Diego, Sacramento, Oakland, San Jose
+us/co: Colorado, Denver
+us/ct: Connecticut
+us/de: Delaware
+us/fl: Florida, Floridian, Miami, Tampa, Orlando, Jacksonville
+us/ga: Atlanta
+us/hi: Hawaii, Honolulu, Maui
+us/id: Idaho
+us/il: Illinois, Chicago
+us/in: Indiana, Indianapolis
+us/ia: Iowa
+us/ks: Kansas
+us/ky: Kentucky, Louisville
+us/la: Louisiana, New Orleans
+us/me: Maine
+us/md: Maryland, Baltimore
+us/ma: Massachusetts, Boston
+us/mi: Michigan, Detroit
+us/mn: Minnesota, Minneapolis
+us/ms: Mississippi
+us/mo: Missouri, St. Louis
+us/mt: Montana
+us/ne: Nebraska
+us/nv: Nevada, Las Vegas
+us/nh: New Hampshire
+us/nj: New Jersey, Newark
+us/nm: New Mexico
+us/ny: New York, NYC, Brooklyn, Manhattan, Bronx
+us/nc: North Carolina
+us/nd: North Dakota
+us/oh: Ohio, Cleveland, Cincinnati
+us/ok: Oklahoma
+us/or: Oregon
+us/pa: Pennsylvania, Philadelphia, Pittsburgh
+us/ri: Rhode Island
+us/sc: South Carolina
+us/sd: South Dakota
+us/tn: Tennessee, Nashville, Memphis
+us/tx: Texas, Texan, Houston, Dallas, San Antonio
+us/ut: Utah, Salt Lake City
+us/vt: Vermont
+us/va: Virginia
+us/wa: Seattle
+us/wv: West Virginia
+us/wi: Wisconsin, Milwaukee
+us/wy: Wyoming
+us/pr: Puerto Rico, Puerto Rican
+us/gu: Guam
+
+canada: Canada, Canadian, Ottawa
+canada/bc: British Columbia, Vancouver, Bella Coola
+canada/ab: Alberta, Calgary, Edmonton
+canada/on: Ontario, Toronto
+canada/qc: Quebec, Montreal
+canada/mb: Manitoba, Winnipeg
+canada/sk: Saskatchewan
+canada/ns: Nova Scotia
+canada/nb: New Brunswick
+canada/nl: Newfoundland
+
+australia: Australia, Australian, Canberra
+australia/nsw: New South Wales, Sydney
+australia/vic: Melbourne
+australia/qld: Queensland, Brisbane
+australia/wa: Western Australia, Perth
+australia/sa: South Australia, Adelaide
+australia/tas: Tasmania
+
+uk: United Kingdom, UK, U.K., Britain, British, England, Scotland, Scottish, Wales, Welsh, Northern Ireland, London, Westminster, Manchester, Liverpool, Birmingham, Edinburgh, Glasgow, Belfast
+ireland: Ireland, Irish, Dublin
+france: France, French, Paris, Marseille, Lyon
+germany: Germany, German, Berlin, Munich, Bavaria, Bavarian, Hamburg, Frankfurt, Cologne
+italy: Italy, Italian, Rome, Milan, Naples, Sicily, Venice, Vatican
+spain: Spain, Spanish, Madrid, Barcelona, Valencia, Seville
+portugal: Portugal, Portuguese, Lisbon
+netherlands: Netherlands, Dutch, Amsterdam, The Hague, Holland
+belgium: Belgium, Belgian, Brussels
+switzerland: Switzerland, Swiss, Geneva, Zurich
+austria: Austria, Austrian, Vienna
+poland: Poland, Polish, Warsaw
+czechia: Czech Republic, Czechia, Czech, Prague
+slovakia: Slovakia, Slovak
+hungary: Hungary, Hungarian, Budapest
+romania: Romania, Romanian, Bucharest
+bulgaria: Bulgaria, Bulgarian
+greece: Greece, Greek, Athens
+serbia: Serbia, Serbian, Belgrade
+croatia: Croatia, Croatian
+bosnia: Bosnia, Bosnian, Sarajevo
+kosovo: Kosovo
+albania: Albania, Albanian
+slovenia: Slovenia
+north macedonia: North Macedonia
+moldova: Moldova, Moldovan
+ukraine: Ukraine, Ukrainian, Kyiv, Kiev, Kharkiv, Odesa, Odessa, Crimea, Donbas
+belarus: Belarus, Belarusian, Minsk
+russia: Russia, Russian, Moscow, Kremlin, St Petersburg, St. Petersburg
+lithuania: Lithuania, Lithuanian
+latvia: Latvia, Latvian
+estonia: Estonia, Estonian
+finland: Finland, Finnish, Helsinki
+sweden: Sweden, Swedish, Stockholm
+norway: Norway, Norwegian, Oslo
+denmark: Denmark, Danish, Copenhagen
+iceland: Iceland, Icelandic
+greenland: Greenland
+luxembourg: Luxembourg
+malta: Malta, Maltese
+cyprus: Cyprus, Cypriot
+turkey: Turkey, Türkiye, Turkish, Istanbul, Ankara
+armenia: Armenia, Armenian, Yerevan
+azerbaijan: Azerbaijan, Azerbaijani, Baku
+georgia-country: Tbilisi
+
+israel: Israel, Israeli, Jerusalem, Tel Aviv
+palestine: Palestine, Palestinian, Gaza, West Bank
+lebanon: Lebanon, Lebanese, Beirut
+syria: Syria, Syrian, Damascus, Aleppo
+iraq: Iraq, Iraqi, Baghdad
+iran: Iran, Iranian, Tehran, Hormuz
+saudi arabia: Saudi Arabia, Saudi, Riyadh
+qatar: Qatar, Qatari, Doha
+uae: United Arab Emirates, UAE, Emirati, Dubai, Abu Dhabi
+kuwait: Kuwait, Kuwaiti
+bahrain: Bahrain
+oman: Oman, Omani
+yemen: Yemen, Yemeni, Sanaa
+jordan: Jordanian, Amman
+egypt: Egypt, Egyptian, Cairo
+afghanistan: Afghanistan, Afghan, Kabul
+pakistan: Pakistan, Pakistani, Islamabad, Karachi, Lahore
+india: India, Indian, New Delhi, Delhi, Mumbai, Kolkata, Bengaluru
+bangladesh: Bangladesh, Bangladeshi, Dhaka
+sri lanka: Sri Lanka, Sri Lankan, Colombo
+nepal: Nepal, Nepali, Nepalese, Kathmandu, Everest
+china: China, Chinese, Beijing, Shanghai, Shenzhen, Wuhan, Xinjiang, Tibet
+hong kong: Hong Kong, Hongkonger
+macau: Macau, Macao
+taiwan: Taiwan, Taiwanese, Taipei
+japan: Japan, Japanese, Tokyo, Osaka, Okinawa, Hiroshima
+south korea: South Korea, South Korean, Seoul
+north korea: North Korea, North Korean, Pyongyang
+mongolia: Mongolia, Mongolian
+vietnam: Vietnam, Vietnamese, Hanoi
+thailand: Thailand, Thai, Bangkok
+cambodia: Cambodia, Cambodian
+laos: Laos
+myanmar: Myanmar, Burma, Burmese
+malaysia: Malaysia, Malaysian, Kuala Lumpur
+singapore: Singapore, Singaporean
+indonesia: Indonesia, Indonesian, Jakarta, Bali
+philippines: Philippines, Philippine, Filipino, Manila
+kazakhstan: Kazakhstan
+uzbekistan: Uzbekistan
+
+nigeria: Nigeria, Nigerian, Lagos, Abuja
+kenya: Kenya, Kenyan, Nairobi
+ethiopia: Ethiopia, Ethiopian, Addis Ababa
+somalia: Somalia, Somali, Mogadishu
+sudan: Sudan, Sudanese, Khartoum, Darfur
+south sudan: South Sudan
+congo: Congo, Congolese, DR Congo, DRC, Kinshasa, Goma
+south africa: South Africa, South African, Johannesburg, Cape Town, Pretoria, ANC
+zimbabwe: Zimbabwe
+zambia: Zambia
+mozambique: Mozambique
+tanzania: Tanzania
+uganda: Uganda, Ugandan
+rwanda: Rwanda, Rwandan
+ghana: Ghana, Ghanaian
+ivory coast: Ivory Coast, Côte d'Ivoire
+senegal: Senegal
+mali: Mali, Malian
+burkina faso: Burkina Faso
+niger: Niger
+cameroon: Cameroon
+libya: Libya, Libyan, Tripoli
+tunisia: Tunisia, Tunisian
+algeria: Algeria, Algerian
+morocco: Morocco, Moroccan
+madagascar: Madagascar
+angola: Angola
+
+mexico: Mexico, Mexican, Mexico City
+guatemala: Guatemala, Guatemalan
+honduras: Honduras, Honduran
+el salvador: El Salvador, Salvadoran, Salvadorian
+nicaragua: Nicaragua
+costa rica: Costa Rica
+panama: Panama
+cuba: Cuba, Cuban, Havana
+haiti: Haiti, Haitian, Port-au-Prince
+dominican republic: Dominican Republic
+jamaica: Jamaica, Jamaican
+venezuela: Venezuela, Venezuelan, Caracas
+colombia: Colombia, Colombian, Bogota, Bogotá
+ecuador: Ecuador
+peru: Peru, Peruvian
+bolivia: Bolivia
+chile: Chile, Chilean
+argentina: Argentina, Argentine, Argentinian, Buenos Aires
+brazil: Brazil, Brazilian, Rio de Janeiro, Sao Paulo, São Paulo, Brasilia
+uruguay: Uruguay
+paraguay: Paraguay
+
+new zealand: New Zealand, Auckland
+fiji: Fiji
+papua new guinea: Papua New Guinea
