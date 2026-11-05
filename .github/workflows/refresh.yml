@@ -1,0 +1,29 @@
+# Regenerates rounds.json from the outlets' feeds and commits it when it changed. GitHub Pages
+# serves the repository root, so each commit publishes a new edition.
+name: Refresh stories
+
+on:
+  schedule:
+    - cron: "17 */4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-stories
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and group stories
+        run: python3 fetch_news.py
+      - name: Commit rounds.json
+        run: |
+          git diff --quiet -- rounds.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh stories" -- rounds.json
+          git push
