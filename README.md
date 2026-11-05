@@ -32,5 +32,5 @@ rated right-leaning (Fox News, Breitbart, New York Post, Daily Mail) and one rat
 Rounds that have both come first. Identical wire-service headlines are dropped, because no one could
 tell them apart.
 
-A GitHub Action reruns it every four hours and commits `rounds.json` when it changed. GitHub Pages
+A GitHub Action reruns it every hour and commits `rounds.json` when it changed. GitHub Pages
 serves `index.html` and `rounds.json` from the repository root.

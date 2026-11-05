@@ -268,7 +268,7 @@ footer p + p { margin-top: 4px; }
 
 <footer class="wrap">
   <p>Headlines and summaries come from each outlet's public RSS feed. Outlet names in the text are hidden, and every article links to its original.</p>
-  <p>Stories refresh a few times a day.</p>
+  <p>Stories refresh every hour.</p>
 </footer>
 
 <script>
@@ -342,7 +342,7 @@ async function load() {
     return;
   }
   if (!data.rounds || !data.rounds.length) {
-    $('message').textContent = 'No stories in this edition yet. Check back in a few hours.';
+    $('message').textContent = 'No stories in this edition yet. Check back in an hour.';
     return;
   }
   const when = new Date(data.generated);
@@ -726,7 +726,7 @@ function finish() {
   $('end-note').textContent =
     (life.games > 1 ? `All-time: ${life.matched} of ${life.total} over ${life.games} games. ` : '') +
     (unseen ? `${unseen} more ${unseen === 1 ? 'story' : 'stories'} you haven't played in this edition.`
-            : 'You have played every story in this edition. New ones arrive in a few hours.');
+            : 'You have played every story in this edition. New ones arrive through the day.');
   renderRecap();
   $('again').focus({ preventScroll: true });
   window.scrollTo({ top: 0 });

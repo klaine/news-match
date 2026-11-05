@@ -15,7 +15,9 @@ file in the repo root holds that domain for Pages: keep it.
   how to tune it. It refuses to overwrite `rounds.json` when fewer than `MIN_ROUNDS_TO_WRITE` rounds
   come out (exit 1), so a network outage never publishes an empty game.
 - `rounds.json` is generated but committed, because Pages serves it.
-  `.github/workflows/refresh.yml` regenerates it every 4 hours and commits it only when it changed.
+  `.github/workflows/refresh.yml` regenerates it hourly (at :17) and commits it when it changed,
+  which is nearly every run because it records when it was built. It's hourly because GitHub runs
+  schedules on a best-effort basis: on the first day it skipped every 4-hourly slot.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.
