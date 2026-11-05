@@ -7,6 +7,8 @@ BBC News, Fox News, Al Jazeera, the Guardian, NPR, the Daily Mail, DW and more.
 Each article's headline and summary come from that outlet's public RSS feed and link back to the
 original.
 
+Play it at https://newsmatch.klaine.net/.
+
 ## Run it locally
 
 ```sh

@@ -1,7 +1,9 @@
 # News Match
 
 Browser game: each round is one news event covered by 3–4 outlets, and the player draws lines from
-each article to the outlet that published it. Published with GitHub Pages from the root of `main`.
+each article to the outlet that published it. Published with GitHub Pages from the root of `main`,
+at https://newsmatch.klaine.net/ (a CNAME record at NameSilo to `klaine.github.io`). The `CNAME`
+file in the repo root holds that domain for Pages: keep it.
 
 - `index.html` is the whole game (inline CSS and JS, no build, no dependencies). It loads only
   `rounds.json`, same-origin. Serve locally with `python3 -m http.server` from this folder (it
@@ -34,8 +36,7 @@ each article to the outlet that published it. Published with GitHub Pages from t
   skipped. Rounds with both leanings sort first (`balance` in `rounds.json`), and the page plays
   the first unplayed rounds, so those are what players get.
 - Round ids hash the round's URLs, so they're stable across refreshes that keep the same articles.
-  The page stores played ids and lifetime stats in `localStorage` under `news-match:v1`. That
-  origin is shared with every klaine.github.io page, so touch only this key.
+  The page stores played ids and lifetime stats in `localStorage` under `news-match:v1`.
 - The results screen lists every story played (`game.played`, filled in `check()`): each
   article's headline, outlet, publish time and the player's guess, oldest first.
 - Input: a drag starting on a dot draws a line (touch drags only from the dot, so a finger on a
