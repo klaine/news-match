@@ -41,8 +41,19 @@ file in the repo root holds that domain for Pages: keep it.
   the first unplayed rounds, so those are what players get.
 - Round ids hash the round's URLs, so they're stable across refreshes that keep the same articles.
   The page stores played ids and lifetime stats in `localStorage` under `news-match:v1`.
-- The results screen lists every story played (`game.played`, filled in `check()`): each
-  article's headline, outlet, publish time and the player's guess, oldest first.
+- Check and Skip both end a story in `endRound(skipped)`. Skip is for browsing: it replaces the
+  lines with the right answers in the cards' own colours and names each card's outlet, but scores
+  nothing (`game.results` gets `'skip'`, and `cur.skipped` keeps the lines out of green/red). It
+  still marks the round as seen. A game of nothing but skips doesn't count in the lifetime stats.
+- The results screen lists every story played (`game.played`, filled in `endRound()`): each
+  article's headline, outlet, publish time and the player's guess, oldest first. Skipped stories
+  say so and have no guesses.
+- Save image (`renderStory`, `saveImage`) draws the current story on a canvas with its own fixed
+  layout, so a phone gets lines too: the date, cards, outlets, the lines made so far and, once
+  checked or skipped, the answers, in the page's current light or dark colours (read from the CSS
+  variables), 2400px wide. It's encoded as a JPEG synchronously, so on touch devices
+  `navigator.share` still runs inside the tap and opens the share sheet. Elsewhere it downloads
+  `news-match-<date>-story-<n>.jpg`. Keep the canvas look in step with the CSS when changing either.
 - Input: a drag starting on a dot draws a line (touch drags only from the dot, so a finger on a
   card still scrolls), and a click or tap selects one side and then the other. A click that ends a
   drag is suppressed. Lines are an SVG over the board, redrawn from the dots' positions by a

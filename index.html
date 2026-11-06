@@ -64,6 +64,7 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 .dots i.done { background: var(--ok); }
 .dots i.part { background: var(--w4); }
 .dots i.miss { background: var(--bad); }
+.dots i.skip { background: color-mix(in srgb, var(--muted) 40%, var(--surface-2)); }
 
 .board {
   --gap: clamp(44px, 10vw, 128px);
@@ -164,6 +165,7 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 .arts .mark { font-weight: 700; line-height: 1.4; }
 .arts .ok .mark { color: var(--ok); }
 .arts .bad .mark { color: var(--bad); }
+.arts .skip .mark { color: var(--muted); }
 .arts .headline { font: 600 15.5px/1.35 Georgia, "Iowan Old Style", "Times New Roman", serif; text-decoration: none; }
 .arts .headline:hover { text-decoration: underline; text-underline-offset: 2px; }
 .art-meta { margin-top: 3px; font-size: 13px; color: var(--muted); }
@@ -249,6 +251,8 @@ footer p + p { margin-top: 4px; }
       <button class="btn primary" id="check" disabled>Check</button>
       <button class="btn" id="next" hidden>Next story</button>
       <button class="btn" id="clear"><span class="only-wide">Clear lines</span><span class="only-narrow">Clear picks</span></button>
+      <button class="btn" id="skip" title="Show who wrote what, without scoring this story">Skip</button>
+      <button class="btn" id="save" title="Save this story as a JPEG image">Save image</button>
       <span class="status" id="status" aria-live="polite"></span>
     </div>
   </section>
@@ -257,7 +261,7 @@ footer p + p { margin-top: 4px; }
     <h2 id="end-score"></h2>
     <p class="verdict" id="end-verdict"></p>
     <div class="actions"><button class="btn primary" id="again">Play again</button></div>
-    <h3>By outlet</h3>
+    <h3 id="end-rows-head">By outlet</h3>
     <div class="rows" id="end-rows"></div>
     <p class="note" id="end-note"></p>
     <h3>The stories you played</h3>
@@ -378,7 +382,7 @@ function startRound() {
   const arts = shuffle(round.articles);
   let outs = shuffle(arts.map((a) => a.outlet));
   while (outs.every((o, i) => o === arts[i].outlet)) outs = shuffle(outs);  // never straight across
-  cur = { round, arts, outs, links: new Map(), checked: false };
+  cur = { round, arts, outs, links: new Map(), checked: false, skipped: false };
   sel = null;
 
   const list = $('articles');
@@ -418,6 +422,7 @@ function startRound() {
   $('round-no').textContent = game.idx + 1;
   $('check').hidden = false;
   $('clear').hidden = false;
+  $('skip').hidden = false;
   $('next').hidden = true;
   renderDots();
   update();
@@ -517,11 +522,12 @@ function draw() {
     if (color) p.style.stroke = color;
     paths.push(p);
   };
+  const scored = cur.checked && !cur.skipped;  // a skipped story's lines are the answers, in plain colours
   for (const [i, o] of cur.links) {
-    const cls = cur.checked ? (cur.arts[i].outlet === o ? 'ok' : 'bad') : '';
+    const cls = scored ? (cur.arts[i].outlet === o ? 'ok' : 'bad') : '';
     add(portCenter(cards[i], box), portCenter(outletLi(o), box), cls, `var(--w${i % WIRES})`);
   }
-  if (cur.checked) {
+  if (scored) {
     cur.arts.forEach((a, i) => {
       if (cur.links.get(i) !== a.outlet) add(portCenter(cards[i], box), portCenter(outletLi(a.outlet), box), 'ghost');
     });
@@ -613,27 +619,34 @@ $('clear').addEventListener('click', () => {
 
 // ------------------------------------------------------------------ checking
 
-function check() {
-  if (!cur || cur.checked || cur.links.size < cur.arts.length) return;
+// Check scores the player's lines. Skip scores nothing: it draws the right lines and names each
+// article's outlet, for browsing the stories without playing.
+function endRound(skipped) {
+  if (!cur || cur.checked || (!skipped && cur.links.size < cur.arts.length)) return;
+  if (skipped) cur.links = new Map(cur.arts.map((a, i) => [i, a.outlet]));
   cur.checked = true;
+  cur.skipped = skipped;
   sel = null;
   let right = 0;
   const cards = $('articles').children;
   cur.arts.forEach((a, i) => {
-    const guess = cur.links.get(i);
-    const ok = guess === a.outlet;
-    right += ok;
-    const s = (game.byOutlet[a.outlet] ||= { right: 0, total: 0 });
-    s.total += 1;
-    s.right += ok;
-
-    cards[i].classList.add(ok ? 'ok' : 'bad');
-    $('outlets').querySelector(`[data-key="${CSS.escape(guess)}"]`).classList.add(ok ? 'ok' : 'bad');
     const rev = el('div', 'reveal');
-    if (ok) {
-      rev.append(el('b', 'ok', `✓ ${outletName(a.outlet)}`));
+    if (skipped) {
+      rev.append(el('b', '', outletName(a.outlet)));
     } else {
-      rev.append(el('b', 'bad', `✗ ${outletName(a.outlet)}`), el('span', 'was', `not ${outletName(guess)}`));
+      const guess = cur.links.get(i);
+      const ok = guess === a.outlet;
+      right += ok;
+      const s = (game.byOutlet[a.outlet] ||= { right: 0, total: 0 });
+      s.total += 1;
+      s.right += ok;
+      cards[i].classList.add(ok ? 'ok' : 'bad');
+      $('outlets').querySelector(`[data-key="${CSS.escape(guess)}"]`).classList.add(ok ? 'ok' : 'bad');
+      if (ok) {
+        rev.append(el('b', 'ok', `✓ ${outletName(a.outlet)}`));
+      } else {
+        rev.append(el('b', 'bad', `✗ ${outletName(a.outlet)}`), el('span', 'was', `not ${outletName(guess)}`));
+      }
     }
     const link = el('a', '', 'Read the original ↗');
     link.href = a.url;
@@ -643,10 +656,14 @@ function check() {
     cards[i].querySelector('.pick').after(rev);
   });
 
-  game.matched += right;
-  game.total += cur.arts.length;
-  game.results[game.idx] = right === cur.arts.length ? 'done' : right ? 'part' : 'miss';
-  game.played[game.idx] = cur.arts.map((a, i) => ({ ...a, guess: cur.links.get(i) }));
+  if (skipped) {
+    game.results[game.idx] = 'skip';
+  } else {
+    game.matched += right;
+    game.total += cur.arts.length;
+    game.results[game.idx] = right === cur.arts.length ? 'done' : right ? 'part' : 'miss';
+  }
+  game.played[game.idx] = cur.arts.map((a, i) => ({ ...a, guess: skipped ? undefined : cur.links.get(i) }));
 
   const store = readStore();
   const seen = (store.seen || []).filter((id) => id !== cur.round.id);
@@ -659,18 +676,25 @@ function check() {
   $('score-total').textContent = game.total;
   $('check').hidden = true;
   $('clear').hidden = true;
+  $('skip').hidden = true;
   const last = game.idx === game.rounds.length - 1;
   $('next').textContent = last ? 'See results' : 'Next story';
   $('next').hidden = false;
   $('next').focus({ preventScroll: true });
   $('status').innerHTML = '';
-  $('status').append(el('b', '', `${right} of ${cur.arts.length} right.`),
-    right === cur.arts.length ? ' Clean sweep.' : narrow.matches ? ' Each card now names its outlet.' : ' Dotted green lines show the right outlet.');
+  if (skipped) {
+    $('status').append(el('b', '', 'Skipped, not scored.'),
+      narrow.matches ? ' Each card now names its outlet.' : ' The lines show who wrote what.');
+  } else {
+    $('status').append(el('b', '', `${right} of ${cur.arts.length} right.`),
+      right === cur.arts.length ? ' Clean sweep.' : narrow.matches ? ' Each card now names its outlet.' : ' Dotted green lines show the right outlet.');
+  }
   renderDots();
   update();
 }
 
-$('check').addEventListener('click', check);
+$('check').addEventListener('click', () => endRound(false));
+$('skip').addEventListener('click', () => endRound(true));
 
 $('next').addEventListener('click', () => {
   if (game.idx < game.rounds.length - 1) {
@@ -689,18 +713,364 @@ function renderDots() {
   });
 }
 
+// ------------------------------------------------------------------ save as image
+
+// The current story drawn on a canvas: its cards and outlets, the lines made so far and, once
+// checked or skipped, the answers. The layout is its own (lines included, also on a phone), in
+// the page's current light or dark colours, IMG_SCALE times IMG_W pixels wide.
+const IMG_W = 1200;
+const IMG_SCALE = 2;
+const SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const SERIF = 'Georgia, "Iowan Old Style", "Times New Roman", serif';
+const MASK = {};  // stands for an "[outlet]" chip in laid-out text
+const coarse = window.matchMedia('(pointer: coarse)');
+
+const typeface = (weight, size, lh, family = SANS) =>
+  ({ font: `${weight} ${size}px ${family}`, mask: `500 ${Math.round(size * 0.82)}px ${SANS}`, size, lh });
+
+function pageColors() {
+  const s = getComputedStyle(document.documentElement);
+  const v = (name) => s.getPropertyValue(`--${name}`).trim();
+  return {
+    bg: v('bg'), surface: v('surface'), surface2: v('surface-2'), text: v('text'), muted: v('muted'),
+    line: v('line'), ok: v('ok'), bad: v('bad'), shadow: v('shadow') !== 'none',
+    wire: [...Array(WIRES)].map((_, i) => v(`w${i}`)),
+  };
+}
+
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+  else ctx.rect(x, y, w, h);
+}
+
+// Words as lists of atoms (text, or MASK), so "[outlet]." stays one unbreakable word.
+function textWords(text) {
+  return text.split(/\s+/).filter(Boolean).map((chunk) => {
+    const atoms = [];
+    chunk.split('[outlet]').forEach((part, i) => {
+      if (i) atoms.push(MASK);
+      if (part) atoms.push(part);
+    });
+    return atoms;
+  });
+}
+
+function atomWidth(ctx, f, atom) {
+  if (atom !== MASK) return ctx.measureText(atom).width;
+  ctx.font = f.mask;
+  const w = ctx.measureText('outlet').width + 10;
+  ctx.font = f.font;
+  return w;
+}
+
+// Greedy line breaking into at most maxLines lines, the last one cut with an ellipsis.
+function wrapText(ctx, text, f, maxW, maxLines) {
+  ctx.font = f.font;
+  const space = ctx.measureText(' ').width;
+  const wordW = (word) => word.reduce((s, a) => s + atomWidth(ctx, f, a), 0);
+  const lineW = (line) => line.reduce((s, word, k) => s + (k ? space : 0) + wordW(word), 0);
+  const lines = [];
+  let line = [];
+  let w = 0;
+  for (const word of textWords(text)) {
+    const ww = wordW(word);
+    if (line.length && w + space + ww > maxW) {
+      lines.push(line);
+      line = [];
+      w = 0;
+    }
+    w += (line.length ? space : 0) + ww;
+    line.push(word);
+  }
+  if (line.length) lines.push(line);
+  if (lines.length > maxLines) {
+    lines.length = maxLines;
+    const last = lines[maxLines - 1];
+    const ell = ctx.measureText('…').width;
+    while (last.length > 1 && lineW(last) + ell > maxW) last.pop();
+    last[last.length - 1] = [...last[last.length - 1], '…'];
+  }
+  return lines;
+}
+
+function drawText(ctx, lines, f, x, y, color, col) {
+  ctx.textBaseline = 'middle';
+  ctx.font = f.font;
+  const space = ctx.measureText(' ').width;
+  lines.forEach((line, n) => {
+    const cy = y + n * f.lh + f.lh / 2;
+    let cx = x;
+    line.forEach((word, k) => {
+      if (k) cx += space;
+      for (const atom of word) {
+        if (atom === MASK) {
+          ctx.font = f.mask;
+          const w = ctx.measureText('outlet').width + 10;
+          const h = Math.round(f.size * 1.2);
+          ctx.fillStyle = col.surface2;
+          rrect(ctx, cx, cy - h / 2, w, h, 4);
+          ctx.fill();
+          ctx.fillStyle = col.muted;
+          ctx.fillText('outlet', cx + 5, cy + 0.5);
+          ctx.font = f.font;
+          cx += w;
+        } else {
+          ctx.fillStyle = color;
+          ctx.fillText(atom, cx, cy);
+          cx += ctx.measureText(atom).width;
+        }
+      }
+    });
+  });
+}
+
+function renderStory() {
+  const col = pageColors();
+  const canvas = document.createElement('canvas');
+  let ctx = canvas.getContext('2d');
+  const scored = cur.checked && !cur.skipped;
+
+  const P = 56;               // outer padding
+  const GAP = 150;            // the space the lines cross
+  const OUT_W = 260;          // outlet column
+  const ART_W = IMG_W - 2 * P - GAP - OUT_W;
+  const T = {
+    date: typeface(600, 13, 18), title: typeface(700, 44, 50), meta: typeface(500, 15, 20),
+    lede: typeface(400, 17, 24), head: typeface(600, 20, 26, SERIF), sum: typeface(400, 15, 22),
+    reveal: typeface(600, 15, 20), outlet: typeface(600, 16, 20), foot: typeface(600, 15, 20),
+  };
+
+  // Layout first: every card's and outlet's height.
+  const cards = cur.arts.map((a) => {
+    const head = wrapText(ctx, a.title, T.head, ART_W - 48, 4);
+    const sum = a.summary ? wrapText(ctx, a.summary, T.sum, ART_W - 48, 5) : [];
+    const h = 18 + head.length * T.head.lh + (sum.length ? 8 + sum.length * T.sum.lh : 0) + 18 +
+      (cur.checked ? 44 : 0);
+    return { a, head, sum, h };
+  });
+  const outs = cur.outs.map((o) => {
+    const lines = wrapText(ctx, outletName(o), T.outlet, OUT_W - 44, 2);
+    return { o, lines, h: 24 + lines.length * T.outlet.lh };
+  });
+  const CARD_GAP = 14;
+  const cardsH = cards.reduce((s, c) => s + c.h, 0) + CARD_GAP * (cards.length - 1);
+  const outsH = outs.reduce((s, o) => s + o.h, 0) + 12 * (outs.length - 1);
+  const boardH = Math.max(cardsH, outsH);
+  const top = P;
+  const boardTop = top + 18 + 12 + 50 + 10 + 24 + 34;
+  const footTop = boardTop + boardH + 40;
+  const H = footTop + 1 + 22 + 20 + P - 8;
+
+  let y = boardTop;
+  for (const c of cards) { c.y = y; y += c.h + CARD_GAP; }
+  const free = (boardH - outs.reduce((s, o) => s + o.h, 0)) / outs.length;  // spaced like space-around
+  y = boardTop + free / 2;
+  for (const o of outs) { o.y = y; y += o.h + free; }
+
+  canvas.width = IMG_W * IMG_SCALE;
+  canvas.height = Math.ceil(H * IMG_SCALE);
+  ctx = canvas.getContext('2d');
+  ctx.scale(IMG_SCALE, IMG_SCALE);
+  ctx.fillStyle = col.bg;
+  ctx.fillRect(0, 0, IMG_W, H);
+
+  // Header: the date, the name, which story.
+  const spaced = (px) => { if ('letterSpacing' in ctx) ctx.letterSpacing = `${px}px`; };
+  spaced(1);
+  ctx.font = T.date.font;
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = col.muted;
+  ctx.fillText($('today').textContent.toUpperCase(), P, top + 9);
+  spaced(-1.4);
+  ctx.font = T.title.font;
+  ctx.fillStyle = col.text;
+  ctx.fillText('News Match', P, top + 30 + 25);
+  spaced(0);
+  ctx.font = T.meta.font;
+  ctx.fillStyle = col.muted;
+  ctx.textAlign = 'right';
+  ctx.fillText(`Story ${game.idx + 1} of ${game.rounds.length}`, IMG_W - P, top + 30 + 25);
+  ctx.textAlign = 'left';
+  ctx.font = T.lede.font;
+  ctx.fillText('Same story, different newsroom. Which outlet published which article?', P, top + 30 + 50 + 10 + 12);
+
+  const shadowed = (fill) => {
+    if (col.shadow) {
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.07)';
+      ctx.shadowBlur = 22 * IMG_SCALE;
+      ctx.shadowOffsetY = 6 * IMG_SCALE;
+    }
+    fill();
+    ctx.shadowColor = 'transparent';
+  };
+  const result = (i) => (cur.links.get(i) === cur.arts[i].outlet ? col.ok : col.bad);
+
+  // Cards.
+  const cardX = P;
+  cards.forEach((c, i) => {
+    rrect(ctx, cardX, c.y, ART_W, c.h, 14);
+    shadowed(() => { ctx.fillStyle = col.surface; ctx.fill(); });
+    ctx.lineWidth = scored ? 1.5 : 1;
+    ctx.strokeStyle = scored ? result(i) : col.line;
+    ctx.stroke();
+    let ty = c.y + 18;
+    drawText(ctx, c.head, T.head, cardX + 22, ty, col.text, col);
+    ty += c.head.length * T.head.lh;
+    if (c.sum.length) drawText(ctx, c.sum, T.sum, cardX + 22, ty + 8, col.muted, col);
+    if (cur.checked) {
+      const ry = c.y + c.h - 44;
+      ctx.fillStyle = col.line;
+      ctx.fillRect(cardX + 22, ry, ART_W - 48, 1);
+      ctx.font = T.reveal.font;
+      ctx.textBaseline = 'middle';
+      const name = outletName(c.a.outlet);
+      if (!scored) {
+        ctx.fillStyle = col.text;
+        ctx.fillText(name, cardX + 22, ry + 22);
+      } else {
+        const ok = cur.links.get(i) === c.a.outlet;
+        const mark = `${ok ? '✓' : '✗'} ${name}`;
+        ctx.fillStyle = ok ? col.ok : col.bad;
+        ctx.fillText(mark, cardX + 22, ry + 22);
+        if (!ok) {
+          const x = cardX + 22 + ctx.measureText(mark).width + 12;
+          ctx.font = typeface(400, 15, 20).font;
+          ctx.fillStyle = col.muted;
+          ctx.fillText(`not ${outletName(cur.links.get(i))}`, x, ry + 22);
+        }
+      }
+    }
+  });
+
+  // Outlets.
+  const outX = IMG_W - P - OUT_W;
+  outs.forEach((o) => {
+    const i = articleFor(o.o);
+    rrect(ctx, outX, o.y, OUT_W, o.h, Math.min(o.h / 2, 22));
+    shadowed(() => { ctx.fillStyle = col.surface; ctx.fill(); });
+    ctx.lineWidth = scored && i !== undefined ? 1.5 : 1;
+    ctx.strokeStyle = scored && i !== undefined ? result(i) : col.line;
+    ctx.stroke();
+    drawText(ctx, o.lines, T.outlet, outX + 26, o.y + 12, col.text, col);
+  });
+
+  // Lines, from each card's dot to its outlet's, and in a checked story the right answers dotted.
+  const cardPort = (i) => ({ x: cardX + ART_W, y: cards[i].y + cards[i].h / 2 });
+  const outPort = (o) => { const b = outs.find((x) => x.o === o); return { x: outX, y: b.y + b.h / 2 }; };
+  const wire = (a, b, color, width, dash, alpha) => {
+    const dx = Math.max(24, Math.abs(b.x - a.x) * 0.5);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = 'round';
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.bezierCurveTo(a.x + dx, a.y, b.x - dx, b.y, b.x, b.y);
+    ctx.stroke();
+    ctx.restore();
+  };
+  for (const [i, o] of cur.links) {
+    const ok = cur.arts[i].outlet === o;
+    if (!scored) wire(cardPort(i), outPort(o), col.wire[i % WIRES], 3, [], 1);
+    else wire(cardPort(i), outPort(o), ok ? col.ok : col.bad, 3, ok ? [] : [8, 7], ok ? 1 : 0.7);
+  }
+  if (scored) {
+    cur.arts.forEach((a, i) => {
+      if (cur.links.get(i) !== a.outlet) wire(cardPort(i), outPort(a.outlet), col.ok, 2, [2, 6], 0.75);
+    });
+  }
+
+  // Dots on top of the lines: filled once linked, green or red once checked.
+  const dot = (p, color, filled) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 6.5, 0, Math.PI * 2);
+    ctx.fillStyle = filled ? color : col.surface;
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = color;
+    ctx.stroke();
+  };
+  cards.forEach((c, i) => dot(cardPort(i), scored ? result(i) : col.wire[i % WIRES], cur.links.has(i)));
+  outs.forEach((o) => {
+    const i = articleFor(o.o);
+    const color = i === undefined ? col.muted : scored ? result(i) : col.wire[i % WIRES];
+    dot(outPort(o.o), color, i !== undefined);
+  });
+
+  // Footer: where it's from and, once checked, the score.
+  ctx.fillStyle = col.line;
+  ctx.fillRect(P, footTop, IMG_W - 2 * P, 1);
+  ctx.font = T.foot.font;
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = col.text;
+  ctx.fillText('newsmatch.klaine.net', P, footTop + 22 + 10);
+  if (cur.checked) {
+    const right = cur.arts.filter((a, i) => cur.links.get(i) === a.outlet).length;
+    ctx.textAlign = 'right';
+    ctx.fillStyle = scored && right === cur.arts.length ? col.ok : col.muted;
+    ctx.fillText(scored ? `${right} of ${cur.arts.length} right` : 'Skipped, answers shown', IMG_W - P, footTop + 22 + 10);
+    ctx.textAlign = 'left';
+  }
+  return canvas;
+}
+
+// A JPEG of the story. Touch devices get the share sheet (which can save to Photos), others a
+// download. The canvas is encoded synchronously so share() still runs inside the tap.
+async function saveImage() {
+  if (!cur) return;
+  const url = renderStory().toDataURL('image/jpeg', 0.92);
+  const bin = atob(url.slice(url.indexOf(',') + 1));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const blob = new Blob([bytes], { type: 'image/jpeg' });
+  const name = `news-match-${$('today').dateTime}-story-${game.idx + 1}.jpg`;
+  if (coarse.matches && navigator.canShare) {
+    const file = new File([blob], name, { type: 'image/jpeg' });
+    if (navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file] });
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;  // closed the share sheet
+      }
+    }
+  }
+  const href = URL.createObjectURL(blob);
+  const a = el('a');
+  a.href = href;
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(href), 10000);
+}
+
+$('save').addEventListener('click', saveImage);
+
 // ------------------------------------------------------------------ results
 
 function finish() {
   $('game').hidden = true;
   $('end').hidden = false;
   const pct = game.total ? Math.round((100 * game.matched) / game.total) : 0;
-  $('end-score').textContent = `You matched ${game.matched} of ${game.total} (${pct}%)`;
-  $('end-verdict').textContent =
-    pct === 100 ? 'Every one. You can hear a newsroom’s accent.' :
-    pct >= 75 ? 'A sharp eye for house style.' :
-    pct >= 50 ? 'Not bad. The newsrooms do blur together.' :
-    'Turns out the headlines all sound alike.';
+  const skips = game.results.filter((r) => r === 'skip').length;
+  const stories = (n) => `${n} ${n === 1 ? 'story' : 'stories'}`;
+  if (game.total) {
+    $('end-score').textContent = `You matched ${game.matched} of ${game.total} (${pct}%)`;
+    $('end-verdict').textContent =
+      (pct === 100 ? 'Every one. You can hear a newsroom’s accent.' :
+       pct >= 75 ? 'A sharp eye for house style.' :
+       pct >= 50 ? 'Not bad. The newsrooms do blur together.' :
+       'Turns out the headlines all sound alike.') +
+      (skips ? ` You skipped ${stories(skips)}.` : '');
+  } else {
+    $('end-score').textContent = `You browsed ${stories(skips)}`;
+    $('end-verdict').textContent = 'Nothing scored this time. Match a story to see how well you know the newsrooms.';
+  }
+  $('end-rows-head').hidden = !game.total;
 
   const rows = $('end-rows');
   rows.textContent = '';
@@ -716,11 +1086,13 @@ function finish() {
 
   const store = readStore();
   const life = store.stats || { games: 0, matched: 0, total: 0 };
-  life.games += 1;
-  life.matched += game.matched;
-  life.total += game.total;
-  store.stats = life;
-  writeStore(store);
+  if (game.total) {  // a game of nothing but skips isn't one
+    life.games += 1;
+    life.matched += game.matched;
+    life.total += game.total;
+    store.stats = life;
+    writeStore(store);
+  }
 
   const unseen = data.rounds.filter((r) => !(store.seen || []).includes(r.id)).length;
   $('end-note').textContent =
@@ -740,13 +1112,15 @@ function renderRecap() {
   list.textContent = '';
   game.played.forEach((arts, n) => {
     if (!arts) return;
+    const skipped = game.results[n] === 'skip';
     const right = arts.filter((a) => a.guess === a.outlet).length;
     const head = el('div', 'story-head');
-    head.append(el('span', '', `Story ${n + 1}`), el('span', game.results[n], `${right} of ${arts.length} right`));
+    head.append(el('span', '', `Story ${n + 1}`),
+      el('span', game.results[n], skipped ? 'Skipped' : `${right} of ${arts.length} right`));
     const ul = el('ul', 'arts');
     [...arts].sort((a, b) => a.published.localeCompare(b.published)).forEach((a) => {
       const ok = a.guess === a.outlet;
-      const li = el('li', ok ? 'ok' : 'bad');
+      const li = el('li', skipped ? 'skip' : ok ? 'ok' : 'bad');
       const link = el('a', 'headline');
       link.href = a.url;
       link.target = '_blank';
@@ -756,10 +1130,10 @@ function renderRecap() {
       when.dateTime = a.published;
       const meta = el('div', 'art-meta');
       meta.append(el('b', '', outletName(a.outlet)), ' · ', when);
-      if (!ok) meta.append(' · ', el('span', 'said', `you said ${outletName(a.guess)}`));
+      if (!ok && !skipped) meta.append(' · ', el('span', 'said', `you said ${outletName(a.guess)}`));
       const body = el('div');
       body.append(link, meta);
-      li.append(el('span', 'mark', ok ? '✓' : '✗'), body);
+      li.append(el('span', 'mark', skipped ? '–' : ok ? '✓' : '✗'), body);
       ul.append(li);
     });
     const story = el('li', 'story');

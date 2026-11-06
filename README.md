@@ -2,7 +2,8 @@
 
 Same story, different newsroom. Each round shows one news event as covered by three or four
 outlets, with the outlet names hidden. Draw a line from each article to the outlet that published it:
-BBC News, Fox News, Al Jazeera, the Guardian, NPR, the Daily Mail, DW and more.
+BBC News, Fox News, Al Jazeera, the Guardian, NPR, the Daily Mail, DW and more. Skip a story to
+see who wrote what without scoring it, and save any story, lines and answers included, as an image.
 
 Each article's headline and summary come from that outlet's public RSS feed and link back to the
 original.
