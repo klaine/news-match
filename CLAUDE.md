@@ -18,6 +18,21 @@ file in the repo root holds that domain for Pages: keep it.
   `.github/workflows/refresh.yml` regenerates it hourly (at :17) and commits it when it changed,
   which is nearly every run because it records when it was built. It's hourly because GitHub runs
   schedules on a best-effort basis: on the first day it skipped every 4-hourly slot.
+  The same run also commits `archive/` and `analysis/` (below). Its steps: fetch, analyse (can
+  fail without stopping the commit), commit.
+- Archive: after `rounds.json` is written, `write_archive` adds the run's standard and polarized
+  rounds to `archive/YYYY-MM.json`, keyed by round id and filed under the month first seen. A round
+  seen again only gets `last_seen` updated. A failed fetch exits before this, so it never writes.
+  Round ids change whenever a group's articles change, so one story can appear several times as its
+  group grows; the archive keeps those as separate entries. `--no-archive` skips it for test runs.
+- Bias analysis: `analyze_bias.py` sends archived rounds that have no entry in `analysis/YYYY-MM.json`
+  to OpenCode Go (`https://opencode.ai/zen/go/v1`, Bearer auth). Rounds on the page now come first,
+  then newest first, at most 6 per run. It needs the Actions secret `OPENCODE_API_KEY` and the
+  repository variable `OPENCODE_MODEL` (the model ID; with the key set but no model, the step lists
+  the models the key can use and does nothing). Without the key the step does nothing. Each entry
+  records the model and time. A reply that isn't a JSON object is stored as an error and not retried:
+  delete that entry to retry it. The page doesn't show the analysis, because it names the outlets and
+  would give the answers away.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.
@@ -68,5 +83,5 @@ file in the repo root holds that domain for Pages: keep it.
   were too cramped to follow. The outlets become a sticky bar above full-width cards, each card's
   `.slot` names its pick, and its colour fills the chosen outlet's dot. `.only-wide` and
   `.only-narrow` swap the instructions and labels that mention lines.
-- Try a grouping change without overwriting `rounds.json`:
-  `python3 fetch_news.py --out /tmp/x.json --debug`.
+- Try a grouping change without overwriting `rounds.json` or the archive:
+  `python3 fetch_news.py --out /tmp/x.json --debug --no-archive`.
