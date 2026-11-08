@@ -36,6 +36,7 @@ covering the story. Identical wire-service headlines are dropped, because no one
 tell them apart.
 
 A GitHub Action reruns it every hour and commits `rounds.json` when it changed. Each run also adds
-its groups to a monthly archive in `archive/`, and, when an OpenCode Go key is set as a repository
-secret, asks an AI model about the framing in new groups and stores the answers in `analysis/`. GitHub Pages
-serves `index.html` and `rounds.json` from the repository root.
+its groups to a monthly archive in `archive/`. When an AI provider key (OpenCode Go or the Claude
+API) is set as a repository secret, it also asks an AI model about the framing in new groups and
+stores the answers in `analysis/`. GitHub Pages serves `index.html` and `rounds.json` from the
+repository root.

@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-"""Ask an AI model, through OpenCode Go, what the headlines and summaries of each archived story
-show about framing. Results go to analysis/YYYY-MM.json, keyed by round id.
+"""Ask an AI model what the headlines and summaries of each archived story show about framing.
+Results go to analysis/YYYY-MM.json, keyed by round id.
 
-Usage: OPENCODE_API_KEY=... OPENCODE_MODEL=... python3 analyze_bias.py [--limit 6]
+Usage: ANALYSIS_PROVIDER=opencode OPENCODE_API_KEY=... OPENCODE_MODEL=... python3 analyze_bias.py [--limit 6]
+
+Providers (ANALYSIS_PROVIDER, default "opencode"):
+  opencode   OpenCode Go, OPENCODE_API_KEY and OPENCODE_MODEL
+  anthropic  the Claude API, ANTHROPIC_API_KEY and ANTHROPIC_MODEL
+Optional base URL overrides: OPENCODE_BASE_URL, ANTHROPIC_BASE_URL.
 
 Standard library only. Only rounds without an analysis are sent: the ones in the current
-rounds.json first, then the newest archived. At most --limit per run, so the hourly refresh
-stays inside the plan's quota. Without a key it does nothing; without a model it lists the models
-the key can use and does nothing. Both exit 0, so the refresh is never blocked by this step.
-Environment: OPENCODE_BASE_URL (default https://opencode.ai/zen/go/v1).
+rounds.json first, then the newest archived. At most --limit per run, so the hourly refresh stays
+inside the plan's quota. Without a key it does nothing; without a model it lists the models the key
+can use and does nothing. Both exit 0, so the refresh is never blocked by this step.
 """
 
 import argparse
@@ -23,9 +27,24 @@ import uuid
 from datetime import datetime, timezone
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_BASE = "https://opencode.ai/zen/go/v1"
 USER_AGENT = "news-match/1.0"
 RETRY_DELAYS = (2, 4, 8, 16)  # seconds, for rate limits and server errors
+RETRYABLE = (429, 500, 502, 503, 504, 529)
+
+PROVIDERS = {
+    "opencode": {
+        "base": "https://opencode.ai/zen/go/v1",
+        "base_env": "OPENCODE_BASE_URL",
+        "key_env": "OPENCODE_API_KEY",
+        "model_env": "OPENCODE_MODEL",
+    },
+    "anthropic": {
+        "base": "https://api.anthropic.com/v1",
+        "base_env": "ANTHROPIC_BASE_URL",
+        "key_env": "ANTHROPIC_API_KEY",
+        "model_env": "ANTHROPIC_MODEL",
+    },
+}
 
 SYSTEM = """You compare how news outlets frame the same event. You are given several articles
 (headline and summary each) about one story, each labelled with its outlet. "[outlet]" marks a
@@ -94,22 +113,25 @@ def prompt_for(entry):
     return "\n".join(lines).strip()
 
 
-def call(base, key, session, body, path, method="POST"):
+def headers_for(provider, key, session):
+    if provider == "anthropic":
+        return {"x-api-key": key, "anthropic-version": "2023-06-01"}
+    # OpenCode Go wants a session per conversation; one per run is enough.
+    return {"Authorization": f"Bearer {key}", "x-opencode-session": session}
+
+
+def call(base, headers, path, body=None, method="POST"):
     """One request, retried on rate limits and server errors. Raises urllib.error.HTTPError or
     URLError when it gives up."""
     data = json.dumps(body).encode("utf-8") if body is not None else None
     req = urllib.request.Request(base + path, data=data, method=method, headers={
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-        "User-Agent": USER_AGENT,
-        "x-opencode-session": session,  # Go wants a session per conversation; one per run is enough
-    })
+        **headers, "Content-Type": "application/json", "User-Agent": USER_AGENT})
     for delay in (*RETRY_DELAYS, None):
         try:
             with urllib.request.urlopen(req, timeout=120) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
-            if e.code not in (429, 500, 502, 503, 504) or delay is None:
+            if e.code not in RETRYABLE or delay is None:
                 raise
         except urllib.error.URLError:
             if delay is None:
@@ -117,8 +139,23 @@ def call(base, key, session, body, path, method="POST"):
         time.sleep(delay)
 
 
-def list_models(base, key, session):
-    return [m["id"] for m in call(base, key, session, None, "/models", method="GET").get("data", [])]
+def list_models(provider, base, headers):
+    return [m["id"] for m in call(base, headers, "/models", method="GET").get("data", [])]
+
+
+def ask(provider, base, headers, model, prompt):
+    """The model's reply as text."""
+    if provider == "anthropic":
+        reply = call(base, headers, "/messages", {
+            "model": model, "max_tokens": 1024, "temperature": 0.2, "system": SYSTEM,
+            "messages": [{"role": "user", "content": prompt}],
+        })
+        return "".join(b.get("text", "") for b in reply["content"] if b.get("type") == "text")
+    reply = call(base, headers, "/chat/completions", {
+        "model": model, "temperature": 0.2,
+        "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
+    })
+    return reply["choices"][0]["message"]["content"]
 
 
 def parse_reply(text):
@@ -142,21 +179,26 @@ def main():
     ap.add_argument("--rounds", default=os.path.join(BASE_DIR, "rounds.json"))
     args = ap.parse_args()
 
-    key = os.environ.get("OPENCODE_API_KEY", "").strip()
-    model = os.environ.get("OPENCODE_MODEL", "").strip()
-    base = os.environ.get("OPENCODE_BASE_URL", DEFAULT_BASE).rstrip("/")
+    provider = os.environ.get("ANALYSIS_PROVIDER", "").strip() or "opencode"
+    if provider not in PROVIDERS:
+        print(f"unknown ANALYSIS_PROVIDER {provider!r}; use one of: {', '.join(PROVIDERS)}", file=sys.stderr)
+        return 1
+    cfg = PROVIDERS[provider]
+    key = os.environ.get(cfg["key_env"], "").strip()
+    model = os.environ.get(cfg["model_env"], "").strip()
+    base = os.environ.get(cfg["base_env"], cfg["base"]).rstrip("/")
     if not key:
-        print("OPENCODE_API_KEY is not set; skipping the bias analysis.")
+        print(f"{cfg['key_env']} is not set; skipping the bias analysis ({provider}).")
         return 0
 
-    session = str(uuid.uuid4())
+    headers = headers_for(provider, key, str(uuid.uuid4()))
     if not model:
         try:
-            models = list_models(base, key, session)
+            models = list_models(provider, base, headers)
         except (urllib.error.URLError, ValueError) as e:
-            print(f"OPENCODE_MODEL is not set, and listing models failed: {e}")
+            print(f"{cfg['model_env']} is not set, and listing models failed: {e}")
             return 0
-        print("OPENCODE_MODEL is not set. Models this key can use:")
+        print(f"{cfg['model_env']} is not set. Models this key can use ({provider}):")
         print("\n".join(f"  {m}" for m in models) or "  (none listed)")
         return 0
 
@@ -170,38 +212,34 @@ def main():
     if not todo:
         print("nothing new to analyse")
         return 0
-    print(f"analysing {len(todo)} round(s) with {model}")
+    print(f"analysing {len(todo)} round(s) with {provider} / {model}")
 
     for rid in todo:
         month, entry = archive[rid]
         path = os.path.join(args.analysis_dir, f"{month}.json")
         doc = read_json(path, {"month": month, "analyses": {}})
-        messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt_for(entry)}]
         stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         try:
-            reply = call(base, key, session, {"model": model, "messages": messages, "temperature": 0.2},
-                         "/chat/completions")
+            text = ask(provider, base, headers, model, prompt_for(entry))
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:300]
             print(f"request failed: HTTP {e.code} {detail}", file=sys.stderr)
             if e.code == 404:
-                print("the model may not exist; check OPENCODE_MODEL against the list with an unset model",
-                      file=sys.stderr)
+                print(f"the model may not exist; check {cfg['model_env']} against the list it prints "
+                      f"when unset", file=sys.stderr)
             return 1
         except urllib.error.URLError as e:
             print(f"request failed: {e.reason}", file=sys.stderr)
             return 1
-        try:
-            text = reply["choices"][0]["message"]["content"]
-        except (KeyError, IndexError, TypeError):
-            print(f"unexpected reply shape: {str(reply)[:300]}", file=sys.stderr)
+        except (KeyError, IndexError, TypeError) as e:
+            print(f"unexpected reply shape from {provider}: {e!r}", file=sys.stderr)
             return 1
         result = parse_reply(text)
+        base_record = {"provider": provider, "model": model, "analysed_at": stamp}
         if result is None:
-            record = {"model": model, "analysed_at": stamp, "error": "reply was not a JSON object",
-                      "raw": text[:1000]}
+            record = {**base_record, "error": "reply was not a JSON object", "raw": text[:1000]}
         else:
-            record = {"model": model, "analysed_at": stamp, "result": result}
+            record = {**base_record, "result": result}
         doc["analyses"][rid] = record
         write_json(path, doc)  # save each one, so a failure later keeps the earlier work
         print(f"  {rid}: {'ok' if result is not None else 'unparseable reply'}")

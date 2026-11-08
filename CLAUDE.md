@@ -26,13 +26,14 @@ file in the repo root holds that domain for Pages: keep it.
   Round ids change whenever a group's articles change, so one story can appear several times as its
   group grows; the archive keeps those as separate entries. `--no-archive` skips it for test runs.
 - Bias analysis: `analyze_bias.py` sends archived rounds that have no entry in `analysis/YYYY-MM.json`
-  to OpenCode Go (`https://opencode.ai/zen/go/v1`, Bearer auth). Rounds on the page now come first,
-  then newest first, at most 6 per run. It needs the Actions secret `OPENCODE_API_KEY` and the
-  repository variable `OPENCODE_MODEL` (the model ID; with the key set but no model, the step lists
-  the models the key can use and does nothing). Without the key the step does nothing. Each entry
-  records the model and time. A reply that isn't a JSON object is stored as an error and not retried:
-  delete that entry to retry it. The page doesn't show the analysis, because it names the outlets and
-  would give the answers away.
+  to an AI model. Rounds on the page now come first, then newest first, at most 6 per run. The
+  provider is the repository variable `ANALYSIS_PROVIDER`: `opencode` (default, OpenCode Go at
+  `https://opencode.ai/zen/go/v1`, secret `OPENCODE_API_KEY`, variable `OPENCODE_MODEL`) or
+  `anthropic` (the Claude API, secret `ANTHROPIC_API_KEY`, variable `ANTHROPIC_MODEL`). With a key
+  set but no model, the step lists the models that key can use and does nothing. Without the key
+  the step does nothing. Each entry records the provider, model and time. A reply that isn't a
+  JSON object is stored as an error and not retried: delete that entry to retry it. The page
+  doesn't show the analysis, because it names the outlets and would give the answers away.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.
