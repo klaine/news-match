@@ -1,5 +1,114 @@
 {
  "analyses": {
+  "01ea562332": {
+   "analysed_at": "2026-11-08T17:39:18Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 35,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Centers on Meghan and her wish to assist investigators rather than on the arrest itself. This makes her the main actor in the story.",
+      "outlet": "dailymail",
+      "quote": "Meghan wants to help FBI probe into her estranged father"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Relies on an unnamed source for Meghan's wishes. The claim is hard to verify from the text.",
+      "outlet": "dailymail",
+      "quote": "A source said Meghan would 'very much like to' assist"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Phrases such as 'piling up' suggest a growing number of inquiries and add momentum. The text also mentions charges in the Philippines, which the NYT summary does not.",
+      "outlet": "dailymail",
+      "quote": "multiple child sex abuse inquiries piling up against Markle"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Focuses on the arrest as a factual event, giving the place (Florida) and the day (Friday). It names the charge type as child sex abuse material.",
+      "outlet": "nyt",
+      "quote": "was arrested in Florida on Friday"
+     },
+     {
+      "kind": "omission",
+      "observation": "Includes his denial, which the Daily Mail summary leaves out. It does not mention Meghan's reaction or any FBI or Philippines angle.",
+      "outlet": "nyt",
+      "quote": "He has denied the accusations against him."
+     },
+     {
+      "kind": "word choice",
+      "observation": "Plain, formal headline with a full name and no speculation.",
+      "outlet": "nyt",
+      "quote": "Meghan Markle’s Father Is Arrested on Child Sex Abuse Material Charges"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The Daily Mail appears to frame the story through Meghan, possibly because of its celebrity and royal audience, and leans on an anonymous source and cumulative language ('piling up'). The NYT is more neutral and event-focused and includes the denial. Neither uses strongly moralizing labels, though the Mail omits the denial in its summary and the two texts differ on what is emphasized (and the Mail also cites Philippine charges, which the NYT summary does not mention).",
+    "shared_facts": [
+     "Thomas Markle, Meghan's estranged father, is facing child sex abuse-related accusations or charges",
+     "Both articles describe him as Meghan's estranged father"
+    ],
+    "summary": "The Daily Mail frames the story around Meghan's reported willingness to help investigators, citing an unnamed source, while the NYT reports the arrest plainly and includes Markle's denial."
+   }
+  },
+  "06e279638b": {
+   "analysed_at": "2026-11-08T17:39:32Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 30,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Uses dramatic, high-stakes wording about the man's condition, which raises the sense of peril. The CBS text describes him only as 'treading water'.",
+      "outlet": "dailymail",
+      "quote": "found on brink of death"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Says the man 'plunged' from the ship, implying a fall or jump. CBS does not say how he ended up in the water.",
+      "outlet": "dailymail",
+      "quote": "Pianist who plunged from Royal Caribbean cruise ship"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Identifies the man by a personal detail (pianist) and says he was 'unidentified'. It names the fishermen and stresses the original marlin-fishing purpose, which makes it read as a human-interest story.",
+      "outlet": "dailymail",
+      "quote": "had set out to catch marlin"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Describes the man as a 'cruise ship employee' in plain, neutral terms and as 'treading water', which suggests he was conscious and coping. This differs from the Daily Mail's 'brink of death'.",
+      "outlet": "cbs",
+      "quote": "cruise ship employee treading water"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Gives a local angle (OC, Newport Beach) and a specific day (Friday), and frames the find as happening while the fishermen were returning home. It does not name the fishermen in the text provided.",
+      "outlet": "cbs",
+      "quote": "Two Newport Beach fishermen found"
+     },
+     {
+      "kind": "other",
+      "observation": "The texts differ on the man's condition and on how precisely the distance is given ('roughly 20 miles' vs 'nearly 20 miles'). The condition difference is the more notable one.",
+      "outlet": "dailymail",
+      "quote": "roughly 20 miles off the coast"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The main gap is the Daily Mail's dramatised language ('plunged', 'brink of death') against CBS's calmer 'treading water'; possibly this reflects the Daily Mail's tabloid style and CBS's local-news framing. The two do not contradict each other on the core facts, though they give different impressions of how dire the man's state was. The evidence comes only from headlines and summaries, so fuller articles might narrow or widen the gap.",
+    "shared_facts": [
+     "Fishermen found a man in the water roughly 20 miles off the coast near Catalina Island.",
+     "The man was connected to a Royal Caribbean cruise ship.",
+     "The rescue was carried out by two fishermen on a fishing trip."
+    ],
+    "summary": "Both outlets report the same sea rescue near Catalina Island, but the Daily Mail dramatises it with 'plunged' and 'brink of death' while CBS uses neutral, local-focused wording."
+   }
+  },
   "075deb8e6b": {
    "analysed_at": "2026-11-08T12:44:06Z",
    "model": "claude-sonnet-5-5",
@@ -295,6 +404,55 @@
     "summary": "Both outlets report the same police-sourced incident, with the New York Post using a more personalized, tabloid tone and NBC a more neutral, arrest-focused one."
    }
   },
+  "15a6ca26d8": {
+   "analysed_at": "2026-11-08T17:37:56Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 33,
+    "differences": [
+     {
+      "kind": "sourcing",
+      "observation": "Leads with Trump's own words in a direct quote and repeats his superlatives, so the framing is Trump's own with no outside context or comment. The 'Please take the job!' headline quote adds an enthusiastic, promotional tone.",
+      "outlet": "nypost",
+      "quote": "the Great Dana White, a violent Fighter and Warrior"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Plain, procedural wording. It reports the offer as something Trump 'said' and stresses the next step, a Monday meeting, which is White's response. It is the only outlet to include White's reaction.",
+      "outlet": "npr",
+      "quote": "says he will meet with Trump Monday over offer"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Neutral and detail-oriented. It notes the job is 'now-vacant' and that Trump told White to bring fighters as aides, which makes the offer seem more unusual without stating an opinion. 'Asks' is milder than 'declared'.",
+      "outlet": "nyt",
+      "quote": "told him to bring along fighters as aides"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Places the offer in the context of 'combative press briefings' with journalists, which implies a pointed link between the fighters theme and the administration's press relations. It also hedges with 'reportedly' and says Trump 'surprised many', which no other outlet says.",
+      "outlet": "france24",
+      "quote": "After a series of combative press briefings between the Trump administration and journalists"
+     },
+     {
+      "kind": "omission",
+      "observation": "Leaves out the context of the vacancy, any reaction, and any mention of the fighter-aides idea in the visible text, whereas NYT and France24 include it.",
+      "outlet": "nypost",
+      "quote": "has been offered the job of Press Secretary of the United States"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in tone and emphasis. The NY Post relays Trump's boastful language almost unfiltered ('violent Fighter and Warrior'), possibly because it is quoting a social media post for color. France24 adds interpretive context ('combative press briefings', 'surprised many'), which is a mild editorial frame, while NPR and the NYT stay closest to plain reporting.",
+    "shared_facts": [
+     "President Trump offered Dana White, head of the UFC, the job of White House press secretary",
+     "The offer was made publicly, via social media/Truth Social, around Saturday",
+     "White is a friend of Trump and the UFC's boss/CEO"
+    ],
+    "summary": "All four outlets report Trump's offer of the press secretary job to Dana White, with the NY Post echoing Trump's colorful rhetoric, France24 adding a 'combative briefings' backdrop, and NPR and the NYT staying largely neutral."
+   }
+  },
   "188a6b65b8": {
    "analysed_at": "2026-11-08T17:11:59Z",
    "model": "claude-sonnet-5-5",
@@ -341,6 +499,110 @@
      "Police were the source of the main casualty and investigative details."
     ],
     "summary": "The outlets describe the same shooting in a similar, factual tone, differing mainly in casualty figures, probably owing to timing, and in whether they focus on witnesses, the suspect's family, the official response or the unclear motive."
+   }
+  },
+  "197b4d9765": {
+   "analysed_at": "2026-11-08T17:38:29Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 18,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Leads with the official response: world tributes, two national days of mourning, and the defense minister's 'terror attack' label. It attributes the motive to authorities and names no suspect details.",
+      "outlet": "nbc",
+      "quote": "World leaders have paid tribute as Poland declared two national days of mourning"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Quotes the defense minister's characterization directly, which frames the event as terrorism through an official voice. The headline hedges with 'authorities say' but the summary states the motive as fact.",
+      "outlet": "nbc",
+      "quote": "a shooter motivated by far-right ideologies"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Takes a British angle, focusing on a 32-year-old British victim and a wounded Briton. This reflects a UK audience focus. It puts 'far-right' in scare quotes in the headline, which distances the outlet from the label, and it uses dramatic wording.",
+      "outlet": "sky",
+      "quote": "Briton among six killed by 'far-right' gunman in Krakow rampage"
+     },
+     {
+      "kind": "word choice",
+      "observation": "'Rampage' is more vivid than the other outlets' headline wording. The summary itself, however, is plain and attributes its facts to Polish officials.",
+      "outlet": "sky",
+      "quote": "Krakow rampage"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses 'in shock' and 'killing spree', which are emotive. It gives the most concrete detail on the suspect (age 24, semi-automatic rifle) and a hedged, attributed description of his ideology.",
+      "outlet": "france24",
+      "quote": "fascinated by far-right ideologies"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Stresses the legal and investigative response, a terror probe, and says 'many more were injured', which the others do not mention.",
+      "outlet": "france24",
+      "quote": "Poland on Sunday launched a terror probe"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The outlets agree on the core facts and all attribute the far-right link to Polish authorities. The differences come mostly from audience and angle: Sky possibly targets a UK readership with the British victim, NBC stresses official and international reaction, and France24 focuses on the investigation. Sky's scare quotes and 'rampage', and France24's 'killing spree', are mildly dramatic but not strongly loaded.",
+    "shared_facts": [
+     "A mass shooting took place in Krakow on Saturday.",
+     "Six people were killed.",
+     "The shooter is linked to far-right views or ideology.",
+     "Polish authorities or officials are the source of the information."
+    ],
+    "summary": "All three outlets report the same Krakow shooting and its far-right link with only modest differences in angle and wording, mainly Sky's British focus, NBC's emphasis on official reaction and France24's emphasis on the terror probe."
+   }
+  },
+  "1a63ece9bd": {
+   "analysed_at": "2026-11-08T17:39:11Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "sourcing",
+      "observation": "Leads with Trump's own words and lets his boastful phrasing carry the story, so the framing is largely Trump's own and no outside voice is included.",
+      "outlet": "nypost",
+      "quote": "“I am pleased to announce that the Great Dana White, a violent Fighter and Warrior, has been offered the job”"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The headline repeats Trump's exclamatory plea, giving the piece a dramatic, informal tone. The words are in quotation marks and attributed, so they are Trump's rather than the outlet's.",
+      "outlet": "nypost",
+      "quote": "‘Please take the job!’"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses plain, neutral reporting language and a paraphrase instead of Trump's flourishes. It describes White as Trump's \"friend\", which adds a small relational detail.",
+      "outlet": "npr",
+      "quote": "has offered the job of White House press secretary to his friend and UFC boss Dana White"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Puts White's response first, namely that he will meet Trump on Monday, which gives the story a forward-looking, procedural focus. The NY Post text does not mention this.",
+      "outlet": "npr",
+      "quote": "says he will meet with Trump Monday"
+     },
+     {
+      "kind": "omission",
+      "observation": "Does not mention White's reaction or the planned meeting in the text provided.",
+      "outlet": "nypost",
+      "quote": "Trump declared in a Truth Social post"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The two outlets agree on the core facts and differ mainly in register: the NY Post foregrounds Trump's colorful quoted language, while NPR paraphrases in neutral terms and adds White's response. The difference possibly reflects house style and tabloid versus public-media conventions, and the NY Post's loaded words (\"violent Fighter and Warrior\") are attributed to Trump, so neither outlet shows strong editorial slant. These are short headlines and summaries only, so fuller articles might differ.",
+    "shared_facts": [
+     "President Trump offered the White House press secretary job to UFC boss Dana White",
+     "Trump announced the offer on Saturday (the NY Post's text points to a Truth Social post)"
+    ],
+    "summary": "Both outlets report Trump's offer of the press secretary job to Dana White, with the NY Post echoing Trump's flamboyant wording and NPR using neutral paraphrase and noting White's planned Monday meeting."
    }
   },
   "1b90c1933e": {
@@ -610,6 +872,61 @@
     "summary": "All four outlets report the pope's South American tour, but Breitbart stresses crowds and secularism while NPR, NYT and Euronews stress his recovery from lung surgery, with Euronews also quoting his peace message."
    }
   },
+  "20b3db4e1a": {
+   "analysed_at": "2026-11-08T17:38:14Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 33,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "Uses the strongest emotive and trend-oriented language, personifying the party as 'humbled' and stressing a continuing downward trajectory; gives no vote share in the text provided.",
+      "outlet": "abc",
+      "quote": "humbled by its worst election results as it continues its decline"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Mildest framing: 'setback' and 'wins just over 30 percent' are measured, and it ties the result to Ramaphosa personally rather than to the party's history or decline. It does not say 'worst' in the text given.",
+      "outlet": "aljazeera",
+      "quote": "suffers setback in local elections"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Most sweeping and interpretive: predicts a lasting political shift and frames the ANC as having fallen from a heroic status to ordinary. The quoted 'any other political party' adds an outside voice, though its source is not identified in the text.",
+      "outlet": "nyt",
+      "quote": "South Africa’s Politics May Never Be the Same Again"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Emphasizes the ANC's historic role ('credited with overturning apartheid') and uses 'lost big', a more dramatic phrase than the others' 'setback'.",
+      "outlet": "nyt",
+      "quote": "lost big in local elections"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Fairly factual and data-focused, with the precise figure and 'worst result on record', but pairs it with the mild 'setback' and the apartheid reference in the headline.",
+      "outlet": "wsj",
+      "quote": "Party That Defeated Apartheid Hits Electoral Setback"
+     },
+     {
+      "kind": "omission",
+      "observation": "Does not mention apartheid history or that this is a record low, unlike NYT and WSJ (and ABC on 'worst ever').",
+      "outlet": "aljazeera",
+      "quote": "President Cyril Ramaphosa's party wins just over 30 percent nationally."
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "All four agree on the core facts and direction; differences are mainly in intensity and emphasis. ABC ('humbled', 'continues its decline') and NYT ('lost big', 'may never be the same') use the most dramatic or interpretive wording, possibly reflecting a narrative or analysis-driven style, while Al Jazeera and WSJ use the milder 'setback'. With only headlines and short summaries, these tonal gaps are modest and no outlet makes accusations.",
+    "shared_facts": [
+     "South Africa held local elections and the African National Congress (ANC) performed poorly.",
+     "The ANC won roughly 30-31% of the vote nationally.",
+     "The result is described as a setback or loss for a party historically tied to ending apartheid or led by President Ramaphosa."
+    ],
+    "summary": "All outlets report the ANC's poor local election result of about 30-31%, with ABC and NYT framing it more dramatically as decline or epochal change, and Al Jazeera and WSJ describing it more plainly as a setback."
+   }
+  },
   "20b93d977e": {
    "analysed_at": "2026-11-08T12:43:25Z",
    "model": "claude-sonnet-5-5",
@@ -719,6 +1036,208 @@
     "summary": "Both outlets report Notre Dame's win over top-ranked Miami in much the same tone, with Fox stressing the coach and vindication narrative and the Guardian stressing player stats, the score and the playoff race."
    }
   },
+  "26b2218fc7": {
+   "analysed_at": "2026-11-08T17:38:22Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 25,
+    "differences": [
+     {
+      "kind": "omission",
+      "observation": "Gives no suspect details, no mention of far-right views, and no terrorism probe. It says the motive is unclear, which sets it apart from the ABC and Guardian texts, which point to far-right views or inspiration. It was also published later than ABC and DW, which possibly explains the higher casualty count.",
+      "outlet": "nyt",
+      "quote": "The motive remains unclear."
+     },
+     {
+      "kind": "other",
+      "observation": "Reports a higher toll (at least nine dead, at least 16 injured) and says shootings occurred in Krakow 'and another town'. The other outlets say six dead and mention only Krakow. This may reflect different reporting times, but the texts do not say so.",
+      "outlet": "nyt",
+      "quote": "At least nine people were dead and at least 16 injured after shootings in Krakow and another town"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Leads with national mourning and the attacker's ideology, stated as fact in the headline and summary. It also stresses how rare the event is.",
+      "outlet": "abc",
+      "quote": "attacker had far-right views"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Hedges the ideological link ('probably inspired by far right') and attributes it to officials. It leads with the terrorism investigation, and it includes the detail that the suspect's family was found dead.",
+      "outlet": "guardian",
+      "quote": "probably inspired by far right, according to officials"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Focuses on the official response (two days of mourning, terror probe) and the discovery of the suspect's family. It does not mention ideology in the text given.",
+      "outlet": "dw",
+      "quote": "Poland begins two days of mourning over Krakow shooting"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences look mainly like differences in timing and sourcing rather than editorial slant. The NYT text appears to be an early or explainer-style piece that stays cautious on motive, while ABC states the far-right link flatly and the Guardian attributes it to officials with 'probably'. No outlet uses strongly loaded language; the main gaps are in the casualty figures and in how firmly the ideology is asserted.",
+    "shared_facts": [
+     "A mass shooting took place in Krakow, Poland, in November 2026.",
+     "Several people were killed and others wounded.",
+     "Police and authorities were investigating the attack."
+    ],
+    "summary": "The outlets report the same Krakow shooting in a broadly similar tone, differing mainly in casualty counts and in whether the attacker's far-right views are stated as fact, hedged, or left out."
+   }
+  },
+  "2a4ed9dd3a": {
+   "analysed_at": "2026-11-08T17:40:00Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 48,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Uses aggressive, combative language to describe Nandy's remarks, which presents her comments as an attack rather than a policy statement.",
+      "outlet": "dailymail",
+      "quote": "lashed out"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "The headline generalises with the phrase 'Russell Brand-style sex attacks' and 'celeb rapists', which is sensational and implies widespread rape by celebrities. It is unclear from the text whether these are Nandy's words or the outlet's own.",
+      "outlet": "dailymail",
+      "quote": "celeb rapists"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Gives the details of the convictions and the 'showbiz heyday' setting, centring on the crimes and celebrity rather than on institutional failings.",
+      "outlet": "dailymail",
+      "quote": "raping one of his fans and sexually assaulting three women during his showbiz heyday"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses measured, institutional language and frames Nandy's comments as a call to action ('wake-up call'), emphasising protection of women.",
+      "outlet": "guardian",
+      "quote": "must be wake-up call to protect women in media"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Focuses on systemic issues: exploitation, abuse and a failure to deal with allegations in the industry and public life, extending beyond media. It does not list the specific convictions in the text given.",
+      "outlet": "guardian",
+      "quote": "a failure to properly deal with allegations"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The Daily Mail's framing is more sensational, with 'lashed out', 'celeb rapists' and 'sex attacks still rife', and puts the criminal details up front, which possibly reflects a tabloid style aimed at attention. The Guardian uses calmer, policy-focused wording on systemic failure and protection. Both agree on the core facts, so the gap is in tone and emphasis, not in contradictory claims.",
+    "shared_facts": [
+     "Culture Secretary Lisa Nandy commented on Russell Brand's case",
+     "Brand was recently convicted (the Daily Mail says of raping a fan and sexually assaulting three women)",
+     "Nandy said exploitation and abuse remain a problem in the media industry and that more needs to be done"
+    ],
+    "summary": "Both report Nandy's call for the media industry to tackle abuse after Brand's conviction, but the Daily Mail uses sensational, combative wording while the Guardian stresses systemic protection in measured terms."
+   }
+  },
+  "312de104a9": {
+   "analysed_at": "2026-11-08T17:38:37Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 33,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "Describes Miller with a political-affinity label and frames the choice as a response to electoral loss. Uses colloquial, forceful language about the election result, including the extent of the losses.",
+      "outlet": "nbc",
+      "quote": "MAGA favorite Stephen Miller"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Vivid, informal wording for the Republican defeat, and adds that both chambers were lost 'by wide margins', which emphasizes the scale of the loss.",
+      "outlet": "nbc",
+      "quote": "Republicans got trounced in Tuesday’s midterm elections"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Focuses on Miller's policy intent (immigration) rather than the announcement itself, and says the agenda is one 'many voters rejected', an interpretive claim about voter sentiment not backed by quoted evidence in the summary.",
+      "outlet": "nyt",
+      "quote": "an agenda that many voters rejected"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Frames the appointment as defiance of the election result, with 'crackdown' as the label for the immigration policy and 'back down' implying a choice to resist voters.",
+      "outlet": "nyt",
+      "quote": "Election Defeat Is No Reason to Back Down on Immigration Crackdown"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Interprets the move as escalation after defeat ('doubling down') and uses 'rout' for the midterms. The summary itself is a neutral announcement, so the loaded framing sits in the headline.",
+      "outlet": "latimes",
+      "quote": "doubling down after midterm rout"
+     },
+     {
+      "kind": "omission",
+      "observation": "The summary gives only the bare fact of the announcement and the date, with no mention of voter reaction, the election margins, or Miller's policy aims.",
+      "outlet": "latimes",
+      "quote": "announced his appointment of Stephen Miller as his chief of staff to replace Susie Wiles"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "All three outlets connect the appointment to the midterm loss and use somewhat charged terms ('trounced', 'rout', 'doubling down'), so the gaps are modest. The NYT is the most interpretive, asserting what voters rejected and casting Miller as defiant, while NBC's 'MAGA favorite' is a mild label and the LA Times summary is the most neutral. Possibly these reflect news-analysis framing, in the NYT's case, versus straight announcement coverage in the others; only headlines and summaries are available, so fuller text may differ.",
+    "shared_facts": [
+     "President Trump named Stephen Miller as his chief of staff",
+     "Miller replaces Susie Wiles (stated by NBC and LA Times; NYT only says 'new chief of staff')",
+     "The appointment came after the Republicans' poor midterm election results"
+    ],
+    "summary": "All three outlets report Trump's appointment of Stephen Miller after the midterm defeat, with NBC and the LA Times using vivid terms for the loss and the NYT most clearly framing the move as defiance of voters."
+   }
+  },
+  "3172b39932": {
+   "analysed_at": "2026-11-08T17:38:46Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Uses 'rebuke' and focuses on the president personally, while the other two target 'leadership' more broadly. It also describes the vote as 'largely symbolic' and uses the generic 'sex-assault allegations' rather than naming gang rape.",
+      "outlet": "wsj",
+      "quote": "Cornell Faculty Rebuke President Over Response to Sex-Assault Allegations"
+     },
+     {
+      "kind": "omission",
+      "observation": "The summary gives no detail about the underlying allegation (gang rape, 2024, lawsuit, fraternity), so the event is the least specific here.",
+      "outlet": "wsj",
+      "quote": "reflects dissatisfaction with the university leadership’s response"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Puts the 'alleged gang rape' in the headline and calls it a 'crisis', foregrounding the crime over the governance response. It does not mention that the vote is symbolic.",
+      "outlet": "sky",
+      "quote": "amid a crisis sparked by an alleged 2024 gang rape"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Attributes the claim to a former student's lawsuit ('saying she was gang raped'), which gives the most careful attribution. It also stresses 'deep discontent on campus' and adds the fraternity-party setting and the Friday date.",
+      "outlet": "cbc",
+      "quote": "a former student's lawsuit saying she was gang raped at a fraternity party in 2024"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Calls the vote 'a symbolic gesture', similar to WSJ's 'largely symbolic', but with a slightly more dismissive 'gesture'. Its headline is the most neutral of the three.",
+      "outlet": "cbc",
+      "quote": "a symbolic gesture reflecting deep discontent on campus"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in emphasis and specificity. WSJ possibly frames the story as a personnel and administrative dispute ('rebuke', 'President') and downplays the vote with 'largely symbolic', while Sky leads with the crime and the word 'crisis'. CBC is the most explicit about attribution (a lawsuit), but none of the three uses strongly loaded labels or contradicts the others.",
+    "shared_facts": [
+     "Cornell's faculty senate approved a no-confidence resolution in university leadership",
+     "The vote followed allegations of a gang rape in 2024",
+     "The vote reflects dissatisfaction with the university's leadership"
+    ],
+    "summary": "All three report the same Cornell faculty no-confidence vote, with only modest differences: WSJ is administrative and vague, Sky foregrounds the alleged gang rape and 'crisis', and CBC is the most detailed and attributive."
+   }
+  },
   "36a59251f8": {
    "analysed_at": "2026-11-08T17:10:16Z",
    "model": "claude-sonnet-5-5",
@@ -822,6 +1341,55 @@
      "The shooter fired from a car (Fox, DW) and the attack hit a busy tourist area"
     ],
     "summary": "All four outlets report the same Kraków shooting with similar facts, but Fox emphasizes the attacker's military-style look and omits the far-right and terror context that the Guardian, France 24 and DW attribute to officials."
+   }
+  },
+  "40fb5ef464": {
+   "analysed_at": "2026-11-08T17:39:25Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 27,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Names a specific weapon and a direct hit as the cause of the damage, and frames the event as a continuing pattern. This gives a more direct and dramatic account of the cause than the NYT.",
+      "outlet": "dailymail",
+      "quote": "Houthi missile damages Saudi Aramco Tower in Riyadh in fresh attack"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Emphasizes the physical damage, with windows blown out on several floors. It does not mention casualties or the Saudi authorities' statement.",
+      "outlet": "dailymail",
+      "quote": "Windows were blown out on several floors of the building"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Attributes the account to Saudi authorities and reports that no one was hurt. This puts the official version first and adds the human-impact context the Daily Mail leaves out.",
+      "outlet": "nyt",
+      "quote": "The Saudi authorities said no one was hurt after “falling shrapnel” hit the building"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses the more neutral phrasing 'Attack Riyadh' and 'Damaged', with the cause given as 'falling shrapnel' (a quoted official phrase) rather than a missile strike. It places the event in a wider context of Houthi targeting.",
+      "outlet": "nyt",
+      "quote": "one of the highest-profile areas targeted by the Houthis"
+     },
+     {
+      "kind": "omission",
+      "observation": "Leaves out the 'falling shrapnel' explanation, which suggests an interception or debris rather than a direct hit. Readers of the Daily Mail text alone may infer a direct missile strike.",
+      "outlet": "dailymail",
+      "quote": "Houthi missile damages Saudi Aramco Tower"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The two texts agree on the core event but differ in how they explain the damage and what they include. The Daily Mail possibly favors a more dramatic, headline-driven framing with 'missile' and 'blown out', while the NYT attributes its account to Saudi authorities and adds the no-injury detail. Neither uses overtly moral or accusatory labels, so the gap is modest and may partly reflect the short summary format.",
+    "shared_facts": [
+     "A Houthi attack on Riyadh damaged the Saudi Aramco Tower",
+     "The building is in Riyadh's financial district",
+     "The building is owned by or associated with Saudi Aramco"
+    ],
+    "summary": "Both report a Houthi attack damaging the Aramco Tower in Riyadh, but the Daily Mail stresses a missile strike and broken windows while the NYT relays the Saudi account of falling shrapnel and no injuries."
    }
   },
   "41ede9afab": {
@@ -1501,6 +2069,55 @@
     "summary": "Fox and CBS report the Miller-for-Wiles swap in plain terms, while the Guardian and NYT frame it around Miller's controversial immigration role and a rejected agenda."
    }
   },
+  "631c61baa9": {
+   "analysed_at": "2026-11-08T17:38:58Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "sourcing",
+      "observation": "The headline attributes the claim to Ukraine (\"Ukraine Claims\") and the summary says \"authorities said\". This marks the account as unverified and sourced to one side. ABC's headline states the targeting as fact.",
+      "outlet": "breitbart",
+      "quote": "Russia Targets Emergency Workers at Site of Deadly Strike, Ukraine Claims"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The headline asserts without attribution that Russia targets emergency crews. The summary gives no source for the claim.",
+      "outlet": "abc",
+      "quote": "Russia targets emergency crews at the site of a deadly strike in southern Ukraine"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The summary adds detail: a former school and nearby shelter, earlier hit by \"multiple Russian guided bombs\" while residents waited for humanitarian aid. This stresses civilian harm and the earlier attack.",
+      "outlet": "breitbart",
+      "quote": "hitting a former school and nearby shelter that had been earlier blasted by multiple Russian guided bombs as residents waited for humanitarian aid"
+     },
+     {
+      "kind": "omission",
+      "observation": "The summary given is a single short sentence with no details on the earlier strike, the location or the sources. This may reflect only a truncated excerpt, so the omission should not be read as a framing choice.",
+      "outlet": "abc",
+      "quote": "A Russian drone has struck emergency workers on rescue missions in southern Ukraine"
+     },
+     {
+      "kind": "word choice",
+      "observation": "\"Blasted\" is a vivid verb for the earlier bombing. It is mildly more dramatic than the neutral wording in ABC's text.",
+      "outlet": "breitbart",
+      "quote": "earlier blasted by multiple Russian guided bombs"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The two texts describe the same event in nearly the same terms. The main difference is that Breitbart attributes the claim to Ukraine and authorities, which is more cautious, while it adds more vivid detail such as \"blasted\". ABC's headline states the targeting as fact, though its summary is too short to judge further, and possibly it is wire copy that Breitbart rewrote.",
+    "shared_facts": [
+     "A Russian drone struck emergency workers on rescue missions in southern Ukraine",
+     "The drone strike came at the site of an earlier deadly strike",
+     "Both headlines say Russia targeted emergency crews/workers"
+    ],
+    "summary": "Both outlets report a Russian drone strike on emergency workers at a previously bombed site in southern Ukraine, with only small differences in attribution and descriptive detail."
+   }
+  },
   "64c962ad0e": {
    "analysed_at": "2026-11-08T17:11:53Z",
    "model": "claude-sonnet-5-5",
@@ -1694,6 +2311,160 @@
      "The strikes came in the context of Ukraine's energy system being targeted ahead of winter"
     ],
     "summary": "All three outlets report Russian strikes causing large power outages in Ukraine in a broadly neutral tone, differing mainly in the casualty figures, sourcing and added detail such as the Komyshuvakha death toll."
+   }
+  },
+  "6fdf208028": {
+   "analysed_at": "2026-11-08T17:39:04Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Breitbart's summary stays on the interview exchange and the impeachment question. It names host Jonathan Karl and brings in Thomas Massie, which frames the story around a bipartisan impeachment push. It says nothing about the election or Jeffries' political prospects.",
+      "outlet": "breitbart",
+      "quote": "Thomas Massie, of course, a."
+     },
+     {
+      "kind": "word choice",
+      "observation": "Breitbart uses the title \"Secretary of War\" and describes the measure as the \"Hegseth Impeachment Resolution\". The headline presents the stance as Jeffries' own statement and does not call it an announcement. The tone is mostly neutral, though the title may be used because it is the current official branding.",
+      "outlet": "breitbart",
+      "quote": "Secretary of War Pete Hegseth"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "ABC's summary highlights Jeffries' political standing, saying he is expected to become speaker, and calls the Democratic election results \"historic\". This puts the impeachment stance in the context of Democratic momentum and carries a favourable tone towards Democrats.",
+      "outlet": "abc",
+      "quote": "following Democrats' historic victories in Tuesday's election"
+     },
+     {
+      "kind": "word choice",
+      "observation": "ABC's headline describes Jeffries as \"announces support\", which presents the remark as a formal development. It does not mention Hegseth's title in the text provided.",
+      "outlet": "abc",
+      "quote": "Hakeem Jeffries announces support for Hegseth impeachment"
+     },
+     {
+      "kind": "omission",
+      "observation": "ABC's summary leaves out the question about Massie and any detail of the impeachment itself, so the reader gets context about Jeffries but not about the resolution.",
+      "outlet": "abc",
+      "quote": "was interviewed on \"This Week\""
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "Both texts report the same core statement, and the differences come mostly from what each chooses to emphasise. Breitbart centres the interview exchange and the Massie question, while ABC, which hosted the interview, possibly centres Jeffries' rising status and the \"historic\" Democratic win. The \"historic victories\" phrasing in ABC is mildly favourable, but neither outlet uses strongly loaded labels, and both summaries are short and truncated.",
+    "shared_facts": [
+     "House Minority Leader Hakeem Jeffries appeared on ABC's \"This Week\"",
+     "Jeffries said he is a \"hard yes\" on impeaching Pete Hegseth",
+     "The interview took place on Sunday, following the recent election"
+    ],
+    "summary": "Both outlets report Jeffries' \"hard yes\" on impeaching Hegseth, with Breitbart focusing on the interview exchange and ABC on Jeffries' rising position and Democratic election wins."
+   }
+  },
+  "7204473e95": {
+   "analysed_at": "2026-11-08T17:39:47Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Frames the location as a tourist destination, which stresses the threat to visitors and the setting's appeal. The NYT text names only a 'market square'.",
+      "outlet": "fox",
+      "quote": "European tourist hot spot"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Adds vivid detail about the attacker's appearance, attributed to unnamed reports, which adds a dramatic or militarized tone. The NYT text has no such detail.",
+      "outlet": "fox",
+      "quote": "reportedly wearing military-style fatigues"
+     },
+     {
+      "kind": "other",
+      "observation": "The headline says 6 dead while the summary says five killed, an internal inconsistency not seen in the NYT text, which says at least 6. This may reflect an updated or unreconciled count.",
+      "outlet": "fox",
+      "quote": "killing five and injuring at least 15"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Attributes the account to officials in the headline and summary, giving a more cautious, authority-sourced framing. Fox uses 'allegedly' and 'reportedly' without naming a source.",
+      "outlet": "nyt",
+      "quote": "Police Say"
+     },
+     {
+      "kind": "omission",
+      "observation": "Includes the gunman's fate (shot and hospitalized), which Fox's text omits, while leaving out the injury count and the attacker's clothing.",
+      "outlet": "nyt",
+      "quote": "was shot and taken to a hospital"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "Both outlets report the same core event in a largely factual tone. Fox adds more vivid, dramatic details (tourist hot spot, military-style fatigues) and hedges with 'reportedly' and 'allegedly', while the NYT leans on police attribution and the gunman's outcome; the differences possibly reflect timing (the NYT piece was published about six hours later) and house style rather than strong slant. No loaded labels or accusations appear in either text.",
+    "shared_facts": [
+     "A gunman opened fire from a car in Kraków, Poland, near the Main Square/market square",
+     "Multiple people were killed (at least five or six)",
+     "The incident is treated as a shooting attack in a public area"
+    ],
+    "summary": "Fox and the NYT describe the same Kraków shooting in similar terms, with Fox adding more dramatic detail and the NYT stressing police sourcing and the gunman's capture, so differences are small."
+   }
+  },
+  "73642226a8": {
+   "analysed_at": "2026-11-08T17:40:07Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Uses emotive, sentimental language that foregrounds feeling and national mourning rather than reporting detail.",
+      "outlet": "dailymail",
+      "quote": "emotional memorial service"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Centres the royals (Kate, Queen Camilla, King Charles, Prince William) in the headline, with Burnham appearing only in the summary as one of the mourners.",
+      "outlet": "dailymail",
+      "quote": "Kate joins Queen Camilla in paying tribute to Britain's fallen heroes"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Describes the war dead as heroes and the royals as leading the nation, a reverent, patriotic framing.",
+      "outlet": "dailymail",
+      "quote": "Britain's fallen heroes"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Leads with the number of former prime ministers and the dwindling number of WWII veterans, giving a factual, demographic angle about generational change.",
+      "outlet": "guardian",
+      "quote": "Second world war veterans outnumbered former prime ministers for what could be the last time"
+     },
+     {
+      "kind": "omission",
+      "observation": "Does not mention Kate, Queen Camilla, or Prince William in the headline or summary, and uses little emotive language.",
+      "outlet": "guardian",
+      "quote": "Nine former PMs join King Charles at Remembrance Sunday service in London"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Gives specific figures (nine former PMs, about 12 veterans) and notes ceremonies across the UK, where the Mail gives a vague crowd estimate.",
+      "outlet": "guardian",
+      "quote": "about 12 second world war veterans, as ceremonies held across UK"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mainly of tone and angle rather than conflicting claims. The Daily Mail, in a live-blog style, possibly aims at an audience interested in the royals and uses sentimental, patriotic wording (\"emotional\", \"fallen heroes\", \"Thousands of mourners\"), while the Guardian takes a more analytical, numbers-based approach focused on political figures and veterans. Neither text contains accusations or contested claims, and both are limited to headlines and summaries.",
+    "shared_facts": [
+     "Remembrance Sunday service was held at the Cenotaph in central London/Whitehall",
+     "King Charles took part",
+     "Andy Burnham attended for the first time in his current role as prime minister",
+     "The service was a national act of remembrance"
+    ],
+    "summary": "Both outlets report the same Cenotaph service with Burnham's first appearance as PM, but the Daily Mail frames it as an emotional royal-centred tribute while the Guardian frames it around former PMs and the dwindling number of veterans."
    }
   },
   "73cb06d4d2": {
@@ -3003,6 +3774,56 @@
     "summary": "Breitbart frames Bottoms' win through a controversy over Tyler Perry's place on her transition team, while the NYT presents an upbeat, strategy-focused interview with no mention of it."
    }
   },
+  "bbd3d0ed40": {
+   "analysed_at": "2026-11-08T17:38:03Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 12,
+    "differences": [
+     {
+      "kind": "other",
+      "observation": "The headline gives 'Seven killed and 114 injured', but the summary cites the Health Ministry with 'at least four people were killed and 88 others were wounded'. The text contradicts itself, probably because the figures come from different update times. Its headline is also the highest in the group.",
+      "outlet": "dailymail",
+      "quote": "Seven killed and 114 injured"
+     },
+     {
+      "kind": "word choice",
+      "observation": "It uses 'wounded' for passengers hurt in an accident, a term more usual for violence or conflict. It also gives no location detail and no mention of an investigation.",
+      "outlet": "dailymail",
+      "quote": "88 others were wounded"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "It leads with the official response, the president's order for a 'prompt investigation'. It gives the most precise location and uses cautious hedging ('at least', 'authorities have said').",
+      "outlet": "guardian",
+      "quote": "President orders prompt investigation after one train derails"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "It reports the lowest toll (four dead, 88 injured), likely from an earlier update. It describes the mechanism (one train hit the rear of another) and names President al-Sisi, framing the investigation as about 'causes and responsibility'.",
+      "outlet": "euronews",
+      "quote": "to determine the causes and responsibility"
+     },
+     {
+      "kind": "word choice",
+      "observation": "It is the least specific and gives no numbers, using vague terms. It stresses the emergency response through the ambulance count.",
+      "outlet": "dw",
+      "quote": "several dead, many injured"
+     }
+    ],
+    "possible_bias": "none apparent",
+    "same_event": true,
+    "score_reason": "The outlets differ mainly in casualty figures and in what they emphasise (official response, mechanism, emergency response). These differences are possibly due to articles being published at different times as the toll rose (Euronews earliest at 15:48, Guardian and Daily Mail later). None uses loaded labels or assigns blame; the Daily Mail's headline/summary mismatch and 'wounded' are the largest oddities.",
+    "shared_facts": [
+     "Two trains collided in Egypt south of Cairo on Sunday",
+     "One train derailed in the collision",
+     "There were multiple deaths and many injuries",
+     "Injured people were taken to hospital or emergency services were deployed"
+    ],
+    "summary": "All four outlets report the same Egyptian train collision in neutral terms, differing mostly in casualty figures and in whether they stress the investigation, the mechanism or the rescue effort."
+   }
+  },
   "bf1dc736de": {
    "analysed_at": "2026-11-08T17:10:47Z",
    "model": "claude-sonnet-5-5",
@@ -3099,6 +3920,56 @@
      "The attacks come as Ukraine faces renewed pressure on its energy system"
     ],
     "summary": "All three outlets report Russian strikes on Kyiv-region infrastructure in similar, mostly factual terms, differing mainly in whether they stress outage figures (CBS), Zelenskyy's accusation and the talks (DW), or civilian damage such as a ruined kindergarten (Euronews)."
+   }
+  },
+  "c0f02e1239": {
+   "analysed_at": "2026-11-08T17:39:54Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 8,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Uses the plain verb 'crash' and gives exact figures, with 'wounded' and 'injured' used interchangeably. Attributes the numbers specifically to the Health Ministry.",
+      "outlet": "dailymail",
+      "quote": "Four killed and 88 injured after two trains crash in Egypt"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses the more neutral 'collision' and rounds the injured to 'almost 90'. Hedges the death toll with 'at least' in the headline itself.",
+      "outlet": "guardian",
+      "quote": "Collision of two trains in Egypt kills at least four"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Leads with the official response, the president ordering an investigation, and adds location (al-Ayyat, about 30 miles from Cairo) and the detail that one train derailed. The Daily Mail summary does not include these.",
+      "outlet": "guardian",
+      "quote": "President orders prompt investigation after one train derails in collision in al-Ayyat"
+     },
+     {
+      "kind": "omission",
+      "observation": "Omits the location, the derailment and the presidential investigation; focuses on casualties and hospital treatment.",
+      "outlet": "dailymail",
+      "quote": "The injured were taken to nearby hospitals for treatment, it said."
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Attributes the figures vaguely to 'authorities' rather than naming the ministry, though the summary is truncated so more sourcing may follow.",
+      "outlet": "guardian",
+      "quote": "authorities have said"
+     }
+    ],
+    "possible_bias": "none apparent",
+    "same_event": true,
+    "score_reason": "Both outlets report the same core facts in a restrained, factual tone with no loaded labels. The differences are in emphasis: the Guardian adds location, cause-related detail and the government response, while the Daily Mail focuses on casualty numbers and hospital care, possibly reflecting a shorter wire-style item versus a more contextual report. The Guardian summary is truncated, so omissions are hard to judge.",
+    "shared_facts": [
+     "Two trains crashed or collided in Egypt",
+     "At least four people were killed",
+     "Around 88-90 people were injured (88 per the Daily Mail, 'almost 90' per the Guardian)",
+     "Figures came from Egyptian authorities (the Health Ministry per the Daily Mail, 'authorities' per the Guardian)"
+    ],
+    "summary": "Both outlets give a neutral, near-identical account of the Egyptian train collision, differing only in the Guardian's added detail on location, derailment and the presidential investigation."
    }
   },
   "d1aa09858c": {
@@ -3466,6 +4337,98 @@
     "summary": "All four outlets report that Trump offered Dana White the press secretary job, with only small differences in tone, the New York Post foregrounding Trump's flamboyant praise while NPR, CBS and Sky stay more neutral and add different context."
    }
   },
+  "e57b95f799": {
+   "analysed_at": "2026-11-08T17:38:52Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 8,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Gives a specific time for the shootings and does not say how many separate incidents there were; it uses the plural 'shootings' without clarifying.",
+      "outlet": "breitbart",
+      "quote": "shortly before 10 p.m."
+     },
+     {
+      "kind": "emphasis",
+      "observation": "States that there were two separate shootings, which clarifies the incidents were not a single event, but gives no time of day.",
+      "outlet": "nbc",
+      "quote": "after two separate shootings"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses 'has died' and 'wounded', a slightly softer phrasing than Breitbart's 'killed'. In the headline both use 'killed'. The difference is minor.",
+      "outlet": "nbc",
+      "quote": "One person has died"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Headline uses the blunt 'Dead' and numeral 'One', with a compact tabloid-like style, but the tone remains factual.",
+      "outlet": "breitbart",
+      "quote": "One Dead, 3 Injured"
+     }
+    ],
+    "possible_bias": "none apparent",
+    "same_event": true,
+    "score_reason": "Both texts are short, factual and agree on the casualty count and location. The differences are about detail: Breitbart supplies the time and NBC supplies the 'two separate shootings' detail, possibly reflecting what each had at the time of publication (NBC's piece came about an hour later). Neither uses loaded labels, accusations or quoted sources in the text given.",
+    "shared_facts": [
+     "One person was killed and three others were wounded in shootings on Winston-Salem State University's campus",
+     "The shootings took place on Saturday"
+    ],
+    "summary": "Both outlets report the same Winston-Salem State shootings in neutral terms, differing only in whether they give the time or the number of separate incidents."
+   }
+  },
+  "ee0db033df": {
+   "analysed_at": "2026-11-08T17:37:48Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 25,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "It intensifies the setback framing by calling it \"significant\" and focusing on Netanyahu's loss. It names Herzog and Eisenkot, but the story is told as a blow to Netanyahu.",
+      "outlet": "breitbart",
+      "quote": "handing Prime Minister Benjamin Netanyahu a significant political setback"
+     },
+     {
+      "kind": "omission",
+      "observation": "It does not say that parties recommended Eisenkot or that neither candidate has a majority, so the choice looks like a presidential decision rather than the result of party support. It also gives a timing detail the others omit (\"nearly two weeks after\"), which conflicts slightly with SCMP's \"last week's election\".",
+      "outlet": "breitbart",
+      "quote": "nearly two weeks after the country's parliamentary elections"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "It explains the mechanics: no one has a majority and the main parties recommended Eisenkot. It does not use the word \"setback\" in the text shown, and the headline is the most procedural of the group.",
+      "outlet": "npr",
+      "quote": "neither won enough support to command a majority"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "It attributes the larger meaning to Netanyahu's rivals (\"see as a first step to remove\") rather than stating it in its own voice, and it adds the context that Netanyahu is the longest-serving prime minister.",
+      "outlet": "scmp",
+      "quote": "a first step to remove the country's longest-serving prime minister"
+     },
+     {
+      "kind": "word choice",
+      "observation": "It is brief and uses \"another setback\", which suggests a run of defeats for Netanyahu, a mild framing the others do not share. It labels Eisenkot as \"Netanyahu's rival\" in the headline.",
+      "outlet": "cbc",
+      "quote": "in another setback for Prime Minister Benjamin Netanyahu"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "All four outlets report the same decision and mostly the same tone, so the differences are small. Breitbart leans hardest on the Netanyahu-setback angle (\"significant political setback\") and omits the party-recommendation context that NPR supplies. The wording differences possibly reflect space limits in the summaries, with SCMP and NPR giving more background and CBC giving the briefest account.",
+    "shared_facts": [
+     "Israeli President Isaac Herzog chose Gadi Eisenkot to try to form the next government",
+     "Eisenkot is Prime Minister Benjamin Netanyahu's main rival and a former military chief",
+     "The announcement came on Saturday after the recent election",
+     "The decision is a setback for Netanyahu (stated in Breitbart, SCMP and CBC; NPR implies it by contrasting Eisenkot with Netanyahu)"
+    ],
+    "summary": "Four outlets report Herzog's choice of Eisenkot with broadly similar tone, though Breitbart stresses Netanyahu's setback most strongly while NPR adds the most procedural context."
+   }
+  },
   "f346244b47": {
    "analysed_at": "2026-11-08T17:10:01Z",
    "model": "claude-sonnet-5-5",
@@ -3610,6 +4573,54 @@
      "The incident took place in California"
     ],
     "summary": "Both outlets report the two skydiver deaths in a similar neutral tone, differing only in small details of wording and sourcing."
+   }
+  },
+  "fb9b137bab": {
+   "analysed_at": "2026-11-08T17:39:40Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 33,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Fox uses 'sweep' to describe the midterm results and 'bypassing' for the compact. This suggests a decisive partisan victory and a way around the constitutional system. Its framing is one of Democrats actively working around the system.",
+      "outlet": "fox",
+      "quote": "Democrats’ midterm sweep opens path to bypassing Electoral College by 2028"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The NYT uses the milder 'sidestep' and 'elevate the national popular vote'. This presents the compact as raising the popular vote rather than circumventing the Electoral College.",
+      "outlet": "nyt",
+      "quote": "opportunity to elevate the national popular vote"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The NYT puts feasibility and uncertainty first, with a question in the headline and a mention of obstacles. Fox does not mention obstacles and presents activation as a plausible near-term outcome.",
+      "outlet": "nyt",
+      "quote": "obstacles like legal challenges would loom"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Fox stresses the 2028 timeline, the 270-vote threshold and 'Democrat trifectas', with a focus on partisan control and on the change to how Americans choose a president. It leaves out legal hurdles in the summary.",
+      "outlet": "fox",
+      "quote": "Democrat trifectas in key swing states could push the National Popular Vote Interstate Compact past 270"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Fox uses 'Democrat' as an adjective, a form often seen in conservative-leaning writing, and 'Democrats' sweep', which stresses partisan advantage.",
+      "outlet": "fox",
+      "quote": "Democrat trifectas"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "Both outlets report the same development, but Fox's wording ('sweep', 'bypassing', 'Democrat trifectas') stresses partisan gain and circumvention, which possibly fits a conservative-leaning audience. The NYT's framing ('sidestep', 'elevate', 'Would It Work?') is more analytical and caveated, with a focus on legal obstacles. Neither summary has accusations or strong moral labels, and only short summaries are available, so the differences are modest.",
+    "shared_facts": [
+     "Democratic midterm victories have opened a possible route to the National Popular Vote Interstate Compact reducing the role of the Electoral College in choosing the president",
+     "The route depends on states joining the compact, with Democratic control in key states playing a role"
+    ],
+    "summary": "Fox frames the compact as a partisan workaround enabled by a Democratic 'sweep', while the NYT presents it more neutrally as an opportunity facing legal uncertainty."
    }
   },
   "fc27d77309": {
