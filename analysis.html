@@ -47,6 +47,8 @@ p, h1, h2, h3, ul, ol, figure { margin: 0; }
 button, select { font: inherit; color: inherit; }
 .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
 
+.disclaimer { margin-top: 22px; padding: 12px 16px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); font-size: 14px; line-height: 1.5; }
+.disclaimer b { font-weight: 700; }
 header.top { padding-top: 40px; padding-bottom: 20px; }
 .dateline { margin-bottom: 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 h1 { font-size: clamp(28px, 4.5vw, 42px); line-height: 1.08; letter-spacing: -.03em; font-weight: 750; }
@@ -118,6 +120,13 @@ footer p + p { margin-top: 4px; }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <aside class="disclaimer" role="note" aria-label="Disclaimer">
+    <b>An experiment.</b> The scores and reasons here come from a language model reading only the headlines and
+    RSS summaries of each article, not the full articles, and not checked by a person. They can be wrong or
+    miss context. Use your own judgement: read the original articles and make up your own mind.
+  </aside>
+</div>
 <header class="top wrap">
   <p class="dateline">Framing analysis</p>
   <h1>How the newsrooms frame the same story</h1>
