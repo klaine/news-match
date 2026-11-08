@@ -30,7 +30,9 @@ states and cities it knows. Groups with at least
 three outlets become rounds of up to four articles. Each round tries to include one outlet commonly
 rated right-leaning (Fox News, Breitbart, New York Post, Daily Mail) and one rated left-leaning
 (the Guardian, NPR, the New York Times, CBS, NBC, ABC, the LA Times); the other picks are random.
-Rounds that have both come first. Identical wire-service headlines are dropped, because no one could
+Rounds that have both come first. Groups with a right- and a left-leaning outlet also give a
+Polarized round of just two articles, from the most right-leaning and the most left-leaning outlet
+covering the story. Identical wire-service headlines are dropped, because no one could
 tell them apart.
 
 A GitHub Action reruns it every hour and commits `rounds.json` when it changed. GitHub Pages

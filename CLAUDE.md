@@ -33,14 +33,20 @@ file in the repo root holds that domain for Pages: keep it.
   known place fits anything. Aliases are case-sensitive. Leave out names that are mostly
   something else (Jordan, Chad, Georgia), because a wrong place splits real stories. To test a
   change, run the old and new script on the same fetched feeds and diff the groups.
+- `LEAN` scores each outlet from -3 (most left) to 3 (most right), broadly AllSides' and Ad Fontes
+  Media's ratings; `side_of` reduces that to right, left, or centre (0; unlisted outlets).
 - Picking a round (`pick_articles`): at most `MAX_PER_ROUND` (4) articles. First the most central
-  right-leaning and left-leaning ones (`LEAN`, broadly AllSides' and Ad Fontes Media's ratings;
-  unlisted outlets count as centre), then random others, seeded by the group so an unchanged group
+  right-leaning and left-leaning ones, then random others, seeded by the group so an unchanged group
   gives the same round. Wire copy (`WIRE_OVERLAP`, the same AP headline at several outlets) is
   skipped. Rounds with both leanings sort first (`balance` in `rounds.json`), and the page plays
   the first unplayed rounds, so those are what players get.
+- Polarized rounds (`polarized_rounds`, the `polarized` list in `rounds.json`): each group with a
+  right- and a left-leaning outlet gives one two-article round, from its most right-leaning and its
+  most left-leaning outlet (ties go to the more central article; a same-wire pair moves on to the
+  next pair). Most cohesive first. Standard mode plays only `rounds`, Polarized only `polarized`.
 - Round ids hash the round's URLs, so they're stable across refreshes that keep the same articles.
-  The page stores played ids and lifetime stats in `localStorage` under `news-match:v1`.
+  The page stores played ids (shared by both modes), the chosen `mode`, and lifetime stats in
+  `localStorage` under `news-match:v1`: `stats` for Standard, `polarStats` for Polarized.
 - Check and Skip both end a story in `endRound(skipped)`. Skip is for browsing: it replaces the
   lines with the right answers in the cards' own colours and names each card's outlet, but scores
   nothing (`game.results` gets `'skip'`, and `cur.skipped` keeps the lines out of green/red). It

@@ -55,6 +55,12 @@ header.top { padding-top: 44px; padding-bottom: 22px; }
 h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spacing: -.035em; font-weight: 750; }
 .lede { margin-top: 10px; max-width: 60ch; font-size: 17px; color: var(--muted); }
 .edition { margin-top: 10px; font-size: 13.5px; color: var(--muted); }
+.modes { display: inline-flex; margin-top: 18px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); }
+.mode { padding: 7px 16px; border: 0; border-radius: 999px; background: none; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.mode[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.mode:disabled { opacity: .45; cursor: default; }
+.mode:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mode-note { margin-top: 8px; max-width: 60ch; font-size: 14px; color: var(--muted); }
 
 .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-bottom: 18px; font-size: 14px; color: var(--muted); }
 .bar b { color: var(--text); font-variant-numeric: tabular-nums; }
@@ -231,6 +237,11 @@ footer p + p { margin-top: 4px; }
   <h1>News Match</h1>
   <p class="lede">Same story, different newsroom. Connect each article to the outlet that published it: <span class="only-wide">drag a line between the dots, or tap one and then the other.</span><span class="only-narrow">tap an article, then the outlet you think wrote it.</span></p>
   <p class="edition" id="edition"></p>
+  <div class="modes" id="modes" role="group" aria-label="Game mode" hidden>
+    <button class="mode" id="mode-all" type="button" aria-pressed="true">Standard</button>
+    <button class="mode" id="mode-polar" type="button" aria-pressed="false">Polarized</button>
+  </div>
+  <p class="mode-note" id="mode-note" hidden></p>
 </header>
 
 <main class="wrap">
@@ -291,7 +302,8 @@ const el = (tag, cls, text) => {
 };
 
 let data = null;   // rounds.json
-let game = null;   // { rounds, idx, matched, total, byOutlet, results }
+let mode = 'all';  // 'all' (Standard: three or four outlets) or 'polar' (Polarized: two articles)
+let game = null;   // { mode, rounds, idx, matched, total, byOutlet, results }
 let cur = null;    // { round, arts, outs, links: Map(articleIdx -> outletId), checked }
 let sel = null;    // { side: 'a' | 'o', key }
 let drag = null;
@@ -354,15 +366,47 @@ async function load() {
   $('edition').textContent = `${data.rounds.length} stories from ${outlets} outlets · updated ` +
     when.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   $('message').hidden = true;
+  const polar = roundsFor('polar').length > 0;
+  $('mode-polar').disabled = !polar;
+  $('mode-polar').title = polar ? '' : 'No polarized stories in this edition yet.';
+  mode = polar && readStore().mode === 'polar' ? 'polar' : 'all';
+  $('modes').hidden = false;
+  $('mode-note').hidden = false;
+  renderModes();
   newGame();
+}
+
+// The stories each mode plays. rounds.json has no polarized list in editions made before it.
+function roundsFor(m) {
+  return m === 'polar' ? data.polarized || [] : data.rounds;
+}
+
+function renderModes() {
+  $('mode-all').setAttribute('aria-pressed', String(mode === 'all'));
+  $('mode-polar').setAttribute('aria-pressed', String(mode === 'polar'));
+  $('mode-note').textContent = mode === 'polar'
+    ? 'Two articles a story: the one from the most right-leaning outlet covering it, and the one from the most left-leaning.'
+    : 'Three or four articles a story, from outlets across the spectrum.';
+}
+
+function setMode(m) {
+  if (m === mode) return;
+  mode = m;
+  const store = readStore();
+  store.mode = m;
+  writeStore(store);
+  renderModes();
+  newGame();  // switching starts a new game
 }
 
 function newGame() {
   showToday();  // a tab left open overnight
+  const rounds = roundsFor(mode);
   const seen = new Set(readStore().seen || []);
-  const fresh = data.rounds.filter((r) => !seen.has(r.id));
-  const old = shuffle(data.rounds.filter((r) => seen.has(r.id)));
+  const fresh = rounds.filter((r) => !seen.has(r.id));
+  const old = shuffle(rounds.filter((r) => seen.has(r.id)));
   game = {
+    mode,
     rounds: shuffle(fresh.slice(0, PER_GAME).concat(old).slice(0, PER_GAME)),
     idx: 0, matched: 0, total: 0, byOutlet: {}, results: [],
     played: [],  // per round: its articles, each with the outlet the player picked as `guess`
@@ -1084,19 +1128,21 @@ function finish() {
       rows.append(el('span', '', outletName(o)), meter, el('span', 'n', `${s.right}/${s.total}`));
     });
 
+  // Each mode keeps its own lifetime stats.
   const store = readStore();
-  const life = store.stats || { games: 0, matched: 0, total: 0 };
+  const statsKey = game.mode === 'polar' ? 'polarStats' : 'stats';
+  const life = store[statsKey] || { games: 0, matched: 0, total: 0 };
   if (game.total) {  // a game of nothing but skips isn't one
     life.games += 1;
     life.matched += game.matched;
     life.total += game.total;
-    store.stats = life;
+    store[statsKey] = life;
     writeStore(store);
   }
 
-  const unseen = data.rounds.filter((r) => !(store.seen || []).includes(r.id)).length;
+  const unseen = roundsFor(game.mode).filter((r) => !(store.seen || []).includes(r.id)).length;
   $('end-note').textContent =
-    (life.games > 1 ? `All-time: ${life.matched} of ${life.total} over ${life.games} games. ` : '') +
+    (life.games > 1 ? `All-time${game.mode === 'polar' ? ' polarized' : ''}: ${life.matched} of ${life.total} over ${life.games} games. ` : '') +
     (unseen ? `${unseen} more ${unseen === 1 ? 'story' : 'stories'} you haven't played in this edition.`
             : 'You have played every story in this edition. New ones arrive through the day.');
   renderRecap();
@@ -1144,6 +1190,8 @@ function renderRecap() {
 
 $('again').addEventListener('click', newGame);
 $('again-bottom').addEventListener('click', newGame);
+$('mode-all').addEventListener('click', () => setMode('all'));
+$('mode-polar').addEventListener('click', () => setMode('polar'));
 
 load();
 </script>

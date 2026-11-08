@@ -7,7 +7,7 @@ Standard library only. Each outlet's RSS/Atom feeds are fetched in parallel, cle
 stripped, outlet names masked so they can't give the answer away), and grouped by TF-IDF cosine
 similarity of title + summary. A group keeps at most one article per outlet; groups with at
 least MIN_OUTLETS outlets become game rounds of up to MAX_PER_ROUND articles, each with one
-right- and one left-leaning outlet where the group has them (LEAN). If too few rounds come out (feeds down, network
+right- and one left-leaning outlet where the group has them (LEAN). Groups with both a right- and a left-leaning outlet also give polarized rounds of two articles, the most extreme on each side. If too few rounds come out (feeds down, network
 gone), the existing rounds.json is left untouched and the script exits with status 1.
 """
 
@@ -120,12 +120,12 @@ OUTLETS = [
 ]
 
 # How each outlet's news coverage is commonly rated (broadly AllSides' and Ad Fontes Media's
-# ratings). Every round tries to include one "right" and one "left" outlet. Outlets not listed
-# count as centre and are picked like any other.
+# ratings), from -3 (most left) to 3 (most right). Classic rounds try to include one right- and
+# one left-leaning outlet (see side_of); polarized rounds use the most extreme on each side.
+# Outlets not listed count as centre (0) and are picked like any other.
 LEAN = {
-    "fox": "right", "breitbart": "right", "nypost": "right", "dailymail": "right",
-    "guardian": "left", "npr": "left", "nyt": "left", "cbs": "left", "nbc": "left",
-    "abc": "left", "latimes": "left",
+    "breitbart": 3, "dailymail": 2, "fox": 2, "nypost": 1,
+    "guardian": -2, "npr": -1, "nyt": -1, "cbs": -1, "nbc": -1, "abc": -1, "latimes": -1,
 }
 
 USER_AGENT = "Mozilla/5.0 (compatible; news-match/1.0)"
@@ -450,6 +450,30 @@ def cluster(articles, sims):
     return [sorted(g) for g in groups.values()], sim
 
 
+def side_of(outlet):
+    """'right', 'left', or None for an outlet counted as centre."""
+    score = LEAN.get(outlet, 0)
+    return "right" if score > 0 else "left" if score < 0 else None
+
+
+def same_wire(words_a, words_b):
+    """True when two headlines (sets of words) are the same wire copy."""
+    return len(words_a & words_b) / (len(words_a | words_b) or 1) >= WIRE_OVERLAP
+
+
+def centrality(group, sim):
+    """Mean similarity of each article in the group to the others."""
+    return {i: sum(sim(i, j) for j in group if j != i) / (len(group) - 1) for i in group}
+
+
+def topic_words(indices, vecs):
+    """The four most shared words of the given articles, for the page to show."""
+    topic = Counter()
+    for i in indices:
+        topic.update({t: x for t, x in vecs[i].items() if " " not in t})
+    return [t for t, _ in topic.most_common(4)]
+
+
 def pick_articles(articles, ranked):
     """Choose a round's articles from a group ranked by centrality: the most central right-leaning
     and left-leaning ones, then random others. Wire copy (the same AP/Reuters headline at several
@@ -459,7 +483,7 @@ def pick_articles(articles, ranked):
 
     def add(i):
         words = set(tokens(articles[i]["title"]))
-        if i in keep or any(len(words & w) / (len(words | w) or 1) >= WIRE_OVERLAP for w in kept_words):
+        if i in keep or any(same_wire(words, w) for w in kept_words):
             return False
         keep.append(i)
         kept_words.append(words)
@@ -467,7 +491,7 @@ def pick_articles(articles, ranked):
 
     for side in ("right", "left"):
         for i in ranked:
-            if LEAN.get(articles[i]["outlet"]) == side and add(i):
+            if side_of(articles[i]["outlet"]) == side and add(i):
                 break
     rest = list(ranked)
     seed = hashlib.sha1("\n".join(sorted(articles[i]["url"] for i in ranked)).encode()).digest()
@@ -479,32 +503,63 @@ def pick_articles(articles, ranked):
     return keep
 
 
+def round_articles(articles, indices):
+    return [{k: articles[i][k] for k in ("outlet", "title", "summary", "url", "published")}
+            for i in indices]
+
+
 def rounds_from(articles, groups, sim, vecs):
     rounds = []
     for g in groups:
         if len(g) < MIN_OUTLETS:
             continue
-        centrality = {i: sum(sim(i, j) for j in g if j != i) / (len(g) - 1) for i in g}
-        keep = pick_articles(articles, sorted(g, key=lambda i: -centrality[i]))
+        cen = centrality(g, sim)
+        keep = pick_articles(articles, sorted(g, key=lambda i: -cen[i]))
         if len(keep) < MIN_OUTLETS:
             continue
         pairs = [(i, j) for x, i in enumerate(keep) for j in keep[x + 1:]]
         cohesion = sum(sim(i, j) for i, j in pairs) / len(pairs)
-        topic = Counter()
-        for i in keep:
-            topic.update({t: x for t, x in vecs[i].items() if " " not in t})
         rid = hashlib.sha1("\n".join(sorted(articles[i]["url"] for i in keep)).encode()).hexdigest()[:10]
-        leans = {LEAN.get(articles[i]["outlet"]) for i in keep}
+        leans = {side_of(articles[i]["outlet"]) for i in keep}
         rounds.append({
             "id": rid,
             "balance": ("right" in leans) + ("left" in leans),
-            "topic": [t for t, _ in topic.most_common(4)],
+            "topic": topic_words(keep, vecs),
             "cohesion": round(cohesion, 3),
-            "articles": [{k: articles[i][k] for k in ("outlet", "title", "summary", "url", "published")}
-                         for i in keep],
+            "articles": round_articles(articles, keep),
         })
     # Rounds with both a right- and a left-leaning outlet first: the page plays the first ones.
     rounds.sort(key=lambda r: (-r["balance"], -len(r["articles"]), -r["cohesion"]))
+    return rounds[:MAX_ROUNDS]
+
+
+def polarized_rounds(articles, groups, sim, vecs):
+    """Two-article rounds for the polarized game. In each group that has a right-leaning and a
+    left-leaning outlet, the article from the most right-leaning outlet and the one from the most
+    left-leaning outlet (ties go to the more central article). A pair that is the same wire copy
+    is passed over for the next one. Most cohesive pairs first."""
+    rounds = []
+    for g in groups:
+        right = [i for i in g if LEAN.get(articles[i]["outlet"], 0) > 0]
+        left = [i for i in g if LEAN.get(articles[i]["outlet"], 0) < 0]
+        if not right or not left:
+            continue
+        cen = centrality(g, sim)
+        right.sort(key=lambda i: (-LEAN[articles[i]["outlet"]], -cen[i]))
+        left.sort(key=lambda i: (LEAN[articles[i]["outlet"]], -cen[i]))
+        words = {i: set(tokens(articles[i]["title"])) for i in g}
+        pair = next(((r, l) for r in right for l in left if not same_wire(words[r], words[l])), None)
+        if pair is None:
+            continue
+        keep = list(pair)
+        rid = hashlib.sha1("\n".join(sorted(articles[i]["url"] for i in keep)).encode()).hexdigest()[:10]
+        rounds.append({
+            "id": rid,
+            "topic": topic_words(keep, vecs),
+            "cohesion": round(sim(*keep), 3),
+            "articles": round_articles(articles, keep),
+        })
+    rounds.sort(key=lambda r: -r["cohesion"])
     return rounds[:MAX_ROUNDS]
 
 
@@ -557,23 +612,30 @@ def main():
     vecs = vectors(articles)
     groups, sim = cluster(articles, similarities(vecs, [a["outlet"] for a in articles]))
     rounds = rounds_from(articles, groups, sim, vecs)
-    print(f"{len(rounds)} rounds ({sum(len(r['articles']) for r in rounds)} articles)", file=sys.stderr)
+    polarized = polarized_rounds(articles, groups, sim, vecs)
+    print(f"{len(rounds)} rounds ({sum(len(r['articles']) for r in rounds)} articles), "
+          f"{len(polarized)} polarized", file=sys.stderr)
 
     if args.debug:
         for r in rounds:
             print(f"\n== {' '.join(r['topic'])}  cohesion {r['cohesion']}  balance {r['balance']}", file=sys.stderr)
             for a in r["articles"]:
-                print(f"   {a['outlet']:10s} {LEAN.get(a['outlet'], ''):5s} {a['title'][:95]}", file=sys.stderr)
+                print(f"   {a['outlet']:10s} {side_of(a['outlet']) or '':5s} {a['title'][:95]}", file=sys.stderr)
+        for r in polarized:
+            print(f"\n-- polarized {' '.join(r['topic'])}  cohesion {r['cohesion']}", file=sys.stderr)
+            for a in r["articles"]:
+                print(f"   {a['outlet']:10s} {LEAN.get(a['outlet'], 0):+d}    {a['title'][:95]}", file=sys.stderr)
 
     if len(rounds) < MIN_ROUNDS_TO_WRITE:
         print(f"only {len(rounds)} rounds; keeping the existing {args.out}", file=sys.stderr)
         return 1
 
-    used = {a["outlet"] for r in rounds for a in r["articles"]}
+    used = {a["outlet"] for r in rounds + polarized for a in r["articles"]}
     doc = {
         "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "outlets": {o[0]: {"name": o[1]} for o in OUTLETS if o[0] in used},
         "rounds": rounds,
+        "polarized": polarized,
     }
     tmp = args.out + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
