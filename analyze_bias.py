@@ -147,7 +147,8 @@ def ask(provider, base, headers, model, prompt):
     """The model's reply as text."""
     if provider == "anthropic":
         reply = call(base, headers, "/messages", {
-            "model": model, "max_tokens": 1024, "temperature": 0.2, "system": SYSTEM,
+            # No temperature: some Claude models reject it.
+            "model": model, "max_tokens": 1024, "system": SYSTEM,
             "messages": [{"role": "user", "content": prompt}],
         })
         return "".join(b.get("text", "") for b in reply["content"] if b.get("type") == "text")
