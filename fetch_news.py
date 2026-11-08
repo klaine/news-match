@@ -603,6 +603,12 @@ def write_archive(archive_dir, rounds, polarized, now):
                       f, ensure_ascii=False, indent=1)
             f.write("\n")
         os.replace(tmp, path)
+    # The months, for pages that can't list the folder (analysis.html).
+    index = os.path.join(archive_dir, "index.json")
+    with open(index + ".tmp", "w", encoding="utf-8") as f:
+        json.dump({"months": sorted(months)}, f, indent=1)
+        f.write("\n")
+    os.replace(index + ".tmp", index)
     return sorted(touched)
 
 

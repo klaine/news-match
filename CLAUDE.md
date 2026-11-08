@@ -36,6 +36,10 @@ file in the repo root holds that domain for Pages: keep it.
   parse or lacks those fields is sent back once to correct; if it still fails, it is stored as an
   error and not retried: delete that entry to retry it. The page
   doesn't show the analysis, because it names the outlets and would give the answers away.
+- Analysis page: `analysis.html` shows the analyses on their own, for the current edition or any archived
+  month, with sort and score-band filters. It isn't linked from the game page. It reads `rounds.json`,
+  `archive/index.json` (the months, written by `write_archive` so the page can find them),
+  `archive/YYYY-MM.json` and `analysis/YYYY-MM.json`.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.

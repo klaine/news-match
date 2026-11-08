@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Framing analysis · News Match</title>
+<meta name="description" content="How news outlets frame the same stories, as an AI model reads their headlines and summaries.">
+<meta name="robots" content="noindex">
+<style>
+:root {
+  --bg: #f4f2ee;
+  --surface: #ffffff;
+  --surface-2: #ece9e3;
+  --text: #1c1b19;
+  --muted: #6b675f;
+  --line: #e0dbd2;
+  --accent: #d9480f;
+  --ok: #2f9e44;
+  --bad: #e03131;
+  --b0: #2f9e44; --b1: #1c7ed6; --b2: #a87b00; --b3: #e8590c; --b4: #e03131;
+  --shadow: 0 1px 2px rgb(0 0 0 / .05), 0 8px 28px rgb(0 0 0 / .06);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111110;
+    --surface: #1a1a19;
+    --surface-2: #242422;
+    --text: #edebe7;
+    --muted: #9b968d;
+    --line: #2e2d2b;
+    --accent: #ff8a4c;
+    --ok: #51cf66;
+    --bad: #ff6b6b;
+    --b0: #51cf66; --b1: #4dabf7; --b2: #fcc419; --b3: #ff8a4c; --b4: #ff6b6b;
+    --shadow: none;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: inherit; }
+p, h1, h2, h3, ul, ol, figure { margin: 0; }
+button, select { font: inherit; color: inherit; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+header.top { padding-top: 40px; padding-bottom: 20px; }
+.dateline { margin-bottom: 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-size: clamp(28px, 4.5vw, 42px); line-height: 1.08; letter-spacing: -.03em; font-weight: 750; }
+.lede { margin-top: 10px; max-width: 66ch; font-size: 16px; color: var(--muted); }
+.caveat { margin-top: 12px; max-width: 66ch; font-size: 13.5px; color: var(--muted); border-left: 3px solid var(--line); padding-left: 12px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: end; margin: 8px 0 18px; }
+.field { display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+select { padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); font-size: 14.5px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.bands { display: flex; flex-wrap: wrap; gap: 6px; }
+.band-chip { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 13px; font-weight: 600; cursor: pointer; }
+.band-chip[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+.band-chip:focus-visible, select:focus-visible, details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.band-chip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: var(--c); vertical-align: 1px; }
+
+.overview { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; margin-bottom: 18px; }
+@media (max-width: 760px) { .overview { grid-template-columns: 1fr; } }
+.panel { padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
+.panel h2 { font-size: 12.5px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.stat-line { font-size: 15px; }
+.stat-line + .stat-line { margin-top: 8px; }
+.stat-line b { font-weight: 700; }
+.hist { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; align-items: end; height: 130px; margin-top: 10px; }
+.hist div { position: relative; height: 100%; display: flex; align-items: end; }
+.hist i { display: block; width: 100%; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--c); }
+.hist span { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hist-wrap { padding-bottom: 22px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 7px 6px; text-align: left; border-bottom: 1px solid var(--line); }
+th { font-size: 11.5px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; min-width: 60px; }
+.meter i { display: block; height: 100%; background: var(--accent); }
+
+.count { margin: 4px 0 12px; font-size: 14px; color: var(--muted); }
+.rounds { list-style: none; padding: 0; display: grid; gap: 14px; }
+.round { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+.round-top { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; padding: 16px 18px 14px; }
+@media (max-width: 560px) { .round-top { grid-template-columns: 1fr; } }
+.score { border-radius: 12px; padding: 10px 8px; text-align: center; color: #fff; background: var(--c); align-self: start; }
+.score b { display: block; font-size: 34px; line-height: 1; font-weight: 750; font-variant-numeric: tabular-nums; }
+.score small { display: block; margin-top: 4px; font-size: 11.5px; font-weight: 650; letter-spacing: .03em; }
+.meta { font-size: 12.5px; color: var(--muted); letter-spacing: .02em; }
+.topic { font: 600 17px/1.3 Georgia, "Iowan Old Style", "Times New Roman", serif; margin-top: 3px; }
+.reason { margin-top: 8px; font-size: 14.5px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; font-size: 12px; }
+.tag { padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font-weight: 600; }
+.tag.live { background: var(--accent); color: #fff; }
+.articles { list-style: none; padding: 0 18px 14px; display: grid; gap: 4px; font-size: 14px; }
+.articles li { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; }
+.articles .who { font-weight: 650; color: var(--muted); font-size: 13px; padding-top: 1px; }
+.articles a { text-decoration: none; }
+.articles a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.mask { display: inline-block; padding: 0 5px; border-radius: 4px; background: var(--surface-2); color: var(--muted); font: 500 .82em/1.5 system-ui, sans-serif; vertical-align: .08em; }
+details { border-top: 1px solid var(--line); }
+details summary { cursor: pointer; padding: 10px 18px; font-size: 13.5px; font-weight: 650; color: var(--muted); list-style: none; }
+details summary::-webkit-details-marker { display: none; }
+details summary::before { content: "▸ "; }
+details[open] summary::before { content: "▾ "; }
+.detail { padding: 0 18px 16px; display: grid; gap: 14px; font-size: 14px; }
+.detail h3 { font-size: 11.5px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.detail ul { padding-left: 18px; display: grid; gap: 6px; }
+.diff .outlet { font-weight: 650; }
+.diff .kind { color: var(--muted); font-size: 12.5px; }
+.diff q { color: var(--text); }
+.empty { padding: 30px 0; color: var(--muted); }
+footer { margin: 36px auto 40px; font-size: 13px; color: var(--muted); }
+footer p + p { margin-top: 4px; }
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <p class="dateline">Framing analysis</p>
+  <h1>How the newsrooms frame the same story</h1>
+  <p class="lede">For each group of articles about one event, an AI model reads the headlines and summaries, scores how far apart the framings are, and suggests possible reasons. Scores run from 0, where outlets describe the event in much the same tone, to 100, where the framings are sharply opposed.</p>
+  <p class="caveat">These are readings of the text shown, not verdicts on any outlet. The model can be wrong, and "possibly" in a reason marks a guess. Outlet names are shown here, which is why this page is kept apart from the game.</p>
+</header>
+
+<main class="wrap">
+  <section class="controls" aria-label="Choose what to show">
+    <label class="field">Show
+      <select id="source"></select>
+    </label>
+    <label class="field">Sort
+      <select id="sort">
+        <option value="score">Most different first</option>
+        <option value="similar">Most alike first</option>
+        <option value="newest">Newest first</option>
+      </select>
+    </label>
+    <div class="field">Spread
+      <div class="bands" id="bands" role="group" aria-label="Filter by score"></div>
+    </div>
+  </section>
+
+  <section class="overview" id="overview" aria-label="Overview"></section>
+
+  <p class="count" id="count" aria-live="polite"></p>
+  <ol class="rounds" id="rounds" aria-label="Analysed groups"></ol>
+  <p class="empty" id="empty" hidden>Nothing analysed matches this view yet.</p>
+</main>
+
+<footer class="wrap">
+  <p>Headlines and summaries come from each outlet's public RSS feed and link back to the original.</p>
+  <p>Scores and reasons are written by an AI model from those texts alone. They are not checked by a person.</p>
+</footer>
+
+<script>
+'use strict';
+// Bands match the scale in analyze_bias.py's prompt.
+const BANDS = [
+  { lo: 0, hi: 20, name: 'Same tone', color: 'var(--b0)' },
+  { lo: 21, hi: 40, name: 'Small differences', color: 'var(--b1)' },
+  { lo: 41, hi: 60, name: 'Clear differences', color: 'var(--b2)' },
+  { lo: 61, hi: 80, name: 'Loaded framing', color: 'var(--b3)' },
+  { lo: 81, hi: 100, name: 'Sharply opposed', color: 'var(--b4)' },
+];
+const bandOf = (score) => BANDS.find((b) => score >= b.lo && score <= b.hi) || BANDS[0];
+const bandIndex = (score) => BANDS.indexOf(bandOf(score));
+
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+};
+// "[outlet]" marks where an outlet named itself in the text; show it as a chip, never as HTML.
+function withMasks(node, text) {
+  text.split('[outlet]').forEach((part, i) => {
+    if (i) node.append(el('span', 'mask', 'outlet'));
+    if (part) node.append(part);
+  });
+  return node;
+}
+
+const state = { items: [], names: {}, byKey: {}, failed: 0, unanalysed: 0, months: [], band: null };
+
+async function getJSON(url) {
+  const r = await fetch(url, { cache: 'no-cache' });
+  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+  return r.json();
+}
+
+// Outlet labels in the analysis may be ids ("dailymail") or names ("Daily Mail"); match them to ids.
+const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+function outletId(label) {
+  const key = norm(label);
+  return state.byKey[key] || null;
+}
+
+async function load() {
+  let live = { rounds: [], polarized: [], outlets: {} };
+  try { live = await getJSON('rounds.json'); } catch (err) { console.warn(err); }
+  const liveIds = new Set([...live.rounds, ...(live.polarized || [])].map((r) => r.id));
+  state.names = Object.fromEntries(Object.entries(live.outlets || {}).map(([id, o]) => [id, o.name]));
+
+  let index;
+  try { index = await getJSON('archive/index.json'); } catch (err) {
+    $('count').textContent = "Couldn't load the archive index (archive/index.json).";
+    console.error(err);
+    return;
+  }
+  state.months = index.months || [];
+
+  const docs = await Promise.all(state.months.map(async (m) => {
+    const archive = await getJSON(`archive/${m}.json`);
+    const analysis = await getJSON(`analysis/${m}.json`).catch(() => ({ analyses: {} }));
+    return { m, archive, analysis };
+  }));
+
+  // Outlets that appear in the archive, for matching labels in the analysis.
+  for (const { archive } of docs) {
+    for (const r of Object.values(archive.rounds)) {
+      for (const a of r.articles) {
+        const id = a.outlet;
+        state.byKey[norm(id)] = id;
+        if (state.names[id]) state.byKey[norm(state.names[id])] = id;
+      }
+    }
+  }
+
+  for (const { m, archive, analysis } of docs) {
+    for (const [rid, entry] of Object.entries(archive.rounds)) {
+      const rec = analysis.analyses[rid];
+      if (!rec) { state.unanalysed += 1; continue; }
+      if (rec.error || !rec.result || typeof rec.result.bias_score !== 'number') { state.failed += 1; continue; }
+      state.items.push({ id: rid, month: m, entry, rec, result: rec.result, live: liveIds.has(rid) });
+    }
+  }
+
+  buildControls();
+  render();
+}
+
+function buildControls() {
+  const source = $('source');
+  const options = [
+    ['current', 'Current edition'],
+    ['all', 'Whole archive'],
+    ...state.months.map((m) => [`month:${m}`, `Archive: ${m}`]),
+  ];
+  for (const [value, label] of options) source.append(new Option(label, value));
+  source.value = 'current';
+  source.addEventListener('change', render);
+  $('sort').addEventListener('change', render);
+
+  const bands = $('bands');
+  const all = el('button', 'band-chip', 'All');
+  all.type = 'button';
+  bands.append(all);
+  BANDS.forEach((b, i) => {
+    const btn = el('button', 'band-chip');
+    btn.type = 'button';
+    btn.style.setProperty('--c', b.color);
+    btn.append(el('span', 'dot'), `${b.lo}–${b.hi} ${b.name}`);
+    btn.dataset.band = i;
+    bands.append(btn);
+  });
+  bands.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    state.band = btn.dataset.band === undefined ? null : Number(btn.dataset.band);
+    render();
+  });
+}
+
+function visible() {
+  const source = $('source').value;
+  let items = state.items.filter((it) => {
+    if (source === 'current') return it.live;
+    if (source.startsWith('month:')) return it.month === source.slice(6);
+    return true;
+  });
+  if (state.band !== null) items = items.filter((it) => bandIndex(it.result.bias_score) === state.band);
+  const sort = $('sort').value;
+  const byScore = (a, b) => b.result.bias_score - a.result.bias_score;
+  if (sort === 'score') items.sort(byScore);
+  else if (sort === 'similar') items.sort((a, b) => -byScore(a, b));
+  else items.sort((a, b) => b.entry.first_seen.localeCompare(a.entry.first_seen));
+  return items;
+}
+
+function median(values) {
+  if (!values.length) return null;
+  const s = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : Math.round((s[mid - 1] + s[mid]) / 2);
+}
+
+function outletName(id) {
+  return state.names[id] || id;
+}
+
+// Per outlet, across the groups shown: how often it appears, and how often its framing was singled out.
+function outletStats(items) {
+  const stats = {};
+  for (const it of items) {
+    const present = new Set(it.entry.articles.map((a) => a.outlet));
+    for (const id of present) (stats[id] ||= { appears: 0, singled: 0, kinds: {} }).appears += 1;
+    const singled = new Set();
+    for (const d of it.result.differences || []) {
+      const id = outletId(d.outlet);
+      if (!id) continue;
+      singled.add(id);
+      const s = (stats[id] ||= { appears: 0, singled: 0, kinds: {} });
+      s.kinds[d.kind || 'other'] = (s.kinds[d.kind || 'other'] || 0) + 1;
+    }
+    for (const id of singled) stats[id].singled += 1;
+  }
+  return Object.entries(stats)
+    .map(([id, s]) => ({ id, ...s, share: s.appears ? s.singled / s.appears : 0 }))
+    .filter((s) => s.appears > 0)
+    .sort((a, b) => b.share - a.share || b.singled - a.singled || b.appears - a.appears);
+}
+
+function renderOverview(items) {
+  const box = $('overview');
+  box.textContent = '';
+  if (!items.length) return;
+
+  const scores = items.map((it) => it.result.bias_score);
+  const summary = el('div', 'panel');
+  summary.append(el('h2', '', 'In this view'));
+  const med = median(scores);
+  summary.append(el('p', 'stat-line', `${items.length} analysed group${items.length === 1 ? '' : 's'}`));
+  summary.append(el('p', 'stat-line', `Median spread ${med} (${bandOf(med).name.toLowerCase()})`));
+  const stats = outletStats(items);
+  const top = stats.find((s) => s.appears >= 3 && s.singled > 0);
+  if (top) {
+    summary.append(el('p', 'stat-line',
+      `${outletName(top.id)} is named in differences in ${top.singled} of the ${top.appears} groups it appears in, ` +
+      `most often for ${Object.entries(top.kinds).sort((a, b) => b[1] - a[1])[0][0]}.`));
+  }
+  if (state.failed || state.unanalysed) {
+    summary.append(el('p', 'stat-line', `${state.unanalysed} archived group${state.unanalysed === 1 ? '' : 's'} with no analysis yet` +
+      (state.failed ? `, ${state.failed} with a reply that could not be read.` : '.')));
+  }
+
+  const hist = el('div', 'panel hist-wrap');
+  hist.append(el('h2', '', 'How different the framings are'));
+  const bars = el('div', 'hist');
+  const counts = Array.from({ length: 10 }, () => 0);
+  for (const s of scores) counts[Math.min(9, Math.floor(s / 10))] += 1;
+  const peak = Math.max(1, ...counts);
+  counts.forEach((n, i) => {
+    const col = el('div');
+    col.style.setProperty('--c', bandOf(i * 10).color);
+    const bar = el('i');
+    bar.style.height = `${(100 * n) / peak}%`;
+    bar.title = `${i * 10}–${i * 10 + 9}: ${n}`;
+    col.append(bar, el('span', '', `${i * 10}`));
+    bars.append(col);
+  });
+  hist.append(bars);
+
+  const table = el('div', 'panel');
+  table.append(el('h2', '', 'Outlets named in differences'));
+  const t = el('table');
+  const head = el('tr');
+  head.append(...[['Outlet', ''], ['Groups', 'num'], ['Named in', 'num'], ['Share of groups', '']].map(([h, c]) => el('th', c, h)));
+  t.append(head);
+  for (const s of stats.slice(0, 10)) {
+    const tr = el('tr');
+    const share = el('td');
+    const meter = el('div', 'meter');
+    const fill = el('i');
+    fill.style.width = `${Math.round(100 * s.share)}%`;
+    meter.append(fill);
+    share.append(meter);
+    tr.append(el('td', '', outletName(s.id)), el('td', 'num', String(s.appears)), el('td', 'num', String(s.singled)), share);
+    t.append(tr);
+  }
+  table.append(t);
+  if (!stats.length) table.append(el('p', 'stat-line', 'No outlets to show yet.'));
+
+  box.append(summary, hist, table);
+}
+
+function renderRound(it) {
+  const { result, entry } = it;
+  const band = bandOf(result.bias_score);
+  const li = el('li', 'round');
+
+  const top = el('div', 'round-top');
+  const score = el('div', 'score');
+  score.style.setProperty('--c', band.color);
+  score.append(el('b', '', String(result.bias_score)), el('small', '', band.name));
+  const body = el('div');
+  const when = new Date(entry.first_seen);
+  const meta = el('p', 'meta', `${when.toLocaleDateString(undefined, { dateStyle: 'medium' })} · ${entry.articles.length} articles`);
+  const tags = el('div', 'tags');
+  if (it.live) tags.append(el('span', 'tag live', 'On the page now'));
+  if (result.possible_bias) tags.append(el('span', 'tag', `bias: ${result.possible_bias}`));
+  if (result.same_event === false) tags.append(el('span', 'tag', 'may not be one event'));
+  if (result.partial) tags.append(el('span', 'tag', 'partly read'));
+  body.append(meta, el('p', 'topic', (entry.topic || []).join(' · ') || 'Group ' + it.id));
+  body.append(withMasks(el('p', 'reason'), result.score_reason || ''), tags);
+  top.append(score, body);
+
+  const list = el('ul', 'articles');
+  for (const a of entry.articles) {
+    const row = el('li');
+    const link = el('a');
+    link.href = a.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    withMasks(link, a.title);
+    row.append(el('span', 'who', outletName(a.outlet)), link);
+    list.append(row);
+  }
+
+  const more = el('details');
+  more.append(el('summary', '', `What stood out (${(result.differences || []).length}) and the detail`));
+  const detail = el('div', 'detail');
+  if (result.summary) detail.append(el('p', '', result.summary));
+  if ((result.differences || []).length) {
+    const h = el('div');
+    h.append(el('h3', '', 'Differences'));
+    const ul = el('ul', 'diff');
+    for (const d of result.differences) {
+      const li2 = el('li');
+      li2.append(el('span', 'outlet', outletName(outletId(d.outlet)) || d.outlet || 'outlet'), ' ',
+        el('span', 'kind', `(${d.kind || 'other'})`), ': ', el('span', '', d.observation || ''));
+      if (d.quote) li2.append(' ', el('q', '', d.quote));
+      ul.append(li2);
+    }
+    h.append(ul);
+    detail.append(h);
+  }
+  if ((result.shared_facts || []).length) {
+    const h = el('div');
+    h.append(el('h3', '', 'Agreed on'));
+    const ul = el('ul');
+    for (const f of result.shared_facts) ul.append(el('li', '', f));
+    h.append(ul);
+    detail.append(h);
+  }
+  more.append(detail);
+
+  li.append(top, list, more);
+  return li;
+}
+
+function render() {
+  const items = visible();
+  renderOverview(items);
+  const ol = $('rounds');
+  ol.textContent = '';
+  items.forEach((it) => ol.append(renderRound(it)));
+  $('empty').hidden = items.length > 0;
+  const n = items.length;
+  $('count').textContent = n
+    ? `Showing ${n} analysed group${n === 1 ? '' : 's'}.`
+    : '';
+  for (const btn of $('bands').querySelectorAll('button')) {
+    const pressed = btn.dataset.band === undefined ? state.band === null : Number(btn.dataset.band) === state.band;
+    btn.setAttribute('aria-pressed', String(pressed));
+  }
+}
+
+load().catch((err) => {
+  $('count').textContent = "Couldn't load the analysis.";
+  console.error(err);
+});
+</script>
+</body>
+</html>
