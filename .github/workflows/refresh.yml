@@ -26,8 +26,11 @@ jobs:
         # stop the stories from being committed, so the step may fail without failing the job.
         continue-on-error: true
         env:
+          ANALYSIS_PROVIDER: ${{ vars.ANALYSIS_PROVIDER }}  # "opencode" (default) or "anthropic"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODEL: ${{ vars.OPENCODE_MODEL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
         run: python3 analyze_bias.py --limit 6
       - name: Commit rounds, archive and analysis
         run: |
