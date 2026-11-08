@@ -98,6 +98,134 @@
     "summary": "All four outlets report Trump's Truth Social offer of the press secretary job to Dana White, with only mild differences in tone: the NY Post amplifies Trump's own words, NPR is plain, Al Jazeera is speculative, and Fox adds slight dramatic and skeptical wording."
    }
   },
+  "37514c5478": {
+   "analysed_at": "2026-11-08T12:15:24Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 27,
+    "differences": [
+     {
+      "kind": "omission",
+      "observation": "Fox's summary leaves out the suspect's ideology, the three bodies found at his home and the official terror designation, which the other three outlets include. It focuses on the attacker's appearance and the setting instead.",
+      "outlet": "fox",
+      "quote": "reportedly wearing military-style fatigues"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Fox hedges heavily on the suspect (\"reportedly\", \"allegedly\") and frames the location as a tourist draw. Its count is internally inconsistent: the headline says 6 dead, the summary says five killed. Later outlets give six dead and 16 wounded, possibly because Fox's text was published earlier.",
+      "outlet": "fox",
+      "quote": "European tourist hot spot, leaving 6 dead and at least 15 wounded"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The Guardian attributes the political framing to named officials, quoting a minister on the suspect's views and the defence minister's \"act of terror\" label. It also stresses the British victim in the headline, possibly for a UK readership.",
+      "outlet": "guardian",
+      "quote": "held ‘ultra-nationalistic’ views"
+     },
+     {
+      "kind": "word choice",
+      "observation": "France 24 uses more dramatic wording for the discovery of bodies, while attributing the terror declaration to Prime Minister Tusk. It says the bodies were \"reportedly\" found.",
+      "outlet": "france24",
+      "quote": "A chilling new discovery in Poland"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "DW attributes the ideological description to unnamed officials and uses quote marks around the labels, keeping a restrained tone. It mentions the British tourist but not the bodies at the home.",
+      "outlet": "dw",
+      "quote": "fascinated with \"radical\" and \"far-right\" ideologies"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The outlets agree on the core facts, and most differences come from what each included and when it published. Fox stands apart mainly through omission of the ideology and terror framing and its more hedged, scene-focused wording, while France 24's \"chilling\" is the most emotive phrase. The Guardian, France 24 and DW attribute political labels to officials rather than asserting them, so the loaded framing is limited.",
+    "shared_facts": [
+     "A gunman opened fire in Kraków's main square/market square in Poland",
+     "Around six people were killed and more than a dozen wounded",
+     "The shooter fired from a car (Fox, DW) and the attack hit a busy tourist area"
+    ],
+    "summary": "All four outlets report the same Kraków shooting with similar facts, but Fox emphasizes the attacker's military-style look and omits the far-right and terror context that the Guardian, France 24 and DW attribute to officials."
+   }
+  },
+  "600375fd75": {
+   "analysed_at": "2026-11-08T12:15:10Z",
+   "error": "the reply was not a JSON object and has no bias_score",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "raw": "{\"same_event\": true,\n\"shared_facts\": [\"Thomas Markle, the father of Meghan Markle, was arrested on Friday\", \"The arrest concerns child sexual abuse material, called 'child pornography' by some outlets\", \"He faces a charge or charges related to that material\"],\n\"differences\": [\n{\"outlet\": \"dailymail\", \"kind\": \"loaded label\", \"observation\": \"The headline states, without attribution or hedging, that a storage unit contains 'photos of him abusing girls'. No other outlet makes this specific and lurid claim. The 'alleged' hedge appears only in the summary.\", \"quote\": \"photos of him abusing girls\"},\n{\"outlet\": \"dailymail\", \"kind\": \"emphasis\", \"observation\": \"The headline credits the outlet with reporting him to the FBI, which makes the outlet part of the story. It also stresses a 'new storage unit' and a discovery narrative.\", \"quote\": \"after [outlet] reported him to the FBI\"},\n{\"outlet\": \"dailymail\", \"kind\": \"word choice\", \"observation\": \"The summary uses the word 'trove' for the evidence, which implies a large collection. It also gives his age (82) and the 'estranged' label.\", \"quote\": \"his trove of alleged child pornography was discovered in storage units\"},\n{\"outlet\": \"nyt\", \"kind\": \"sourcing\", \"observation\": \"The headline is neutral and states the arrest and the charges. It is the only text to say he has denied the accusations, which gives the accused's side.\", \"quote\": \"He has denied the accusations against him.\"},\n{\"outlet\": \"sky\", \"kind\": \"word choice\", \"observation\": \"The framing is procedural, built around his court appearance, and hedged with 'allegedly'. It does not use 'estranged' and adds no lurid detail.\", \"quote\": \"charged with allegedly possessing child sexual abuse images\"},\n{\"outlet\": \"latimes\", \"kind\": \"emphasis\", \"observation\": \"The focus is the law-enforcement process: a federal raid on two storage units he 'allegedly"
+  },
+  "60f865f901": {
+   "analysed_at": "2026-11-08T12:14:58Z",
+   "error": "the reply was not a JSON object and has no score_reason",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "raw": "{\"same_event\": true,\n\"shared_facts\": [\"Trump is replacing Susie Wiles with Stephen Miller as White House chief of staff.\", \"Trump announced or confirmed the change himself.\", \"The change comes shortly after an election in which Republicans lost ground (Fox and Guardian say Republicans lost; NYT refers to an \\\"Election Defeat\\\").\"],\n\"differences\": [\n{\"outlet\": \"fox\", \"kind\": \"emphasis\", \"observation\": \"Leads with Wiles's tenure and record, calling her the \\\"longest-serving chief of staff across both terms\\\", and mentions the electoral losses as context for her departure. Miller is introduced neutrally, with no description of his policy role or reputation.\", \"quote\": \"Susie Wiles served 21 months as Trump's longest-serving chief of staff across both terms\"},\n{\"outlet\": \"fox\", \"kind\": \"omission\", \"observation\": \"Does not mention Miller's immigration work or any controversy around him, so the text reads as a plain announcement.\", \"quote\": \"Trump announced Stephen Miller will take on the role.\"},\n{\"outlet\": \"cbs\", \"kind\": \"sourcing\", \"observation\": \"Relies on a single direct Trump quote as the explanation and uses the active verb \\\"installs\\\" and the phrase \\\"major staffing shakeup\\\". In the text provided it gives no background on Miller or the election.\", \"quote\": \"\\\"I wanted to make a change,\\\"\"},\n{\"outlet\": \"nyt\", \"kind\": \"emphasis\", \"observation\": \"Frames the story around Miller's defiance of the election result and states that voters rejected the agenda. This is an interpretive claim rather than a bare announcement.\", \"quote\": \"an agenda that many voters rejected\"},\n{\"outlet\": \"nyt\", \"kind\": \"word choice\", \"observation\": \"Uses \\\"Election Defeat\\\" and \\\"Immigration Crackdown\\\" and says Miller will not \\\"Back Down\\\", which casts him as unyielding.\", \"quote\": \"Election Defeat Is No Reason to Back Down on Immigration Crackdown\"},\n{\"outlet\": \"guardian\", \"kind\": \"loaded label\", \"observation\": \"Labels Miller \\\"architect\\\" of the crackdown and \\\"most controversial aide\\\", and calls the policy \\\"sweeping\\\". These are the most evaluative descriptors in the group. It also notes Wiles was the first woman in the role.\", \"quote\": \"Donald Trump's most controversial aide and the architect of his sweeping immigration crackdown\"}\n],\n\"possible_bias\": \"notable\",\n\"bias_score\": 52,\n\"score_reason\": \"The core facts agree, but Fox and CBS read as fairly straightforward announcements (Fox centred on Wiles's record, CBS on Trump's own words), while the NYT and Guardian foreground Miller's immigration record and controversy. The Guardian's \\\"most controversial aide\\\" and \\\"sweeping immigration crackdown\\\" and the NYT's claim that voters \\\"rejected\\\" the agenda are the strongest framing; this possibly reflects analysis-style or editorial-line coverage, though the texts are short summaries and C"
+  },
+  "65a2c06d5c": {
+   "analysed_at": "2026-11-08T12:15:32Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 28,
+    "partial": true,
+    "score_reason": "The outlets agree on the core event, and the differences are mostly in detail and tone. NBC uses the most charged wording ('elderly driver plows into'), while CBS is the most neutral and attributes to authorities. The Daily Mail stands out for the 'luxury sedan' and brand detail, the victim profile, and a higher injury count (20 vs 12), possibly because of a later update or a different source, though the texts do not say."
+   }
+  },
+  "78870749ae": {
+   "analysed_at": "2026-11-08T12:15:40Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 30,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Frames the appearance as part of a pattern of mockery of Trump and as a disruption of the sketch, putting Trump at the center rather than Talarico's win.",
+      "outlet": "dailymail",
+      "quote": "yet another sketch mocking Trump"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses dramatic verbs suggesting shock and interruption, where the others describe a planned guest spot.",
+      "outlet": "dailymail",
+      "quote": "stunned the audience when he interrupted SNL's Trump"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Neutral, cooperative framing: he helps open the show. Adds context that his victory was once thought improbable in a Republican stronghold.",
+      "outlet": "nbc",
+      "quote": "made a surprise appearance to help kick off the latest episode"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Uses a colorful political shorthand for the win and verb 'crashes', and leads with a joke quote about fundraising texts rather than the political context.",
+      "outlet": "nypost",
+      "quote": "turning Texas blue"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Only outlet that quotes Talarico directly, giving a self-deprecating tone to the summary.",
+      "outlet": "nypost",
+      "quote": "the guy who's been texting you every day asking for $5"
+     },
+     {
+      "kind": "omission",
+      "observation": "Does not mention Trump or the sketch's target, unlike the Daily Mail.",
+      "outlet": "nbc",
+      "quote": "kicks off ‘SNL’ days after historic Texas Senate win"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The Daily Mail foregrounds Trump and the idea of repeated mockery, and uses 'stunned' and 'interrupted', which possibly reflects an interest in the conflict angle. NBC is the most neutral and adds context on the win's improbability, while the New York Post leans on a punchy quote and the 'turning Texas blue' label. The differences are mostly tone and emphasis, not disputes over facts.",
+    "shared_facts": [
+     "James Talarico, a Democrat, made an appearance on Saturday Night Live's cold open",
+     "The appearance came days after his U.S. Senate win in Texas",
+     "The appearance was a surprise"
+    ],
+    "summary": "All three report Talarico's surprise SNL cold-open cameo after his Texas Senate win, with the Daily Mail stressing Trump mockery, NBC staying neutral, and the New York Post playing up a joke quote."
+   }
+  },
   "a6813aa5ff": {
    "analysed_at": "2026-11-08T12:09:40Z",
    "model": "claude-sonnet-5-5",
@@ -195,6 +323,54 @@
      "Results were preliminary or initial."
     ],
     "summary": "All four report a near-deadlocked New Zealand election with no clear winner, with only mild differences in drama (Daily Mail), bloc framing and context (NYT) and sourcing (SCMP)."
+   }
+  },
+  "e3cd8d475d": {
+   "analysed_at": "2026-11-08T12:14:50Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "sourcing",
+      "observation": "Leads with Trump's own Truth Social wording and quotes it directly, so the framing is Trump's own praise. The summary does not add outside context or a counter-view.",
+      "outlet": "nypost",
+      "quote": "the Great Dana White, a violent Fighter and Warrior"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The headline adds Trump's exclamation as a quote, which gives it an informal, entertaining tone. 'Offers' presents the matter as a done deal from Trump's side.",
+      "outlet": "nypost",
+      "quote": "Please take the job!"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Focuses on White's response and the next step, a meeting with Trump on Monday. It describes White as Trump's 'friend', which hints at a personal tie behind the offer. The tone is neutral and attributed ('said Saturday').",
+      "outlet": "npr",
+      "quote": "his friend and UFC boss Dana White"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Gives context about the vacancy instead of describing White. It says the role has been 'largely vacant' since Karoline Leavitt 'stepped aside' in August, which frames the offer as filling a gap. The headline hedges with 'says he offered'.",
+      "outlet": "cbs",
+      "quote": "largely vacant since Karoline Leavitt stepped aside in August"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses plain, brief wording and describes White as a 'mixed martial arts promoter' rather than a boss or fighter-type figure. It states that Trump 'asks' without attribution to a post, and leaves out context or reaction.",
+      "outlet": "sky",
+      "quote": "mixed martial arts promoter Dana White"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The outlets agree on the core facts and mostly differ in what they emphasise: the New York Post repeats Trump's colourful language ('violent Fighter and Warrior'), NPR notes the friendship and the planned meeting, CBS offers background on the vacancy, and Sky keeps to a short factual line. The Post's text is the most colourful, but the loaded words are attributed to Trump, so possibly this reflects a tabloid style of quoting vivid statements rather than editorial slant. The other three are fairly neutral.",
+    "shared_facts": [
+     "Donald Trump said he offered Dana White, the UFC boss, the job of White House press secretary",
+     "The offer was announced around 7-8 November 2026"
+    ],
+    "summary": "All four outlets report that Trump offered Dana White the press secretary job, with only small differences in tone, the New York Post foregrounding Trump's flamboyant praise while NPR, CBS and Sky stay more neutral and add different context."
    }
   }
  },
