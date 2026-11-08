@@ -283,7 +283,7 @@ footer p + p { margin-top: 4px; }
 
 <footer class="wrap">
   <p>Headlines and summaries come from each outlet's public RSS feed. Outlet names in the text are hidden, and every article links to its original.</p>
-  <p>Stories refresh every hour.</p>
+  <p>Stories refresh every three hours.</p>
 </footer>
 
 <script>
@@ -358,7 +358,7 @@ async function load() {
     return;
   }
   if (!data.rounds || !data.rounds.length) {
-    $('message').textContent = 'No stories in this edition yet. Check back in an hour.';
+    $('message').textContent = 'No stories in this edition yet. Check back in a few hours.';
     return;
   }
   const when = new Date(data.generated);

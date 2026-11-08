@@ -10,7 +10,7 @@ Providers (ANALYSIS_PROVIDER, default "opencode"):
 Optional base URL overrides: OPENCODE_BASE_URL, ANTHROPIC_BASE_URL.
 
 Standard library only. Only rounds without an analysis are sent: the ones in the current
-rounds.json first, then the newest archived. At most --limit per run, so the hourly refresh stays
+rounds.json first, then the newest archived. At most --limit per run, so the refresh stays
 inside the plan's quota. Without a key it does nothing; without a model it lists the models the key
 can use and does nothing. Both exit 0, so the refresh is never blocked by this step.
 """
