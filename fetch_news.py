@@ -563,6 +563,49 @@ def polarized_rounds(articles, groups, sim, vecs):
     return rounds[:MAX_ROUNDS]
 
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ARCHIVE_DIR = os.path.join(BASE_DIR, "archive")
+
+
+def write_archive(archive_dir, rounds, polarized, now):
+    """Add this run's rounds to the monthly archive, archive/YYYY-MM.json. A round is kept once,
+    in the file of the month it was first seen; seeing it again only updates its last_seen. Each
+    file is keyed by round id, so a git diff shows just the rounds that were added. Returns the
+    files that changed."""
+    os.makedirs(archive_dir, exist_ok=True)
+    months, where = {}, {}  # month -> file contents; round id -> month it lives in
+    for name in sorted(os.listdir(archive_dir)):
+        if re.fullmatch(r"\d{4}-\d{2}\.json", name):
+            with open(os.path.join(archive_dir, name), encoding="utf-8") as f:
+                doc = json.load(f)
+            months[doc["month"]] = doc
+            where.update((rid, doc["month"]) for rid in doc["rounds"])
+
+    stamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    touched = set()
+    for kind, items in (("all", rounds), ("polar", polarized)):
+        for r in items:
+            month = where.get(r["id"])
+            if month is None:
+                month = now.strftime("%Y-%m")
+                doc = months.setdefault(month, {"month": month, "rounds": {}})
+                doc["rounds"][r["id"]] = {**r, "kind": kind, "first_seen": stamp, "last_seen": stamp}
+                where[r["id"]] = month
+            else:
+                months[month]["rounds"][r["id"]]["last_seen"] = stamp
+            touched.add(month)
+
+    for month in sorted(touched):
+        path = os.path.join(archive_dir, f"{month}.json")
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump({"month": month, "rounds": dict(sorted(months[month]["rounds"].items()))},
+                      f, ensure_ascii=False, indent=1)
+            f.write("\n")
+        os.replace(tmp, path)
+    return sorted(touched)
+
+
 # ---------------------------------------------------------------- main
 
 def main():
@@ -570,6 +613,8 @@ def main():
     ap.add_argument("--out", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "rounds.json"))
     ap.add_argument("--hours", type=float, default=48, help="ignore articles older than this")
     ap.add_argument("--debug", action="store_true", help="print the groups and near misses")
+    ap.add_argument("--archive-dir", default=ARCHIVE_DIR, help="monthly archive folder")
+    ap.add_argument("--no-archive", action="store_true", help="don't add this run to the archive")
     args = ap.parse_args()
 
     now = datetime.now(timezone.utc)
@@ -643,6 +688,9 @@ def main():
         f.write("\n")
     os.replace(tmp, args.out)
     print(f"wrote {args.out}", file=sys.stderr)
+    if not args.no_archive:
+        changed = write_archive(args.archive_dir, rounds, polarized, now)
+        print(f"archive: updated {', '.join(changed) or 'nothing'}", file=sys.stderr)
     return 0
 
 

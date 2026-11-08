@@ -1,5 +1,6 @@
-# Regenerates rounds.json from the outlets' feeds and commits it when it changed. GitHub Pages
-# serves the repository root, so each commit publishes a new edition.
+# Regenerates rounds.json from the outlets' feeds, adds the run to the monthly archive, asks an AI
+# model about framing in new rounds (when the secret is set), and commits what changed. GitHub
+# Pages serves the repository root, so each commit publishes a new edition.
 name: Refresh stories
 
 on:
@@ -20,10 +21,20 @@ jobs:
       - uses: actions/checkout@v4
       - name: Fetch and group stories
         run: python3 fetch_news.py
-      - name: Commit rounds.json
+      - name: Analyse framing with AI
+        # Optional. Does nothing unless the OPENCODE_API_KEY secret is set. A failure here must not
+        # stop the stories from being committed, so the step may fail without failing the job.
+        continue-on-error: true
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          OPENCODE_MODEL: ${{ vars.OPENCODE_MODEL }}
+        run: python3 analyze_bias.py --limit 6
+      - name: Commit rounds, archive and analysis
         run: |
-          git diff --quiet -- rounds.json && exit 0
+          mkdir -p archive analysis
+          git add -A -- rounds.json archive analysis
+          git diff --cached --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Refresh stories" -- rounds.json
+          git commit -m "Refresh stories"
           git push
