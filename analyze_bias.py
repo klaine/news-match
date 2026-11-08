@@ -105,11 +105,15 @@ def archived_rounds(archive_dir):
 
 
 def analysed_ids(analysis_dir):
+    """Rounds that need no more work: an error (kept, so it isn't retried) or a result with a score.
+    A result from before scoring is analysed again."""
     done = set()
     if os.path.isdir(analysis_dir):
         for name in os.listdir(analysis_dir):
             if re.fullmatch(r"\d{4}-\d{2}\.json", name):
-                done.update(read_json(os.path.join(analysis_dir, name), {"analyses": {}})["analyses"])
+                for rid, rec in read_json(os.path.join(analysis_dir, name), {"analyses": {}})["analyses"].items():
+                    if "error" in rec or "bias_score" in rec.get("result", {}):
+                        done.add(rid)
     return done
 
 
