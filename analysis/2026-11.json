@@ -1,57 +1,214 @@
 {
  "analyses": {
-  "a6813aa5ff": {
-   "analysed_at": "2026-11-08T12:04:57Z",
+  "10d2ca40db": {
+   "analysed_at": "2026-11-08T12:09:47Z",
    "model": "claude-sonnet-5-5",
    "provider": "anthropic",
    "result": {
+    "bias_score": 33,
     "differences": [
      {
-      "kind": "omission",
-      "observation": "Breitbart leaves out the pope's cancer surgery and the length and scope of the tour. It focuses on the crowd and the Church's standing in Uruguay, so the health angle the other three outlets lead with is missing.",
+      "kind": "loaded label",
+      "observation": "Frames the event as a loss for Netanyahu, centering him as the subject who was handed a defeat. It also adds the time elapsed since the election, which emphasizes the delay and his weakened position. The other outlets present the event more neutrally as Eisenkot's selection.",
       "outlet": "breitbart",
-      "quote": "Pope Leo Greeted by 40,000 Faithful During First South America Mass in Uruguay"
+      "quote": "handing Prime Minister Benjamin Netanyahu a significant political setback"
      },
      {
       "kind": "word choice",
-      "observation": "Its language is celebratory and vivid, and it describes the crowd as an estimate. It also frames the visit as an effort to raise the Church's profile in a secular country, which is an interpretation of the pope's aims and not a quoted statement.",
+      "observation": "The headline repeats the 'setback for Netanyahu' framing, and describes Eisenkot as 'former military chief' without calling him an opposition leader or rival.",
+      "outlet": "breitbart",
+      "quote": "in Setback for Netanyahu"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Adds context that neither candidate won a majority and that the main parties recommended Eisenkot, explaining why Herzog chose him. This is procedural rather than evaluative, though 'not Netanyahu' in the headline still contrasts the two.",
+      "outlet": "npr",
+      "quote": "neither won enough support to command a majority"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses forward-looking language about unseating Netanyahu and the four-week deadline. 'Longstanding leader' and 'unseat' put the focus on the prospect of Netanyahu's removal, though the tone is fairly measured.",
+      "outlet": "wsj",
+      "quote": "could unseat Israel's longstanding leader"
+     },
+     {
+      "kind": "other",
+      "observation": "Only a headline is provided, with a red-circle emoji signaling a live or breaking item. The wording is plain, calling Eisenkot 'Netanyahu's rival' and saying he will 'try' to form a government, with no judgment of Netanyahu's position.",
+      "outlet": "france24",
+      "quote": "Israeli president picks Netanyahu's rival Eisenkot to try to form government"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "Breitbart's 'significant political setback' for Netanyahu is the most evaluative framing in the group, while NPR, WSJ and France 24 stick mostly to the event and use terms such as 'rival', 'challenger' or 'opposition candidate'. Possibly Breitbart's angle reflects an interest in how the news affects Netanyahu rather than in Eisenkot. France 24 offers only a headline, so comparison with it is limited.",
+    "shared_facts": [
+     "Israeli President Isaac Herzog chose Gadi Eisenkot to try to form Israel's next government",
+     "Eisenkot is a rival or challenger to Prime Minister Benjamin Netanyahu",
+     "The choice follows Israel's parliamentary elections"
+    ],
+    "summary": "All outlets report Herzog tasking Eisenkot with forming a government, but Breitbart casts it as a significant setback for Netanyahu while the others use more neutral, procedural wording."
+   }
+  },
+  "1b90c1933e": {
+   "analysed_at": "2026-11-08T12:09:05Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 25,
+    "differences": [
+     {
+      "kind": "sourcing",
+      "observation": "Leads with Trump's own words and quotes his praise at length. The text has no White response and no mention of a meeting, so the framing is Trump's announcement, not a developing story.",
+      "outlet": "nypost",
+      "quote": "“I am pleased to announce that the Great Dana White, a violent Fighter and Warrior, has been offered the job of Press Secretary of the United States,”"
+     },
+     {
+      "kind": "other",
+      "observation": "The headline repeats Trump's exclamatory plea as a quote, which gives it a light, entertaining tone.",
+      "outlet": "nypost",
+      "quote": "‘Please take the job!’"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Neutral, attributed reporting. It describes White as Trump's 'friend' and says Trump 'said' he made the offer, with no quoted superlatives.",
+      "outlet": "npr",
+      "quote": "President Donald Trump said Saturday that he has offered the job"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Frames the story as a question and speculation, which keeps some distance from the claim. It says Trump 'urged' White to take the job.",
+      "outlet": "aljazeera",
+      "quote": "Could UFC boss Dana White be next White House press secretary?"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Calls the announcement 'dramatic' and describes the offer as a 'claim', which adds a mild note of doubt. The headline carries a columnist byline style label.",
+      "outlet": "fox",
+      "quote": "amid claim of White House press secretary job offer"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The outlets agree on the core facts and differ mostly in tone and sourcing. The NY Post foregrounds Trump's colorful self-description of White ('violent Fighter and Warrior') and the exclamatory headline, while NPR and Al Jazeera are more neutral and Al Jazeera frames it as a question. Fox's 'dramatic' and 'claim' wording is mild, and possibly reflects a bylined commentary style rather than a strong editorial slant.",
+    "shared_facts": [
+     "Donald Trump publicly offered the job of White House press secretary to UFC boss Dana White.",
+     "The offer was made in a Truth Social post.",
+     "Dana White said he will meet with Trump, according to Articles 2, 3 and 4. Article 4 specifies Monday, as does Article 2's headline."
+    ],
+    "summary": "All four outlets report Trump's Truth Social offer of the press secretary job to Dana White, with only mild differences in tone: the NY Post amplifies Trump's own words, NPR is plain, Al Jazeera is speculative, and Fox adds slight dramatic and skeptical wording."
+   }
+  },
+  "600375fd75": {
+   "analysed_at": "2026-11-08T12:09:25Z",
+   "error": "the reply was not a JSON object",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "raw": "{\"same_event\": true,\n\"shared_facts\": [\"Meghan Markle's father, Thomas Markle, was arrested\", \"The allegations involve child sexual abuse material, which some outlets call child pornography\", \"Several outlets (Daily Mail, NYT, LA Times) describe him as 'estranged' from Meghan\", \"The Daily Mail, NYT and LA Times date the arrest to Friday; the Daily Mail and NYT place it in Florida\"],\n\"differences\": [\n{\"outlet\": \"dailymail\", \"kind\": \"loaded label\", \"observation\": \"The headline says a storage unit contains 'photos of him abusing girls'. Quotation marks do not make this a hedged allegation, and it implies he committed abuse, which goes beyond a possession charge. The summary also says a 'trove' was 'discovered' and puts 'alleged' only on 'child pornography'.\", \"quote\": \"photos of him abusing girls\"},\n{\"outlet\": \"dailymail\", \"kind\": \"emphasis\", \"observation\": \"The headline makes the outlet part of the story by stating it reported him to the FBI, which presents its own role as the trigger for"
+  },
+  "60f865f901": {
+   "analysed_at": "2026-11-08T12:09:12Z",
+   "error": "the reply was not a JSON object",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "raw": "{\"same_event\": true,\n\"shared_facts\": [\"Donald Trump has named Stephen Miller as White House chief of staff.\", \"Miller replaces Susie Wiles, who is leaving the role.\", \"The change follows Republican losses in the election (stated by Fox, NYT and Guardian; the CBS summary does not mention it).\"],\n\"differences\": [\n{\"outlet\": \"fox\", \"kind\": \"emphasis\", \"observation\": \"Leads with Wiles's tenure and record in neutral, factual terms. It mentions the electoral losses only as context for her departure, not as a reason to doubt Miller's agenda, and it says nothing about Miller's immigration role.\", \"quote\": \"Trump's longest-serving chief of staff across both terms\"},\n{\"outlet\": \"fox\", \"kind\": \"omission\", \"observation\": \"Gives no background on Miller or the controversy around his immigration policies, which the NYT and Guardian foreground.\", \"quote\": \"Trump announced Stephen Miller will take on the role.\"},\n{\"outlet\": \"cbs\", \"kind\": \"sourcing\", \"observation\": \"The summary consists only of Trump's"
+  },
+  "a6813aa5ff": {
+   "analysed_at": "2026-11-08T12:09:40Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Leads with crowd size and the Church's standing in a secular country. It does not mention the cancer surgery in the text given. The framing is about the Church's profile and the pope's popularity.",
       "outlet": "breitbart",
       "quote": "poured into a city on the Uruguay River"
      },
      {
-      "kind": "emphasis",
-      "observation": "It stresses Uruguay as 'the region's most secular country', which gives the visit a narrative of a Church working to regain ground. No other outlet includes this context.",
+      "kind": "word choice",
+      "observation": "Describes the pope's aim as raising the Church's profile in 'the region's most secular country', which casts the trip as a religious outreach effort. The word 'poured' and the title word 'Greeted' give an enthusiastic tone.",
       "outlet": "breitbart",
       "quote": "the region's most secular country"
      },
      {
       "kind": "emphasis",
-      "observation": "NPR leads with the surgery and the tour's scope, and adds the personal link to Peru, where the pope spent two decades. It does not mention crowds or any message he delivered.",
+      "observation": "Centers on the pope's health and the trip's scope. It adds personal background (Peru, where he spent two decades) and does not mention crowds or any message.",
       "outlet": "npr",
-      "quote": "Peru, where he spent two decades"
+      "quote": "since lung cancer surgery"
      },
      {
       "kind": "sourcing",
-      "observation": "Euronews is the only outlet to lead with a direct quotation from the pope, on peace, and the only one to name the city (Paysandú) and the hospital (Gemelli) and give the specific diagnosis (lung adenocarcinoma). Its tone is more formal and precise.",
+      "observation": "Leads with a direct quote on peace, giving the pope's own words priority, and also includes the crowd size and the medical detail with clinical precision (diagnosis, hospital).",
       "outlet": "euronews",
       "quote": "'Peace is possible and we are called to build it'"
      },
      {
       "kind": "word choice",
-      "observation": "CBS stresses the physical strain of the trip with 'grueling' and the 19,000-mile distance. The framing is about endurance and health risk. The summary also reads as a video-report teaser ('Chris Livesay has more') and gives little detail.",
+      "observation": "Stresses the physical burden of the trip and its distance, with a mildly dramatic tone, and the text reads as a video teaser.",
       "outlet": "cbs",
-      "quote": "The trip comes with a grueling itinerary, covering roughly 19,000 miles."
+      "quote": "grueling itinerary, covering roughly 19,000 miles"
      }
     ],
     "possible_bias": "slight",
     "same_event": true,
+    "score_reason": "The outlets agree on the core facts and differ mainly in emphasis: Breitbart stresses crowds and Church profile and omits the surgery, NPR and CBS stress health and travel strain, and Euronews foregrounds the pope's peace message. Possibly these choices reflect different angles (religious enthusiasm vs. health and logistics vs. message), but none uses strongly loaded labels in the text given.",
     "shared_facts": [
-     "Pope Leo XIV is traveling to South America, with Uruguay as the first stop",
-     "The trip is his first South American tour and comes shortly after lung cancer surgery (NPR, Euronews, CBS)",
-     "The trip lasts 12 days (NPR, CBS)",
-     "About 40,000 people attended the event in Uruguay (Breitbart, Euronews)"
+     "Pope Leo XIV began a South America tour with a first stop in Uruguay",
+     "The trip is 12 days long",
+     "It follows recent lung cancer surgery",
+     "The Uruguay visit drew a large crowd of about 40,000 (per Breitbart and Euronews)"
     ],
-    "summary": "All four outlets cover the pope's first South American trip, but they choose different angles. Breitbart's summary is upbeat about crowds and the Church's profile and omits the surgery, NPR and CBS focus on his health and the demands of the trip, and Euronews adds his message on peace. The differences are mostly in emphasis and tone, not in conflicting facts."
+    "summary": "All four report the pope's Uruguay-first South America tour, with Breitbart emphasizing crowds and the Church's profile while NPR, CBS and Euronews give more weight to his post-surgery health, with only mild differences in tone."
+   }
+  },
+  "ae6388741f": {
+   "analysed_at": "2026-11-08T12:09:55Z",
+   "model": "claude-sonnet-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 22,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Leads with drama and with a new party's possible kingmaker role, which the others do not mention. This gives a more speculative, tabloid-style angle.",
+      "outlet": "dailymail",
+      "quote": "election cliffhanger ... new centrist Opportunity party could be kingmakers"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses the label 'right-wing bloc' and says it is 'slightly ahead', where the others describe the two main parties as level. It also adds economic concerns as context and frames minor parties as the story.",
+      "outlet": "nyt",
+      "quote": "right-wing bloc slightly ahead but no clear winner"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Stresses a shift by voters to minor parties and the dominance of economic concerns, which are explanatory framings absent elsewhere.",
+      "outlet": "nyt",
+      "quote": "Voters Turn to Minor Parties"
+     },
+     {
+      "kind": "omission",
+      "observation": "Neutral and brief. It names no parties in the headline and gives no context on causes or minor parties.",
+      "outlet": "sky",
+      "quote": "No clear winner after New Zealand general election"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Cites the Electoral Commission and a count figure (over 95 per cent), the most precise and procedural framing. It describes National as 'ruling centre-right'.",
+      "outlet": "scmp",
+      "quote": "Results from the Electoral Commission show that with more than 95 per cent of the ballots counted"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The outlets agree on the core facts and differ mainly in emphasis. The Daily Mail adds a dramatic 'cliffhanger' and 'kingmakers' angle, and the NYT adds 'right-wing bloc' and economic context, which possibly reflects its explanatory style. Sky and SCMP stay close to wire-style reporting, and none uses strongly loaded labels.",
+    "shared_facts": [
+     "New Zealand held a general election and the initial count produced no clear winner.",
+     "National and Labour were nearly level in the popular vote.",
+     "Results were preliminary or initial."
+    ],
+    "summary": "All four report a near-deadlocked New Zealand election with no clear winner, with only mild differences in drama (Daily Mail), bloc framing and context (NYT) and sourcing (SCMP)."
    }
   }
  },
