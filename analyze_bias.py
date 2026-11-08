@@ -174,6 +174,19 @@ def ask(provider, base, headers, model, turns):
     return reply["choices"][0]["message"]["content"]
 
 
+def partial_fields(text):
+    """The score and reason from a reply that isn't valid JSON, or (None, why) if they can't be read."""
+    score = re.search(r'"bias_score"\s*:\s*"?(-?\d+(?:\.\d+)?)', text)
+    reason = re.search(r'"score_reason"\s*:\s*"(.*?)"\s*,?\s*\n?\s*"(?:summary|bias_score)"', text, re.S)
+    if not score:
+        return None, "the reply was not a JSON object and has no bias_score"
+    if not reason or not reason.group(1).strip():
+        return None, "the reply was not a JSON object and has no score_reason"
+    value = {"bias_score": min(100, max(0, int(round(float(score.group(1)))))),
+             "score_reason": reason.group(1).replace('\\"', '"').strip(), "partial": True}
+    return value, None
+
+
 def check_reply(text):
     """(result, None) when the reply is the JSON object we asked for, with bias_score clamped to
     0-100; otherwise (None, what is wrong), which is sent back to the model once."""
@@ -186,7 +199,9 @@ def check_reply(text):
         except ValueError:
             pass
     if not isinstance(value, dict):
-        return None, "the reply was not a JSON object"
+        # Models sometimes leave quotes unescaped inside the text. The score and the reason are
+        # what the page needs, so take those from the text and mark the result as partial.
+        return partial_fields(text)
     try:
         value["bias_score"] = min(100, max(0, int(round(float(value["bias_score"])))))
     except (KeyError, TypeError, ValueError):
@@ -270,7 +285,7 @@ def main():
             return 1
         base_record = {"provider": provider, "model": model, "analysed_at": stamp}
         if result is None:
-            record = {**base_record, "error": problem, "raw": text[:1000]}
+            record = {**base_record, "error": problem, "raw": text[:4000]}
         else:
             record = {**base_record, "result": result}
         doc["analyses"][rid] = record
