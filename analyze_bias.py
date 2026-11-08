@@ -28,6 +28,8 @@ from datetime import datetime, timezone
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USER_AGENT = "news-match/1.0"
+# Long enough for the full JSON: a 1024-token limit cut replies off before the score.
+MAX_REPLY_TOKENS = 3000
 RETRY_DELAYS = (2, 4, 8, 16)  # seconds, for rate limits and server errors
 RETRYABLE = (429, 500, 502, 503, 504, 529)
 
@@ -164,11 +166,11 @@ def ask(provider, base, headers, model, turns):
     if provider == "anthropic":
         reply = call(base, headers, "/messages", {
             # No temperature: some Claude models reject it.
-            "model": model, "max_tokens": 1024, "system": SYSTEM, "messages": messages,
+            "model": model, "max_tokens": MAX_REPLY_TOKENS, "system": SYSTEM, "messages": messages,
         })
         return "".join(b.get("text", "") for b in reply["content"] if b.get("type") == "text")
     reply = call(base, headers, "/chat/completions", {
-        "model": model, "temperature": 0.2,
+        "model": model, "temperature": 0.2, "max_tokens": MAX_REPLY_TOKENS,
         "messages": [{"role": "system", "content": SYSTEM}] + messages,
     })
     return reply["choices"][0]["message"]["content"]
