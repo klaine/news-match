@@ -10,36 +10,45 @@ file in the repo root holds that domain for Pages: keep it.
   can't fetch from `file://`).
 - `404.html` sends any path that doesn't exist to `/` (Pages serves it for every 404, still with
   status 404). `python3 -m http.server` doesn't use it: open `/404.html` to try it locally.
-- `fetch_news.py` writes `rounds.json`, using only the standard library. Browsers can't read most RSS
-  feeds (no CORS), so nothing is fetched from the page. `--debug` prints each group, which is
-  how to tune it. It refuses to overwrite `rounds.json` when fewer than `MIN_ROUNDS_TO_WRITE` rounds
-  come out (exit 1), so a network outage never publishes an empty game.
+- `fetch_news.py` writes `rounds.json`, using only the standard library. Browsers can't read most
+  RSS feeds (no CORS), so nothing is fetched from the page. `--debug` prints each group, which is
+  how to tune it. It refuses to overwrite `rounds.json` when fewer than `MIN_ROUNDS_TO_WRITE`
+  rounds come out (exit 1), so a network outage never publishes an empty game.
 - `rounds.json` is generated but committed, because Pages serves it.
   `.github/workflows/refresh.yml` regenerates it every three hours (at :17) and commits it when it
   changed, which is nearly every run because it records when it was built. It isn't more often
   because GitHub's schedules are best-effort and a skipped run costs its whole interval.
   The same run also commits `archive/` and `analysis/` (below). Its steps: fetch, analyse (can
-  fail without stopping the commit), commit.
+  fail without stopping the commit), commit (rebased on the branch first, in case something landed
+  meanwhile).
 - Archive: after `rounds.json` is written, `write_archive` adds the run's standard and polarized
-  rounds to `archive/YYYY-MM.json`, keyed by round id and filed under the month first seen. A round
-  seen again only gets `last_seen` updated. A failed fetch exits before this, so it never writes.
-  Round ids change whenever a group's articles change, so one story can appear several times as its
-  group grows; the archive keeps those as separate entries. `--no-archive` skips it for test runs.
-- Bias analysis: `analyze_bias.py` sends archived rounds that have no entry in `analysis/YYYY-MM.json`
-  to an AI model. Rounds on the page now come first, then newest first, at most 20 per scheduled run (a manual run can set `analysis_limit`). The
-  provider is the repository variable `ANALYSIS_PROVIDER`: `opencode` (default, OpenCode Go at
+  rounds to `archive/YYYY-MM.json`, keyed by round id and filed under the month the story was first
+  seen. A round seen again unchanged only gets `last_seen` updated. Round ids change whenever a
+  group's articles change, so a round that shares an article with an archived round of the same
+  kind is a new version of that story: it replaces the old entry, keeps its `first_seen`, and lists
+  the replaced ids in `supersedes`. So the archive holds one entry per story, the latest version,
+  and stays small enough for the analysis page to download whole. A failed fetch exits before
+  this, so it never writes. `--no-archive` skips it for test runs.
+- Bias analysis: `analyze_bias.py` sends archived rounds that have no entry in
+  `analysis/YYYY-MM.json` to an AI model. Rounds on the page now come first, then newest first, at
+  most 20 per scheduled run (a manual run can set `analysis_limit`). A round that has left the page
+  is skipped when an id in its `supersedes` was analysed (an earlier version of the story is close
+  enough); a round on the page is analysed as shown, so a live story that grows is analysed again.
+  The provider is the repository variable `ANALYSIS_PROVIDER`: `opencode` (default, OpenCode Go at
   `https://opencode.ai/zen/go/v1`, secret `OPENCODE_API_KEY`, variable `OPENCODE_MODEL`) or
   `anthropic` (the Claude API, secret `ANTHROPIC_API_KEY`, variable `ANTHROPIC_MODEL`). With a key
   set but no model, the step lists the models that key can use and does nothing. Without the key
-  the step does nothing. Each analysis has `bias_score` (0-100: how far apart the most and least loaded framings in
-  the group are) and `score_reason` (a short text on the possible reasons). A reply that doesn't
-  parse or lacks those fields is sent back once to correct; if it still fails, it is stored as an
-  error and not retried: delete that entry to retry it. The page
-  doesn't show the analysis, because it names the outlets and would give the answers away.
-- Analysis page: `analysis.html` shows the analyses on their own, for the current edition or any archived
-  month, with sort and score-band filters. It isn't linked from the game page. It reads `rounds.json`,
-  `archive/index.json` (the months, written by `write_archive` so the page can find them),
-  `archive/YYYY-MM.json` and `analysis/YYYY-MM.json`.
+  the step does nothing. Each analysis has `bias_score` (0-100: how far apart the most and least
+  loaded framings in the group are) and `score_reason` (a short text on the possible reasons). A
+  reply that doesn't parse or lacks those fields is sent back once to correct; if it still fails,
+  it is stored as an error and not retried: delete that entry to retry it. The page doesn't show
+  the analysis, because it names the outlets and would give the answers away.
+- Analysis page: `analysis.html` shows the analyses on their own, for the current edition or any
+  archived month, with sort and score-band filters. It isn't linked from the game page. It reads
+  `rounds.json`, `archive/index.json` (the months, written by `write_archive` so the page can find
+  them), `archive/YYYY-MM.json` and `analysis/YYYY-MM.json`. A round with no analysis of its own
+  shows the one made for an id in its `supersedes`, tagged "earlier version analysed". Any
+  `[outlet]` in the model's text is rendered as a chip, like in the game.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.
@@ -67,8 +76,10 @@ file in the repo root holds that domain for Pages: keep it.
   most left-leaning outlet (ties go to the more central article; a same-wire pair moves on to the
   next pair). Most cohesive first. Standard mode plays only `rounds`, Polarized only `polarized`.
 - Round ids hash the round's URLs, so they're stable across refreshes that keep the same articles.
-  The page stores played ids (shared by both modes), the chosen `mode`, and lifetime stats in
-  `localStorage` under `news-match:v1`: `stats` for Standard, `polarStats` for Polarized.
+  The page stores played ids, the chosen `mode`, and lifetime stats in `localStorage` under
+  `news-match:v1`: `stats` for Standard, `polarStats` for Polarized. Ending a story also marks the
+  other mode's round of the same story (one sharing an article) as played, so switching modes
+  doesn't replay a story with its answers fresh in mind.
 - Check and Skip both end a story in `endRound(skipped)`. Skip is for browsing: it replaces the
   lines with the right answers in the cards' own colours and names each card's outlet, but scores
   nothing (`game.results` gets `'skip'`, and `cur.skipped` keeps the lines out of green/red). It

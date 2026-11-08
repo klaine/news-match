@@ -710,9 +710,12 @@ function endRound(skipped) {
   game.played[game.idx] = cur.arts.map((a, i) => ({ ...a, guess: skipped ? undefined : cur.links.get(i) }));
 
   const store = readStore();
-  const seen = (store.seen || []).filter((id) => id !== cur.round.id);
-  seen.push(cur.round.id);
-  store.seen = seen.slice(-400);
+  // The other mode's round of this story (it shares an article) counts as seen too, so a player
+  // who switches modes doesn't get a story they just saw, answers fresh in mind.
+  const urls = new Set(cur.arts.map((a) => a.url));
+  const ids = [cur.round.id, ...roundsFor(game.mode === 'polar' ? 'all' : 'polar')
+    .filter((r) => r.articles.some((a) => urls.has(a.url))).map((r) => r.id)];
+  store.seen = (store.seen || []).filter((id) => !ids.includes(id)).concat(ids).slice(-400);
   writeStore(store);
 
   $('board').classList.add('checked');

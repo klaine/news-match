@@ -2,7 +2,7 @@
 """Ask an AI model what the headlines and summaries of each archived story show about framing.
 Results go to analysis/YYYY-MM.json, keyed by round id.
 
-Usage: ANALYSIS_PROVIDER=opencode OPENCODE_API_KEY=... OPENCODE_MODEL=... python3 analyze_bias.py [--limit 6]
+Usage: ANALYSIS_PROVIDER=opencode OPENCODE_API_KEY=... OPENCODE_MODEL=... python3 analyze_bias.py [--limit 20]
 
 Providers (ANALYSIS_PROVIDER, default "opencode"):
   opencode   OpenCode Go, OPENCODE_API_KEY and OPENCODE_MODEL
@@ -10,9 +10,12 @@ Providers (ANALYSIS_PROVIDER, default "opencode"):
 Optional base URL overrides: OPENCODE_BASE_URL, ANTHROPIC_BASE_URL.
 
 Standard library only. Only rounds without an analysis are sent: the ones in the current
-rounds.json first, then the newest archived. At most --limit per run, so the refresh stays
-inside the plan's quota. Without a key it does nothing; without a model it lists the models the key
-can use and does nothing. Both exit 0, so the refresh is never blocked by this step.
+rounds.json first, then the newest archived. A round's id changes whenever its articles change,
+and the archive lists the ids a round replaced in `supersedes`: a round that has left the page is
+skipped when an earlier version of it was analysed, while a round on the page is analysed as it
+is shown. At most --limit per run, so the refresh stays inside the plan's quota. Without a key it
+does nothing; without a model it lists the models the key can use and does nothing. Both exit 0,
+so the refresh is never blocked by this step.
 """
 
 import argparse
@@ -215,7 +218,7 @@ def check_reply(text):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--limit", type=int, default=6, help="most rounds to analyse in one run")
+    ap.add_argument("--limit", type=int, default=20, help="most rounds to analyse in one run")
     ap.add_argument("--archive-dir", default=os.path.join(BASE_DIR, "archive"))
     ap.add_argument("--analysis-dir", default=os.path.join(BASE_DIR, "analysis"))
     ap.add_argument("--rounds", default=os.path.join(BASE_DIR, "rounds.json"))
@@ -250,7 +253,15 @@ def main():
     archive = {rid: (month, entry) for rid, month, entry in archived_rounds(args.archive_dir)}
     order = [rid for rid in live_ids if rid in archive] + [rid for rid in archive if rid not in live_ids]
     done = analysed_ids(args.analysis_dir)
-    todo = [rid for rid in order if rid not in done][: args.limit]
+
+    def needs_work(rid):
+        if rid in done:
+            return False
+        # A round on the page is analysed as shown. One that has left it is close enough to an
+        # analysed earlier version (fewer or other articles) of the same story.
+        return rid in live_ids or not any(s in done for s in archive[rid][1].get("supersedes", []))
+
+    todo = [rid for rid in order if needs_work(rid)][: args.limit]
     if not todo:
         print("nothing new to analyse")
         return 0

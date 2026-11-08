@@ -7,8 +7,10 @@ Standard library only. Each outlet's RSS/Atom feeds are fetched in parallel, cle
 stripped, outlet names masked so they can't give the answer away), and grouped by TF-IDF cosine
 similarity of title + summary. A group keeps at most one article per outlet; groups with at
 least MIN_OUTLETS outlets become game rounds of up to MAX_PER_ROUND articles, each with one
-right- and one left-leaning outlet where the group has them (LEAN). Groups with both a right- and a left-leaning outlet also give polarized rounds of two articles, the most extreme on each side. If too few rounds come out (feeds down, network
-gone), the existing rounds.json is left untouched and the script exits with status 1.
+right- and one left-leaning outlet where the group has them (LEAN). Groups with both a right- and
+a left-leaning outlet also give polarized rounds of two articles, the most extreme on each side.
+If too few rounds come out (feeds down, network gone), the existing rounds.json is left untouched
+and the script exits with status 1.
 """
 
 import argparse
@@ -568,31 +570,48 @@ ARCHIVE_DIR = os.path.join(BASE_DIR, "archive")
 
 
 def write_archive(archive_dir, rounds, polarized, now):
-    """Add this run's rounds to the monthly archive, archive/YYYY-MM.json. A round is kept once,
-    in the file of the month it was first seen; seeing it again only updates its last_seen. Each
-    file is keyed by round id, so a git diff shows just the rounds that were added. Returns the
-    files that changed."""
+    """Add this run's rounds to the monthly archive, archive/YYYY-MM.json, keyed by round id and
+    filed under the month the story was first seen. A round's id changes whenever its articles
+    change, so a round that shares an article with an archived round of the same kind is a new
+    version of that story: it replaces the old entry (or entries), keeps the earliest first_seen,
+    and lists the replaced ids in `supersedes`, so an analysis made for an earlier version can
+    still be found. A round seen again unchanged only gets its last_seen updated. Each file is
+    keyed by round id, so a git diff shows just the rounds that changed. Returns the months whose
+    files changed."""
     os.makedirs(archive_dir, exist_ok=True)
-    months, where = {}, {}  # month -> file contents; round id -> month it lives in
+    months = {}  # month -> file contents
     for name in sorted(os.listdir(archive_dir)):
         if re.fullmatch(r"\d{4}-\d{2}\.json", name):
             with open(os.path.join(archive_dir, name), encoding="utf-8") as f:
                 doc = json.load(f)
             months[doc["month"]] = doc
-            where.update((rid, doc["month"]) for rid in doc["rounds"])
+
+    def month_of(rid):
+        return next((m for m, doc in months.items() if rid in doc["rounds"]), None)
 
     stamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     touched = set()
     for kind, items in (("all", rounds), ("polar", polarized)):
         for r in items:
-            month = where.get(r["id"])
-            if month is None:
-                month = now.strftime("%Y-%m")
-                doc = months.setdefault(month, {"month": month, "rounds": {}})
-                doc["rounds"][r["id"]] = {**r, "kind": kind, "first_seen": stamp, "last_seen": stamp}
-                where[r["id"]] = month
-            else:
+            month = month_of(r["id"])
+            if month is not None:
                 months[month]["rounds"][r["id"]]["last_seen"] = stamp
+                touched.add(month)
+                continue
+            urls = {a["url"] for a in r["articles"]}
+            entry = {**r, "kind": kind, "first_seen": stamp, "last_seen": stamp}
+            superseded = []
+            for m, doc in months.items():
+                for rid, old in list(doc["rounds"].items()):
+                    if old["kind"] == kind and any(a["url"] in urls for a in old["articles"]):
+                        entry["first_seen"] = min(entry["first_seen"], old["first_seen"])
+                        superseded += [rid, *old.get("supersedes", [])]
+                        del doc["rounds"][rid]
+                        touched.add(m)
+            if superseded:
+                entry["supersedes"] = superseded
+            month = entry["first_seen"][:7]
+            months.setdefault(month, {"month": month, "rounds": {}})["rounds"][r["id"]] = entry
             touched.add(month)
 
     for month in sorted(touched):

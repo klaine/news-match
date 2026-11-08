@@ -201,7 +201,7 @@ footer p + p { margin-top: 4px; }
 
   <p class="count" id="count" aria-live="polite"></p>
   <ol class="rounds" id="rounds" aria-label="Analysed groups"></ol>
-  <p class="empty" id="empty" hidden>Nothing analysed matches this view yet.</p>
+  <p class="empty" id="empty" hidden>Nothing analysed matches this view yet. Groups are analysed a few at a time, so a fresh edition can take a run or two to appear here.</p>
 </main>
 
 <footer class="wrap">
@@ -238,7 +238,9 @@ function withMasks(node, text) {
   return node;
 }
 
-const state = { items: [], names: {}, byKey: {}, failed: 0, unanalysed: 0, months: [], band: null };
+// Every archived round: { id, month, entry, live, status: 'ok' | 'failed' | 'none', rec, result, earlier }.
+// `earlier` marks an analysis made for an earlier version of the story (the archive's `supersedes`).
+const state = { rounds: [], names: {}, byKey: {}, months: [], band: null };
 
 async function getJSON(url) {
   const r = await fetch(url, { cache: 'no-cache' });
@@ -284,12 +286,20 @@ async function load() {
     }
   }
 
-  for (const { m, archive, analysis } of docs) {
+  // A round that replaced earlier versions of its story may only have an analysis under one of
+  // their ids, possibly in another month's file.
+  const analyses = Object.assign({}, ...docs.map((d) => d.analysis.analyses));
+  const usable = (rec) => rec && !rec.error && rec.result && typeof rec.result.bias_score === 'number';
+  for (const { m, archive } of docs) {
     for (const [rid, entry] of Object.entries(archive.rounds)) {
-      const rec = analysis.analyses[rid];
-      if (!rec) { state.unanalysed += 1; continue; }
-      if (rec.error || !rec.result || typeof rec.result.bias_score !== 'number') { state.failed += 1; continue; }
-      state.items.push({ id: rid, month: m, entry, rec, result: rec.result, live: liveIds.has(rid) });
+      let rec = analyses[rid];
+      let earlier = false;
+      if (!usable(rec)) {
+        const old = (entry.supersedes || []).find((id) => usable(analyses[id]));
+        if (old) { rec = analyses[old]; earlier = true; }
+      }
+      const status = usable(rec) ? 'ok' : rec ? 'failed' : 'none';
+      state.rounds.push({ id: rid, month: m, entry, live: liveIds.has(rid), status, rec, result: rec && rec.result, earlier });
     }
   }
 
@@ -329,13 +339,18 @@ function buildControls() {
   });
 }
 
-function visible() {
+// The rounds the Show menu selects, analysed or not.
+function inView() {
   const source = $('source').value;
-  let items = state.items.filter((it) => {
+  return state.rounds.filter((it) => {
     if (source === 'current') return it.live;
     if (source.startsWith('month:')) return it.month === source.slice(6);
     return true;
   });
+}
+
+function visible() {
+  let items = inView().filter((it) => it.status === 'ok');
   if (state.band !== null) items = items.filter((it) => bandIndex(it.result.bias_score) === state.band);
   const sort = $('sort').value;
   const byScore = (a, b) => b.result.bias_score - a.result.bias_score;
@@ -365,7 +380,9 @@ function outletStats(items) {
     const singled = new Set();
     for (const d of it.result.differences || []) {
       const id = outletId(d.outlet);
-      if (!id) continue;
+      // Only outlets with an article in the group: an analysis made for an earlier version of
+      // the story, or a mislabelled reply, can name one that isn't there.
+      if (!id || !present.has(id)) continue;
       singled.add(id);
       const s = (stats[id] ||= { appears: 0, singled: 0, kinds: {} });
       s.kinds[d.kind || 'other'] = (s.kinds[d.kind || 'other'] || 0) + 1;
@@ -396,9 +413,12 @@ function renderOverview(items) {
       `${outletName(top.id)} is named in differences in ${top.singled} of the ${top.appears} groups it appears in, ` +
       `most often for ${Object.entries(top.kinds).sort((a, b) => b[1] - a[1])[0][0]}.`));
   }
-  if (state.failed || state.unanalysed) {
-    summary.append(el('p', 'stat-line', `${state.unanalysed} archived group${state.unanalysed === 1 ? '' : 's'} with no analysis yet` +
-      (state.failed ? `, ${state.failed} with a reply that could not be read.` : '.')));
+  const all = inView();
+  const unanalysed = all.filter((it) => it.status === 'none').length;
+  const failed = all.filter((it) => it.status === 'failed').length;
+  if (failed || unanalysed) {
+    summary.append(el('p', 'stat-line', `${unanalysed} group${unanalysed === 1 ? '' : 's'} with no analysis yet` +
+      (failed ? `, ${failed} with a reply that could not be read.` : '.')));
   }
 
   const hist = el('div', 'panel hist-wrap');
@@ -409,7 +429,7 @@ function renderOverview(items) {
   const peak = Math.max(1, ...counts);
   counts.forEach((n, i) => {
     const col = el('div');
-    col.style.setProperty('--c', bandOf(i * 10).color);
+    col.style.setProperty('--c', bandOf(i * 10 + 5).color);  // the bar's middle: 20 and 21 are in different bands
     const bar = el('i');
     bar.style.height = `${(100 * n) / peak}%`;
     bar.title = `${i * 10}–${i * 10 + 9}: ${n}`;
@@ -458,6 +478,7 @@ function renderRound(it) {
   if (result.possible_bias) tags.append(el('span', 'tag', `bias: ${result.possible_bias}`));
   if (result.same_event === false) tags.append(el('span', 'tag', 'may not be one event'));
   if (result.partial) tags.append(el('span', 'tag', 'partly read'));
+  if (it.earlier) tags.append(el('span', 'tag', 'earlier version analysed'));
   body.append(meta, el('p', 'topic', (entry.topic || []).join(' · ') || 'Group ' + it.id));
   body.append(withMasks(el('p', 'reason'), result.score_reason || ''), tags);
   top.append(score, body);
@@ -477,7 +498,7 @@ function renderRound(it) {
   const more = el('details');
   more.append(el('summary', '', `What stood out (${(result.differences || []).length}) and the detail`));
   const detail = el('div', 'detail');
-  if (result.summary) detail.append(el('p', '', result.summary));
+  if (result.summary) detail.append(withMasks(el('p'), result.summary));
   if ((result.differences || []).length) {
     const h = el('div');
     h.append(el('h3', '', 'Differences'));
@@ -485,8 +506,8 @@ function renderRound(it) {
     for (const d of result.differences) {
       const li2 = el('li');
       li2.append(el('span', 'outlet', outletName(outletId(d.outlet)) || d.outlet || 'outlet'), ' ',
-        el('span', 'kind', `(${d.kind || 'other'})`), ': ', el('span', '', d.observation || ''));
-      if (d.quote) li2.append(' ', el('q', '', d.quote));
+        el('span', 'kind', `(${d.kind || 'other'})`), ': ', withMasks(el('span'), d.observation || ''));
+      if (d.quote) li2.append(' ', withMasks(el('q'), d.quote));
       ul.append(li2);
     }
     h.append(ul);
@@ -496,7 +517,7 @@ function renderRound(it) {
     const h = el('div');
     h.append(el('h3', '', 'Agreed on'));
     const ul = el('ul');
-    for (const f of result.shared_facts) ul.append(el('li', '', f));
+    for (const f of result.shared_facts) ul.append(withMasks(el('li'), String(f)));
     h.append(ul);
     detail.append(h);
   }
