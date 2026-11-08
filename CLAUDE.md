@@ -26,7 +26,7 @@ file in the repo root holds that domain for Pages: keep it.
   Round ids change whenever a group's articles change, so one story can appear several times as its
   group grows; the archive keeps those as separate entries. `--no-archive` skips it for test runs.
 - Bias analysis: `analyze_bias.py` sends archived rounds that have no entry in `analysis/YYYY-MM.json`
-  to an AI model. Rounds on the page now come first, then newest first, at most 6 per run. The
+  to an AI model. Rounds on the page now come first, then newest first, at most 20 per scheduled run (a manual run can set `analysis_limit`). The
   provider is the repository variable `ANALYSIS_PROVIDER`: `opencode` (default, OpenCode Go at
   `https://opencode.ai/zen/go/v1`, secret `OPENCODE_API_KEY`, variable `OPENCODE_MODEL`) or
   `anthropic` (the Claude API, secret `ANTHROPIC_API_KEY`, variable `ANTHROPIC_MODEL`). With a key
