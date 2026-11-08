@@ -51,17 +51,28 @@ SYSTEM = """You compare how news outlets frame the same event. You are given sev
 place where an outlet named itself; ignore it.
 
 Use only the text you are given. Look for differences in word choice, emphasis, what is left out,
-who is quoted, and loaded labels. Quote the words you rely on. Do not guess at motives, and do not
-call an outlet biased overall: say what the text shows and how strongly. If the articles may not
-be about the same event, say so.
+who is quoted, and loaded labels. Quote the words you rely on. Say what the texts show and how
+strongly. Where a reason is a guess, say "possibly" rather than stating it as fact.
 
-Reply with only one JSON object, no other text, in this shape:
+Score bias_score from 0 to 100 for how far apart the most and least loaded framings in the group
+are, judged from the texts only:
+- 0-20: the outlets describe the event in much the same tone.
+- 21-40: small differences in emphasis or wording.
+- 41-60: clear differences in word choice, emphasis or what is included.
+- 61-80: loaded language, labels or omissions that put one outlet far from the others.
+- 81-100: sharply opposed framing, such as accusations, moral labels, or claims that one
+  outlet's text contradicts another's.
+
+Reply with only one JSON object and no other text. Every string must be valid JSON: escape any
+double quote inside a string as \\" and never join quoted strings with semicolons. Shape:
 {"same_event": true or false,
  "shared_facts": ["facts all the articles agree on"],
  "differences": [{"outlet": "outlet label", "kind": "word choice | emphasis | omission | sourcing | loaded label | other",
-                  "observation": "what differs and why it matters", "quote": "the words used"}],
+                  "observation": "what differs and why it matters", "quote": "one quoted phrase"}],
  "possible_bias": "none apparent | slight | notable | unclear",
- "summary": "one or two sentences"}"""
+ "bias_score": an integer from 0 to 100,
+ "score_reason": "two or three sentences: the possible reasons for the differences (for example the outlet's audience or editorial line, sourcing, or wire copy), and which outlets, if any, seem to show strong framing, with the evidence",
+ "summary": "one sentence"}"""
 
 
 def read_json(path, default):
@@ -143,33 +154,42 @@ def list_models(provider, base, headers):
     return [m["id"] for m in call(base, headers, "/models", method="GET").get("data", [])]
 
 
-def ask(provider, base, headers, model, prompt):
-    """The model's reply as text."""
+def ask(provider, base, headers, model, turns):
+    """The model's reply as text, given the conversation so far as (role, text) turns."""
+    messages = [{"role": role, "content": text} for role, text in turns]
     if provider == "anthropic":
         reply = call(base, headers, "/messages", {
             # No temperature: some Claude models reject it.
-            "model": model, "max_tokens": 1024, "system": SYSTEM,
-            "messages": [{"role": "user", "content": prompt}],
+            "model": model, "max_tokens": 1024, "system": SYSTEM, "messages": messages,
         })
         return "".join(b.get("text", "") for b in reply["content"] if b.get("type") == "text")
     reply = call(base, headers, "/chat/completions", {
         "model": model, "temperature": 0.2,
-        "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
+        "messages": [{"role": "system", "content": SYSTEM}] + messages,
     })
     return reply["choices"][0]["message"]["content"]
 
 
-def parse_reply(text):
-    """The model's JSON object, even if it wrapped it in prose or a code fence."""
+def check_reply(text):
+    """(result, None) when the reply is the JSON object we asked for, with bias_score clamped to
+    0-100; otherwise (None, what is wrong), which is sent back to the model once."""
     text = (text or "").strip()
+    value = None
     for candidate in (text, text[text.find("{"): text.rfind("}") + 1] if "{" in text else ""):
         try:
             value = json.loads(candidate)
-            if isinstance(value, dict):
-                return value
+            break
         except ValueError:
             pass
-    return None
+    if not isinstance(value, dict):
+        return None, "the reply was not a JSON object"
+    try:
+        value["bias_score"] = min(100, max(0, int(round(float(value["bias_score"])))))
+    except (KeyError, TypeError, ValueError):
+        return None, "bias_score is missing or not a number"
+    if not isinstance(value.get("score_reason"), str) or not value["score_reason"].strip():
+        return None, "score_reason is missing"
+    return value, None
 
 
 def main():
@@ -220,8 +240,17 @@ def main():
         path = os.path.join(args.analysis_dir, f"{month}.json")
         doc = read_json(path, {"month": month, "analyses": {}})
         stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        turns = [("user", prompt_for(entry))]
         try:
-            text = ask(provider, base, headers, model, prompt_for(entry))
+            text = ask(provider, base, headers, model, turns)
+            result, problem = check_reply(text)
+            if result is None:
+                # Send it back once with what was wrong; most replies that fail are close to valid.
+                turns += [("assistant", text), ("user",
+                           f"That reply was not valid in the required shape ({problem}). "
+                           "Reply again with only the corrected JSON object.")]
+                text = ask(provider, base, headers, model, turns)
+                result, problem = check_reply(text)
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:300]
             print(f"request failed: HTTP {e.code} {detail}", file=sys.stderr)
@@ -235,15 +264,14 @@ def main():
         except (KeyError, IndexError, TypeError) as e:
             print(f"unexpected reply shape from {provider}: {e!r}", file=sys.stderr)
             return 1
-        result = parse_reply(text)
         base_record = {"provider": provider, "model": model, "analysed_at": stamp}
         if result is None:
-            record = {**base_record, "error": "reply was not a JSON object", "raw": text[:1000]}
+            record = {**base_record, "error": problem, "raw": text[:1000]}
         else:
             record = {**base_record, "result": result}
         doc["analyses"][rid] = record
         write_json(path, doc)  # save each one, so a failure later keeps the earlier work
-        print(f"  {rid}: {'ok' if result is not None else 'unparseable reply'}")
+        print(f"  {rid}: {'ok, bias_score ' + str(result['bias_score']) if result else 'failed: ' + problem}")
     return 0
 
 

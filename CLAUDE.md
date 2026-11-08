@@ -31,8 +31,10 @@ file in the repo root holds that domain for Pages: keep it.
   `https://opencode.ai/zen/go/v1`, secret `OPENCODE_API_KEY`, variable `OPENCODE_MODEL`) or
   `anthropic` (the Claude API, secret `ANTHROPIC_API_KEY`, variable `ANTHROPIC_MODEL`). With a key
   set but no model, the step lists the models that key can use and does nothing. Without the key
-  the step does nothing. Each entry records the provider, model and time. A reply that isn't a
-  JSON object is stored as an error and not retried: delete that entry to retry it. The page
+  the step does nothing. Each analysis has `bias_score` (0-100: how far apart the most and least loaded framings in
+  the group are) and `score_reason` (a short text on the possible reasons). A reply that doesn't
+  parse or lacks those fields is sent back once to correct; if it still fails, it is stored as an
+  error and not retried: delete that entry to retry it. The page
   doesn't show the analysis, because it names the outlets and would give the answers away.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
