@@ -1,8 +1,8 @@
 # News Match
 
 Same story, different newsroom. Each round shows one news event as covered by three or four
-outlets, with the outlet names hidden. Draw a line from each article to the outlet that published it:
-BBC News, Fox News, Al Jazeera, the Guardian, NPR, the Daily Mail, DW and more. Skip a story to
+outlets, with the outlet names hidden. Draw a line from each article to the outlet that published
+it: BBC News, Fox News, Al Jazeera, the Guardian, NPR, the Daily Mail, DW and more. Skip a story to
 see who wrote what without scoring it, and save any story, lines and answers included, as an image.
 
 Each article's headline and summary come from that outlet's public RSS feed and link back to the
@@ -35,8 +35,8 @@ Polarized round of just two articles, from the most right-leaning and the most l
 covering the story. Identical wire-service headlines are dropped, because no one could
 tell them apart.
 
-A GitHub Action reruns it every three hours and commits `rounds.json` when it changed. Each run also adds
-its groups to a monthly archive in `archive/`. When an AI provider key (OpenCode Go or the Claude
-API) is set as a repository secret, it also asks an AI model about the framing in new groups and
-stores the answers in `analysis/`. GitHub Pages serves `index.html` and `rounds.json` from the
-repository root.
+A GitHub Action reruns it every three hours and commits `rounds.json` when it changed. Each run
+also adds its groups to a monthly archive in `archive/`, one entry per story. When an AI provider
+key (OpenCode Go or the Claude API) is set as a repository secret, it also asks an AI model about
+the framing in new groups and stores the answers in `analysis/`. GitHub Pages serves `index.html`
+and `rounds.json` from the repository root.
