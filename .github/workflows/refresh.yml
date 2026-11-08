@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: "17 */3 * * *"   # every three hours: GitHub skips scheduled runs at times, so a skip costs three hours
   workflow_dispatch:
+    inputs:
+      analysis_limit:
+        description: "Most archived rounds to analyse in this run (scheduled runs use 6)"
+        required: false
+        default: "6"
 
 permissions:
   contents: write
@@ -26,12 +31,13 @@ jobs:
         # stop the stories from being committed, so the step may fail without failing the job.
         continue-on-error: true
         env:
+          LIMIT: ${{ inputs.analysis_limit || 6 }}
           ANALYSIS_PROVIDER: ${{ vars.ANALYSIS_PROVIDER }}  # "opencode" (default) or "anthropic"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODEL: ${{ vars.OPENCODE_MODEL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
-        run: python3 analyze_bias.py --limit 6
+        run: python3 analyze_bias.py --limit "$LIMIT"
       - name: Commit rounds, archive and analysis
         run: |
           mkdir -p archive analysis
