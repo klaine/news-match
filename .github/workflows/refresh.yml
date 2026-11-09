@@ -5,7 +5,7 @@ name: Refresh stories
 
 on:
   schedule:
-    - cron: "17 */3 * * *"   # every three hours: GitHub skips scheduled runs at times, so a skip costs three hours
+    - cron: "17 */6 * * *"   # every six hours: GitHub skips scheduled runs at times, so a skip costs six hours
   workflow_dispatch:
     inputs:
       analysis_limit:
