@@ -861,6 +861,7 @@ async function showFraming(round) {
     return;
   }
   const { result } = found.rec;
+  cur.framing = { result, earlier: found.earlier };  // for Save image
   const band = bandOf(result.bias_score);
   box.className = 'framing';
 
@@ -1072,7 +1073,11 @@ function renderStory() {
   const boardH = Math.max(cardsH, outsH);
   const top = P;
   const boardTop = top + 18 + 12 + 50 + 10 + 24 + 34;
-  const footTop = boardTop + boardH + 40;
+  // The framing analysis, when it's on the page: as shown there, its list only when open.
+  const shown = !$('framing').hidden && cur.framing;
+  const framing = shown ? layoutFraming(ctx, cur.framing, !!$('framing').querySelector('details[open]'), IMG_W - 2 * P) : null;
+  const framingTop = boardTop + boardH + 36;
+  const footTop = (framing ? framingTop + framing.h : boardTop + boardH) + 40;
   const H = footTop + 1 + 22 + 20 + P - 8;
 
   let y = boardTop;
@@ -1213,6 +1218,15 @@ function renderStory() {
     dot(outPort(o.o), color, i !== undefined);
   });
 
+  if (framing) {
+    rrect(ctx, P, framingTop, IMG_W - 2 * P, framing.h, 14);
+    shadowed(() => { ctx.fillStyle = col.surface; ctx.fill(); });
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = col.line;
+    ctx.stroke();
+    drawFraming(ctx, framing, P, framingTop, col);
+  }
+
   // Footer: where it's from and, once checked, the score.
   ctx.fillStyle = col.line;
   ctx.fillRect(P, footTop, IMG_W - 2 * P, 1);
@@ -1228,6 +1242,123 @@ function renderStory() {
     ctx.textAlign = 'left';
   }
   return canvas;
+}
+
+// The framing panel for the image, laid out as a list of things to draw at offsets from its top
+// left corner, so its height is known before the canvas is sized.
+function layoutFraming(ctx, { result, earlier }, open, W) {
+  const PAD = 26;
+  const BADGE = 104;
+  const T = {
+    label: typeface(600, 13, 18), gist: typeface(400, 17, 25), why: typeface(400, 15, 22),
+    sub: typeface(650, 16, 22), who: typeface(650, 15, 21), body: typeface(400, 15, 22), fine: typeface(400, 13, 19),
+  };
+  const ops = [];
+  const text = (str, f, x, y, w, max, color) => {
+    const lines = wrapText(ctx, String(str || ''), f, w, max);
+    ops.push({ kind: 'text', lines, f, x, y, color });
+    return lines.length * f.lh;
+  };
+  const band = bandOf(result.bias_score);
+  ops.push({ kind: 'badge', x: PAD, y: PAD, w: BADGE, h: 92, color: band.color, score: result.bias_score, name: band.name });
+
+  const tx = PAD + BADGE + 22;
+  const tw = W - tx - PAD;
+  let y = PAD;
+  ops.push({ kind: 'label', str: 'HOW THEY FRAMED IT', f: T.label, x: tx, y });
+  y += T.label.lh + 6;
+  if (result.summary) y += text(result.summary, T.gist, tx, y, tw, 6, 'text') + 8;
+  if (result.score_reason) y += text(result.score_reason, T.why, tx, y, tw, 9, 'muted');
+  if (earlier) {
+    y += 8;
+    ops.push({ kind: 'label', str: 'Analysed from an earlier version of this story', f: T.fine, x: tx, y, plain: true });
+    y += T.fine.lh;
+  }
+  y = Math.max(y, PAD + 92) + 18;
+
+  const diffs = result.differences || [];
+  const facts = result.shared_facts || [];
+  const fw = W - 2 * PAD;
+  if (open && (diffs.length || facts.length)) {
+    ops.push({ kind: 'rule', x: PAD, y, w: fw });
+    y += 16;
+    if (diffs.length) {
+      ops.push({ kind: 'sub', str: `What stood out (${diffs.length})`, f: T.sub, x: PAD, y });
+      y += T.sub.lh + 8;
+      for (const d of diffs) {
+        ops.push({ kind: 'who', str: labelOutlet(d.outlet), kindStr: ` (${d.kind || 'other'})`, f: T.who, x: PAD, y });
+        y += T.who.lh;
+        const quote = String(d.quote || '').trim().replace(/^["“”]+|["“”]+$/g, '');
+        y += text(`${d.observation || ''}${quote ? ` “${quote}”` : ''}`, T.body, PAD, y, fw, 7, 'text') + 10;
+      }
+    }
+    if (facts.length) {
+      if (diffs.length) y += 4;
+      ops.push({ kind: 'label', str: 'AGREED ON', f: T.label, x: PAD, y });
+      y += T.label.lh + 6;
+      for (const f of facts) {
+        ops.push({ kind: 'bullet', x: PAD + 4, y: y + T.body.lh / 2 });
+        y += text(f, T.body, PAD + 18, y, fw - 18, 4, 'text') + 4;
+      }
+    }
+    y += 10;
+  }
+  y += text('Written by an AI model from these headlines and summaries alone, not checked by a person. ' +
+    'A high score means the framings differ, not which one is right.', T.fine, PAD, y, fw, 3, 'muted');
+  return { ops, h: y + PAD - 4 };
+}
+
+function drawFraming(ctx, layout, x0, y0, col) {
+  const css = getComputedStyle(document.documentElement);
+  const resolve = (c) => c.replace(/var\((--[\w-]+)\)/, (_, n) => css.getPropertyValue(n).trim());
+  const spaced = (px) => { if ('letterSpacing' in ctx) ctx.letterSpacing = `${px}px`; };
+  ctx.textBaseline = 'middle';
+  for (const op of layout.ops) {
+    const x = x0 + op.x;
+    const y = y0 + op.y;
+    if (op.kind === 'badge') {
+      rrect(ctx, x, y, op.w, op.h, 12);
+      ctx.fillStyle = resolve(op.color);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.font = typeface(750, 36, 40).font;
+      ctx.fillText(String(op.score), x + op.w / 2, y + 32);
+      ctx.font = typeface(650, 12, 16).font;
+      const words = op.name.split(' ');
+      const lines = words.length > 1 ? [words[0], words.slice(1).join(' ')] : words;
+      lines.forEach((l, n) => ctx.fillText(l, x + op.w / 2, y + 62 + n * 15));
+      ctx.textAlign = 'left';
+    } else if (op.kind === 'text') {
+      drawText(ctx, op.lines, op.f, x, y, op.color === 'muted' ? col.muted : col.text, col);
+    } else if (op.kind === 'label') {
+      if (!op.plain) spaced(1);
+      ctx.font = op.f.font;
+      ctx.fillStyle = col.muted;
+      ctx.fillText(op.str, x, y + op.f.lh / 2);
+      spaced(0);
+    } else if (op.kind === 'sub') {
+      ctx.font = op.f.font;
+      ctx.fillStyle = col.text;
+      ctx.fillText(op.str, x, y + op.f.lh / 2);
+    } else if (op.kind === 'who') {
+      ctx.font = op.f.font;
+      ctx.fillStyle = col.text;
+      ctx.fillText(op.str, x, y + op.f.lh / 2);
+      const w = ctx.measureText(op.str).width;
+      ctx.font = typeface(400, 13, 21).font;
+      ctx.fillStyle = col.muted;
+      ctx.fillText(op.kindStr, x + w, y + op.f.lh / 2);
+    } else if (op.kind === 'rule') {
+      ctx.fillStyle = col.line;
+      ctx.fillRect(x, y, op.w, 1);
+    } else if (op.kind === 'bullet') {
+      ctx.beginPath();
+      ctx.arc(x + 3, y, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = col.muted;
+      ctx.fill();
+    }
+  }
 }
 
 // A JPEG of the story. Touch devices get the share sheet (which can save to Photos), others a
