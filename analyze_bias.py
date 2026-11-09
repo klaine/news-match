@@ -6,7 +6,8 @@ Usage: ANALYSIS_PROVIDER=opencode OPENCODE_API_KEY=... OPENCODE_MODEL=... python
 
 Providers (ANALYSIS_PROVIDER, default "opencode"):
   opencode   OpenCode Go, OPENCODE_API_KEY and OPENCODE_MODEL
-  anthropic  the Claude API, ANTHROPIC_API_KEY and ANTHROPIC_MODEL
+  anthropic  the Claude API, ANTHROPIC_API_KEY and ANTHROPIC_MODEL; optional ANTHROPIC_EFFORT
+             (low, medium, high, xhigh or max; unset leaves the model's default)
 Optional base URL overrides: OPENCODE_BASE_URL, ANTHROPIC_BASE_URL.
 
 Standard library only. Only rounds without an analysis are sent: the ones in the current
@@ -31,8 +32,11 @@ from datetime import datetime, timezone
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USER_AGENT = "news-match/1.0"
-# Long enough for the full JSON: a 1024-token limit cut replies off before the score.
-MAX_REPLY_TOKENS = 3000
+# Long enough for the full JSON: a 1024-token limit cut replies off before the score. Claude's
+# thinking counts against it too, and more of it at a higher effort.
+MAX_REPLY_TOKENS = 6000
+EFFORTS = ("low", "medium", "high", "xhigh", "max")
+SCALE = 10  # bias_score runs from 0 to SCALE; each record says so in "scale"
 RETRY_DELAYS = (2, 4, 8, 16)  # seconds, for rate limits and server errors
 RETRYABLE = (429, 500, 502, 503, 504, 529)
 
@@ -59,13 +63,13 @@ Use only the text you are given. Look for differences in word choice, emphasis, 
 who is quoted, and loaded labels. Quote the words you rely on. Say what the texts show and how
 strongly. Where a reason is a guess, say "possibly" rather than stating it as fact.
 
-Score bias_score from 0 to 100 for how far apart the most and least loaded framings in the group
+Score bias_score from 0 to 10 for how far apart the most and least loaded framings in the group
 are, judged from the texts only:
-- 0-20: the outlets describe the event in much the same tone.
-- 21-40: small differences in emphasis or wording.
-- 41-60: clear differences in word choice, emphasis or what is included.
-- 61-80: loaded language, labels or omissions that put one outlet far from the others.
-- 81-100: sharply opposed framing, such as accusations, moral labels, or claims that one
+- 0-2: the outlets describe the event in much the same tone.
+- 3-4: small differences in emphasis or wording.
+- 5-6: clear differences in word choice, emphasis or what is included.
+- 7-8: loaded language, labels or omissions that put one outlet far from the others.
+- 9-10: sharply opposed framing, such as accusations, moral labels, or claims that one
   outlet's text contradicts another's.
 
 Reply with only one JSON object and no other text. Every string must be valid JSON: escape any
@@ -75,7 +79,7 @@ double quote inside a string as \\" and never join quoted strings with semicolon
  "differences": [{"outlet": "outlet label", "kind": "word choice | emphasis | omission | sourcing | loaded label | other",
                   "observation": "what differs and why it matters", "quote": "one quoted phrase"}],
  "possible_bias": "none apparent | slight | notable | unclear",
- "bias_score": an integer from 0 to 100,
+ "bias_score": an integer from 0 to 10,
  "score_reason": "two or three sentences: the possible reasons for the differences (for example the outlet's audience or editorial line, sourcing, or wire copy), and which outlets, if any, seem to show strong framing, with the evidence",
  "summary": "one sentence"}"""
 
@@ -163,20 +167,64 @@ def list_models(provider, base, headers):
     return [m["id"] for m in call(base, headers, "/models", method="GET").get("data", [])]
 
 
-def ask(provider, base, headers, model, turns):
-    """The model's reply as text, given the conversation so far as (role, text) turns."""
+def ask(provider, base, headers, model, turns, effort=""):
+    """The model's reply as text, given the conversation so far as (role, text) turns. effort is
+    sent to Claude only when set."""
     messages = [{"role": role, "content": text} for role, text in turns]
     if provider == "anthropic":
-        reply = call(base, headers, "/messages", {
+        body = {
             # No temperature: some Claude models reject it.
             "model": model, "max_tokens": MAX_REPLY_TOKENS, "system": SYSTEM, "messages": messages,
-        })
+        }
+        if effort:
+            body["output_config"] = {"effort": effort}
+        reply = call(base, headers, "/messages", body)
         return "".join(b.get("text", "") for b in reply["content"] if b.get("type") == "text")
     reply = call(base, headers, "/chat/completions", {
         "model": model, "temperature": 0.2, "max_tokens": MAX_REPLY_TOKENS,
         "messages": [{"role": "system", "content": SYSTEM}] + messages,
     })
     return reply["choices"][0]["message"]["content"]
+
+
+def read_score(raw):
+    """bias_score as an integer from 0 to 10. Raises ValueError, with what to tell the model, for
+    anything else, such as a score on the old 0-100 scale."""
+    try:
+        score = float(raw)
+    except (TypeError, ValueError):
+        raise ValueError("bias_score is missing or not a number")
+    if not 0 <= score <= SCALE:
+        raise ValueError(f"bias_score must be from 0 to {SCALE}")
+    return int(score + 0.5)
+
+
+def migrate_scores(analysis_dir):
+    """Rescale analyses scored 0-100 (before the scale became 0-10) to 0-10, rounded to the
+    nearest integer, halves up, keeping the old score as bias_score_100. Run on every run, so an
+    analysis that a run of an older script adds is converted by the next one."""
+    if not os.path.isdir(analysis_dir):
+        return 0
+    changed = 0
+    for name in sorted(os.listdir(analysis_dir)):
+        if not re.fullmatch(r"\d{4}-\d{2}\.json", name):
+            continue
+        path = os.path.join(analysis_dir, name)
+        doc = read_json(path, {"analyses": {}})
+        n = 0
+        for rec in doc["analyses"].values():
+            result = rec.get("result")
+            if rec.get("scale") == SCALE or not isinstance(result, dict) \
+                    or not isinstance(result.get("bias_score"), (int, float)):
+                continue
+            result["bias_score_100"] = result["bias_score"]
+            result["bias_score"] = int(result["bias_score"] / 10 + 0.5)
+            rec["scale"] = SCALE
+            n += 1
+        if n:
+            write_json(path, doc)
+            changed += n
+    return changed
 
 
 def partial_fields(text):
@@ -187,14 +235,18 @@ def partial_fields(text):
         return None, "the reply was not a JSON object and has no bias_score"
     if not reason or not reason.group(1).strip():
         return None, "the reply was not a JSON object and has no score_reason"
-    value = {"bias_score": min(100, max(0, int(round(float(score.group(1)))))),
+    try:
+        bias = read_score(score.group(1))
+    except ValueError as e:
+        return None, str(e)
+    value = {"bias_score": bias,
              "score_reason": reason.group(1).replace('\\"', '"').strip(), "partial": True}
     return value, None
 
 
 def check_reply(text):
-    """(result, None) when the reply is the JSON object we asked for, with bias_score clamped to
-    0-100; otherwise (None, what is wrong), which is sent back to the model once."""
+    """(result, None) when the reply is the JSON object we asked for, with bias_score an integer
+    from 0 to 10; otherwise (None, what is wrong), which is sent back to the model once."""
     text = (text or "").strip()
     value = None
     for candidate in (text, text[text.find("{"): text.rfind("}") + 1] if "{" in text else ""):
@@ -208,9 +260,9 @@ def check_reply(text):
         # what the page needs, so take those from the text and mark the result as partial.
         return partial_fields(text)
     try:
-        value["bias_score"] = min(100, max(0, int(round(float(value["bias_score"])))))
-    except (KeyError, TypeError, ValueError):
-        return None, "bias_score is missing or not a number"
+        value["bias_score"] = read_score(value.get("bias_score"))
+    except ValueError as e:
+        return None, str(e)
     if not isinstance(value.get("score_reason"), str) or not value["score_reason"].strip():
         return None, "score_reason is missing"
     return value, None
@@ -232,6 +284,13 @@ def main():
     key = os.environ.get(cfg["key_env"], "").strip()
     model = os.environ.get(cfg["model_env"], "").strip()
     base = os.environ.get(cfg["base_env"], cfg["base"]).rstrip("/")
+    effort = os.environ.get("ANTHROPIC_EFFORT", "").strip().lower() if provider == "anthropic" else ""
+    if effort and effort not in EFFORTS:
+        print(f"unknown ANTHROPIC_EFFORT {effort!r}; use one of: {', '.join(EFFORTS)}", file=sys.stderr)
+        return 1
+    migrated = migrate_scores(args.analysis_dir)
+    if migrated:
+        print(f"rescaled {migrated} analysis score(s) from 0-100 to 0-{SCALE}")
     if not key:
         print(f"{cfg['key_env']} is not set; skipping the bias analysis ({provider}).")
         return 0
@@ -265,7 +324,7 @@ def main():
     if not todo:
         print("nothing new to analyse")
         return 0
-    print(f"analysing {len(todo)} round(s) with {provider} / {model}")
+    print(f"analysing {len(todo)} round(s) with {provider} / {model}" + (f", effort {effort}" if effort else ""))
 
     for rid in todo:
         month, entry = archive[rid]
@@ -274,14 +333,14 @@ def main():
         stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         turns = [("user", prompt_for(entry))]
         try:
-            text = ask(provider, base, headers, model, turns)
+            text = ask(provider, base, headers, model, turns, effort)
             result, problem = check_reply(text)
             if result is None:
                 # Send it back once with what was wrong; most replies that fail are close to valid.
                 turns += [("assistant", text), ("user",
                            f"That reply was not valid in the required shape ({problem}). "
                            "Reply again with only the corrected JSON object.")]
-                text = ask(provider, base, headers, model, turns)
+                text = ask(provider, base, headers, model, turns, effort)
                 result, problem = check_reply(text)
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:300]
@@ -296,7 +355,9 @@ def main():
         except (KeyError, IndexError, TypeError) as e:
             print(f"unexpected reply shape from {provider}: {e!r}", file=sys.stderr)
             return 1
-        base_record = {"provider": provider, "model": model, "analysed_at": stamp}
+        base_record = {"provider": provider, "model": model, "analysed_at": stamp, "scale": SCALE}
+        if effort:
+            base_record["effort"] = effort
         if result is None:
             record = {**base_record, "error": problem, "raw": text[:4000]}
         else:

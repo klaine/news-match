@@ -37,6 +37,7 @@ jobs:
           OPENCODE_MODEL: ${{ vars.OPENCODE_MODEL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          ANTHROPIC_EFFORT: ${{ vars.ANTHROPIC_EFFORT }}  # optional: low, medium, high, xhigh, max
         run: python3 analyze_bias.py --limit "$LIMIT"
       - name: Commit rounds, archive and analysis
         run: |
