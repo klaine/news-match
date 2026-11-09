@@ -61,6 +61,9 @@ file in the repo root holds that domain for Pages: keep it.
   them), `archive/YYYY-MM.json` and `analysis/YYYY-MM.json`. A round with no analysis of its own
   shows the one made for an id in its `supersedes`, tagged "earlier version analysed". Any
   `[outlet]` in the model's text is rendered as a chip, like in the game.
+- Headlines are shown in capitals everywhere (cards, results, saved image), through `headline()`,
+  because some outlets capitalise every word of a title and that alone would give them away. The
+  `[outlet]` mask keeps its spelling so it still renders as a chip.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.
