@@ -102,7 +102,7 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 }
 .pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .card .pick { padding: 14px 20px 14px 16px; border-radius: 11px; }
-.card .title { display: block; font: 600 16px/1.35 Georgia, "Iowan Old Style", "Times New Roman", serif; letter-spacing: .02em; }
+.card .title { display: block; font: 700 15px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .03em; }
 .card .summary { display: block; margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--muted); }
 .mask { display: inline-block; padding: 0 5px; border-radius: 4px; background: var(--surface-2); color: var(--muted); font: 500 .82em/1.5 system-ui, sans-serif; letter-spacing: .02em; vertical-align: .08em; }
 .outlet .pick { padding: 10px 14px 10px 20px; border-radius: 999px; font-weight: 650; font-size: 14.5px; line-height: 1.25; }
@@ -214,7 +214,7 @@ summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; b
 .arts .ok .mark { color: var(--ok); }
 .arts .bad .mark { color: var(--bad); }
 .arts .skip .mark { color: var(--muted); }
-.arts .headline { font: 600 14.5px/1.4 Georgia, "Iowan Old Style", "Times New Roman", serif; letter-spacing: .02em; text-decoration: none; }
+.arts .headline { font: 700 13.5px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .03em; text-decoration: none; }
 .arts .headline:hover { text-decoration: underline; text-underline-offset: 2px; }
 .art-meta { margin-top: 3px; font-size: 13px; color: var(--muted); }
 .art-meta b { font-weight: 650; color: var(--text); }
@@ -264,7 +264,7 @@ footer p + p { margin-top: 4px; }
   .card.selected .slot { color: var(--accent); }
   .checked .slot { display: none; }
   .reveal { margin: 0 14px; font-size: 13px; }
-  .card .title { font-size: 14.5px; }
+  .card .title { font-size: 13.5px; }
   .card .summary { font-size: 13px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
   .checked .card .summary { -webkit-line-clamp: unset; }
   .dots { margin-left: 0; width: 100%; }
@@ -961,12 +961,11 @@ function renderDots() {
 const IMG_W = 1200;
 const IMG_SCALE = 2;
 const SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
-const SERIF = 'Georgia, "Iowan Old Style", "Times New Roman", serif';
 const MASK = {};  // stands for an "[outlet]" chip in laid-out text
 const coarse = window.matchMedia('(pointer: coarse)');
 
-const typeface = (weight, size, lh, family = SANS) =>
-  ({ font: `${weight} ${size}px ${family}`, mask: `500 ${Math.round(size * 0.82)}px ${SANS}`, size, lh });
+const typeface = (weight, size, lh) =>
+  ({ font: `${weight} ${size}px ${SANS}`, mask: `500 ${Math.round(size * 0.82)}px ${SANS}`, size, lh });
 
 function pageColors() {
   const s = getComputedStyle(document.documentElement);
@@ -1077,7 +1076,7 @@ function renderStory() {
   const ART_W = IMG_W - 2 * P - GAP - OUT_W;
   const T = {
     date: typeface(600, 13, 18), title: typeface(700, 44, 50), meta: typeface(500, 15, 20),
-    lede: typeface(400, 17, 24), head: typeface(600, 19, 26, SERIF), sum: typeface(400, 15, 22),
+    lede: typeface(400, 17, 24), head: typeface(700, 18, 26), sum: typeface(400, 15, 22),
     reveal: typeface(600, 15, 20), outlet: typeface(600, 16, 20), foot: typeface(600, 15, 20),
   };
 
