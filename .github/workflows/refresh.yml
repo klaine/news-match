@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       analysis_limit:
-        description: "Most archived rounds to analyse in this run (scheduled runs use 20)"
+        description: "Most archived rounds to analyse in this run (scheduled runs use 40)"
         required: false
-        default: "20"
+        default: "40"
 
 permissions:
   contents: write
@@ -31,7 +31,7 @@ jobs:
         # stop the stories from being committed, so the step may fail without failing the job.
         continue-on-error: true
         env:
-          LIMIT: ${{ inputs.analysis_limit || 20 }}
+          LIMIT: ${{ inputs.analysis_limit || 40 }}
           ANALYSIS_PROVIDER: ${{ vars.ANALYSIS_PROVIDER }}  # "opencode" (default) or "anthropic"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODEL: ${{ vars.OPENCODE_MODEL }}

@@ -2,7 +2,7 @@
 """Ask an AI model what the headlines and summaries of each archived story show about framing.
 Results go to analysis/YYYY-MM.json, keyed by round id.
 
-Usage: ANALYSIS_PROVIDER=opencode OPENCODE_API_KEY=... OPENCODE_MODEL=... python3 analyze_bias.py [--limit 20]
+Usage: ANALYSIS_PROVIDER=opencode OPENCODE_API_KEY=... OPENCODE_MODEL=... python3 analyze_bias.py [--limit 40]
 
 Providers (ANALYSIS_PROVIDER, default "opencode"):
   opencode   OpenCode Go, OPENCODE_API_KEY and OPENCODE_MODEL
@@ -218,7 +218,7 @@ def check_reply(text):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--limit", type=int, default=20, help="most rounds to analyse in one run")
+    ap.add_argument("--limit", type=int, default=40, help="most rounds to analyse in one run")
     ap.add_argument("--archive-dir", default=os.path.join(BASE_DIR, "archive"))
     ap.add_argument("--analysis-dir", default=os.path.join(BASE_DIR, "analysis"))
     ap.add_argument("--rounds", default=os.path.join(BASE_DIR, "rounds.json"))

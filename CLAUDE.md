@@ -31,7 +31,7 @@ file in the repo root holds that domain for Pages: keep it.
   this, so it never writes. `--no-archive` skips it for test runs.
 - Bias analysis: `analyze_bias.py` sends archived rounds that have no entry in
   `analysis/YYYY-MM.json` to an AI model. Rounds on the page now come first, then newest first, at
-  most 20 per scheduled run (a manual run can set `analysis_limit`). A round that has left the page
+  most 40 per scheduled run (a manual run can set `analysis_limit`). A round that has left the page
   is skipped when an id in its `supersedes` was analysed (an earlier version of the story is close
   enough); a round on the page is analysed as shown, so a live story that grows is analysed again.
   The provider is the repository variable `ANALYSIS_PROVIDER`: `opencode` (default, OpenCode Go at
