@@ -49,7 +49,10 @@ file in the repo root holds that domain for Pages: keep it.
   reply that doesn't parse or lacks those fields is sent back once to correct; if it still fails,
   it is stored as an error and not retried: delete that entry to retry it. The game shows a
   story's analysis (`showFraming`, the `#framing` panel under the board) only once it is checked
-  or skipped, because it names the outlets and would give the answers away. Both pages, and the
+  or skipped, because it names the outlets and would give the answers away. In its "What
+  stood out" list each difference names the outlet with a dot in that article's card colour
+  (`articleByLabel`), the kind as a label pill, and the quote on its own line; the fine print and
+  the model tags make a footer. Both pages, and the
   saved image, label an analysis with the model that made it (`analysedBy`, from the record's
   `model` and `effort`). It loads
   `archive/index.json` and the newest two months' `analysis/` and `archive/` files once, a moment
@@ -61,6 +64,14 @@ file in the repo root holds that domain for Pages: keep it.
   them), `archive/YYYY-MM.json` and `analysis/YYYY-MM.json`. A round with no analysis of its own
   shows the one made for an id in its `supersedes`, tagged "earlier version analysed". Any
   `[outlet]` in the model's text is rendered as a chip, like in the game.
+- Headlines are shown in capitals everywhere (cards, results, saved image), through `headline()`,
+  because some outlets capitalise every word of a title and that alone would give them away. The
+  `[outlet]` mask keeps its spelling so it still renders as a chip.
+- Light and dark: both pages key their dark colours on `data-theme` on the root, set by a small
+  script in `<head>` before the first paint from `theme` in the store (shared by both pages) or,
+  unset, the system setting. The round sun/moon button in the header corner (`#theme`) flips it
+  and saves it. There is no `prefers-color-scheme` block in the CSS: the script is the one place
+  that decides.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.
