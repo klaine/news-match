@@ -179,7 +179,7 @@ summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; b
 .framing ul { margin: 8px 0 4px; padding-left: 18px; }
 .framing li + li { margin-top: 6px; }
 .framing .who { font-weight: 650; }
-.framing .kind { color: var(--muted); font-size: 12.5px; }
+.framing .kind { display: inline-block; margin-right: 2px; padding: 0 7px; border-radius: 999px; background: var(--surface-2); font: 600 11px/18px system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); vertical-align: .1em; white-space: nowrap; }
 .framing .fine { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
 .framing.empty { padding: 12px 20px; font-size: 14px; color: var(--muted); }
 @media (max-width: 640px) {
@@ -914,7 +914,7 @@ async function showFraming(round) {
       const ul = el('ul');
       for (const d of diffs) {
         const li = el('li');
-        li.append(el('span', 'who', labelOutlet(d.outlet)), ' ', el('span', 'kind', `(${d.kind || 'other'})`), ': ',
+        li.append(el('span', 'kind', d.kind || 'other'), ' ', el('span', 'who', labelOutlet(d.outlet)), ': ',
           masked('span', '', d.observation));
         const quote = String(d.quote || '').trim().replace(/^["“”]+|["“”]+$/g, '');  // <q> adds its own marks
         if (quote) li.append(' ', masked('q', '', quote));
@@ -1316,7 +1316,7 @@ function layoutFraming(ctx, { result, earlier, by }, open, W) {
       ops.push({ kind: 'sub', str: `What stood out (${diffs.length})`, f: T.sub, x: PAD, y });
       y += T.sub.lh + 8;
       for (const d of diffs) {
-        ops.push({ kind: 'who', str: labelOutlet(d.outlet), kindStr: ` (${d.kind || 'other'})`, f: T.who, x: PAD, y });
+        ops.push({ kind: 'who', str: `${labelOutlet(d.outlet)}:`, label: (d.kind || 'other').toUpperCase(), f: T.who, x: PAD, y });
         y += T.who.lh;
         const quote = String(d.quote || '').trim().replace(/^["“”]+|["“”]+$/g, '');
         y += text(`${d.observation || ''}${quote ? ` “${quote}”` : ''}`, T.body, PAD, y, fw, 7, 'text') + 10;
@@ -1372,13 +1372,19 @@ function drawFraming(ctx, layout, x0, y0, col) {
       ctx.fillStyle = col.text;
       ctx.fillText(op.str, x, y + op.f.lh / 2);
     } else if (op.kind === 'who') {
+      // The kind of difference as a label pill, like .framing .kind, then the outlet.
+      ctx.font = typeface(600, 11, 18).font;
+      spaced(0.55);
+      const lw = ctx.measureText(op.label).width + 14;
+      rrect(ctx, x, y + 1, lw, 18, 9);
+      ctx.fillStyle = col.surface2;
+      ctx.fill();
+      ctx.fillStyle = col.muted;
+      ctx.fillText(op.label, x + 7, y + 10.5);
+      spaced(0);
       ctx.font = op.f.font;
       ctx.fillStyle = col.text;
-      ctx.fillText(op.str, x, y + op.f.lh / 2);
-      const w = ctx.measureText(op.str).width;
-      ctx.font = typeface(400, 13, 21).font;
-      ctx.fillStyle = col.muted;
-      ctx.fillText(op.kindStr, x + w, y + op.f.lh / 2);
+      ctx.fillText(op.str, x + lw + 6, y + op.f.lh / 2);
     } else if (op.kind === 'rule') {
       ctx.fillStyle = col.line;
       ctx.fillRect(x, y, op.w, 1);
