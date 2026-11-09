@@ -998,7 +998,12 @@ async function showFraming(round) {
     box.append(more);
   }
   const foot = el('div', 'foot');
-  foot.append(el('p', 'fine', 'Written by an AI model from these headlines and summaries alone, not checked by a person. A high score means the framings differ, not which one is right.'));
+  const fine = el('p', 'fine', 'Written by an AI model from these headlines and summaries alone, not checked by a person. A high score means the framings differ, not which one is right. ');
+  // The analysis page names every outlet, so it is only linked once the story is over.
+  const all = el('a', '', 'Compare every analysed story');
+  all.href = `analysis.html#round=${encodeURIComponent(round.id)}`;
+  fine.append(all);
+  foot.append(fine);
   if (found.earlier) foot.append(el('span', 'tag', 'Analysed from an earlier version of this story'));
   if (by) foot.append(el('span', 'tag', by));
   box.append(foot);

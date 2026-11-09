@@ -622,10 +622,14 @@ def write_archive(archive_dir, rounds, polarized, now):
                       f, ensure_ascii=False, indent=1)
             f.write("\n")
         os.replace(tmp, path)
-    # The months, for pages that can't list the folder (analysis.html).
+    # The months, for pages that can't list the folder (analysis.html), and every outlet's name
+    # and lean, so the analysis page can label archived rounds whose outlets have left the
+    # current edition.
     index = os.path.join(archive_dir, "index.json")
     with open(index + ".tmp", "w", encoding="utf-8") as f:
-        json.dump({"months": sorted(months)}, f, indent=1)
+        json.dump({"months": sorted(months),
+                   "outlets": {o[0]: {"name": o[1], "lean": LEAN.get(o[0], 0)} for o in OUTLETS}},
+                  f, indent=1)
         f.write("\n")
     os.replace(index + ".tmp", index)
     return sorted(touched)
@@ -703,7 +707,7 @@ def main():
     used = {a["outlet"] for r in rounds + polarized for a in r["articles"]}
     doc = {
         "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "outlets": {o[0]: {"name": o[1]} for o in OUTLETS if o[0] in used},
+        "outlets": {o[0]: {"name": o[1], "lean": LEAN.get(o[0], 0)} for o in OUTLETS if o[0] in used},
         "rounds": rounds,
         "polarized": polarized,
     }

@@ -29,12 +29,14 @@
   --ok: #2f9e44;
   --bad: #e03131;
   --b0: #2f9e44; --b1: #1c7ed6; --b2: #a87b00; --b3: #e8590c; --b4: #e03131;
+  /* One colour per kind of difference, for the phrases highlighted in the texts. */
+  --k-word: #d9480f; --k-emph: #1c7ed6; --k-omit: #2b8a3e; --k-src: #7048e8; --k-label: #c2255c; --k-other: #868e96;
   --shadow: 0 1px 2px rgb(0 0 0 / .05), 0 8px 28px rgb(0 0 0 / .06);
   color-scheme: light;
 }
 /* Dark colours, keyed on data-theme like the game page: set by the script in <head>. */
 :root[data-theme="dark"] {
-    --bg: #111110;
+  --bg: #111110;
   --surface: #1a1a19;
   --surface-2: #242422;
   --text: #edebe7;
@@ -44,17 +46,19 @@
   --ok: #51cf66;
   --bad: #ff6b6b;
   --b0: #51cf66; --b1: #4dabf7; --b2: #fcc419; --b3: #ff8a4c; --b4: #ff6b6b;
+  --k-word: #f76707; --k-emph: #339af0; --k-omit: #37b24d; --k-src: #9775fa; --k-label: #e64980; --k-other: #adb5bd;
   --shadow: none;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 a { color: inherit; }
 p, h1, h2, h3, ul, ol, figure { margin: 0; }
-button, select { font: inherit; color: inherit; }
+button, select, input { font: inherit; color: inherit; }
 .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
 
 .disclaimer { margin-top: 22px; padding: 12px 16px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); font-size: 14px; line-height: 1.5; }
@@ -91,19 +95,37 @@ h1 { font-size: clamp(28px, 4.5vw, 42px); line-height: 1.08; letter-spacing: -.0
 .lede { margin-top: 10px; max-width: 66ch; font-size: 16px; color: var(--muted); }
 .caveat { margin-top: 12px; max-width: 66ch; font-size: 13.5px; color: var(--muted); border-left: 3px solid var(--line); padding-left: 12px; }
 
-.controls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: end; margin: 8px 0 18px; }
+/* Controls: menus and a search box on one row, then chip rows that show how many groups each
+   choice would leave. On wide screens the menu row sticks to the top while the rest scrolls. */
+.controls { display: grid; gap: 10px; margin: 8px 0 18px; }
+.controls-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; }
+@media (min-width: 761px) {
+  .controls-row { position: sticky; top: 0; z-index: 5; margin: 0 -16px; padding: 10px 16px 12px; background: var(--bg); border-bottom: 1px solid var(--line); }
+}
 .field { display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
-select { padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); font-size: 14.5px; font-weight: 500; text-transform: none; letter-spacing: 0; }
-.bands { display: flex; flex-wrap: wrap; gap: 6px; }
-.band-chip { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 13px; font-weight: 600; cursor: pointer; }
+select, input[type="search"] { padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); font-size: 14.5px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+select { padding-right: 34px; }
+input[type="search"] { min-width: 150px; width: 100%; -webkit-appearance: none; appearance: none; }
+input[type="search"]::placeholder { color: var(--muted); font-weight: 400; }
+.field.grow { flex: 1 1 150px; max-width: 320px; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.seg button { padding: 8px 12px; border: 0; background: none; font-size: 13.5px; font-weight: 600; cursor: pointer; text-transform: none; letter-spacing: 0; color: var(--muted); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+.bands, .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.band-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 13px; font-weight: 600; cursor: pointer; text-transform: none; letter-spacing: 0; color: var(--text); }
 .band-chip[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
-.band-chip:focus-visible, select:focus-visible, details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.band-chip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: var(--c); vertical-align: 1px; }
+.band-chip:disabled { opacity: .45; cursor: default; }
+.band-chip .n { font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+.band-chip:focus-visible, .seg button:focus-visible, select:focus-visible, input:focus-visible, details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.band-chip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
 
-.overview { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; margin-bottom: 18px; }
+.overview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
 @media (max-width: 760px) { .overview { grid-template-columns: 1fr; } }
-.panel { padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
+.panel { padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); min-width: 0; }
+.panel.wide { grid-column: 1 / -1; }
 .panel h2 { font-size: 12.5px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.panel .note { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
 .stat-line { font-size: 15px; }
 .stat-line + .stat-line { margin-top: 8px; }
 .stat-line b { font-weight: 700; }
@@ -112,16 +134,26 @@ select { padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radiu
 .hist i { display: block; width: 100%; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--c); }
 .hist span { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .hist-wrap { padding-bottom: 22px; }
+/* The trend: one bar per day or week, as tall as that period's median spread, labelled with it. */
+.trend { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(34px, 96px); justify-content: start; gap: 6px; align-items: end; height: 150px; margin-top: 26px; padding-bottom: 34px; overflow-x: auto; }
+.trend div { position: relative; height: 100%; display: flex; align-items: end; }
+.trend i { display: block; position: relative; width: 100%; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--c); }
+.trend em { position: absolute; bottom: calc(100% + 4px); left: 0; right: 0; text-align: center; font: 600 12px/1 system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+.trend span { position: absolute; bottom: -34px; left: 0; right: 0; text-align: center; font-size: 11px; line-height: 1.3; color: var(--muted); font-variant-numeric: tabular-nums; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th, td { padding: 7px 6px; text-align: left; border-bottom: 1px solid var(--line); }
+th, td { padding: 7px 6px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-size: 11.5px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
-td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-.meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; min-width: 60px; }
-.meter i { display: block; height: 100%; background: var(--accent); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.kinds { font-size: 12.5px; color: var(--muted); }
+.meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; min-width: 60px; margin-top: 7px; }
+.meter i { display: block; height: 100%; background: var(--c, var(--accent)); }
 
-.count { margin: 4px 0 12px; font-size: 14px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 10px; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 14px; height: 9px; margin-right: 5px; border-bottom: 2px solid var(--k); background: color-mix(in srgb, var(--k) 20%, transparent); vertical-align: -1px; }
+.count { margin: 4px 0 8px; font-size: 14px; color: var(--muted); }
 .rounds { list-style: none; padding: 0; display: grid; gap: 14px; }
 .round { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+.round.target { outline: 2px solid var(--accent); outline-offset: 2px; }
 .round-top { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; padding: 16px 18px 14px; }
 @media (max-width: 560px) { .round-top { grid-template-columns: 1fr; } }
 .score { border-radius: 12px; padding: 10px 8px; text-align: center; color: #fff; background: var(--c); align-self: start; }
@@ -131,13 +163,21 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .topic { font: 600 17px/1.3 Georgia, "Iowan Old Style", "Times New Roman", serif; margin-top: 3px; }
 .reason { margin-top: 8px; font-size: 14.5px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; font-size: 12px; }
-.tag { padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font-weight: 600; }
+.tag { padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font-weight: 600; text-decoration: none; }
 .tag.live { background: var(--accent); color: #fff; }
-.articles { list-style: none; padding: 0 18px 14px; display: grid; gap: 4px; font-size: 14px; }
+a.tag:hover { color: var(--text); }
+.articles { list-style: none; padding: 0 18px 14px; display: grid; gap: 10px; font-size: 14px; }
 .articles li { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; }
+@media (max-width: 560px) { .articles li { grid-template-columns: 1fr; gap: 2px; } }
 .articles .who { font-weight: 650; color: var(--muted); font-size: 13px; padding-top: 1px; }
-.articles a { text-decoration: none; }
+.side { display: inline-block; margin-left: 5px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--line); font-size: 10.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); vertical-align: 1px; }
+.articles a { text-decoration: none; font-weight: 550; }
 .articles a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.articles .sum { margin-top: 2px; font-size: 13.5px; color: var(--muted); }
+.articles .when { margin-left: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+mark.hl { color: inherit; background: color-mix(in srgb, var(--k) 18%, transparent); border-bottom: 2px solid var(--k); border-radius: 2px; padding: 0 1px; cursor: help; }
+.k-word { --k: var(--k-word); } .k-emph { --k: var(--k-emph); } .k-omit { --k: var(--k-omit); }
+.k-src { --k: var(--k-src); } .k-label { --k: var(--k-label); } .k-other { --k: var(--k-other); }
 .mask { display: inline-block; padding: 0 5px; border-radius: 4px; background: var(--surface-2); color: var(--muted); font: 500 .82em/1.5 system-ui, sans-serif; vertical-align: .08em; }
 details { border-top: 1px solid var(--line); }
 details summary { padding: 10px 18px; font-size: 13.5px; font-weight: 650; color: var(--text); }
@@ -163,7 +203,26 @@ summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; b
 .detail ul { padding-left: 18px; display: grid; gap: 6px; }
 .diff .outlet { font-weight: 650; }
 .diff .kind { display: inline-block; margin-right: 2px; padding: 0 7px; border-radius: 999px; background: var(--surface-2); font: 600 11px/18px system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); vertical-align: .1em; white-space: nowrap; }
+.diff .kind::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: var(--k); vertical-align: 0; }
 .diff q { color: var(--text); }
+.reads li { color: var(--muted); }
+.reads b { color: var(--text); }
+
+/* Compact view: one line per group, which opens into the full card. */
+.rows { list-style: none; padding: 0; margin: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+.row + .row { border-top: 1px solid var(--line); }
+.row-main { display: grid; grid-template-columns: 34px 64px minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%; padding: 9px 14px; border: 0; background: none; text-align: left; cursor: pointer; font-size: 14px; }
+.row-main:hover { background: var(--surface-2); }
+.row-main:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 560px) { .row-main { grid-template-columns: 34px minmax(0, 1fr); } .row-main .date, .row-main .kdots { display: none; } }
+.mini { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--c); color: #fff; font-weight: 750; font-variant-numeric: tabular-nums; }
+.row-main .date { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row-main .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-main .title small { display: block; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.kdots { display: flex; gap: 3px; }
+.kdots i { width: 8px; height: 8px; border-radius: 50%; background: var(--k); }
+.row[open] .row-main { background: var(--surface-2); }
+.row .round { border: 0; border-radius: 0; box-shadow: none; border-top: 1px solid var(--line); }
 .empty { padding: 30px 0; color: var(--muted); }
 footer { margin: 36px auto 40px; font-size: 13px; color: var(--muted); }
 footer p + p { margin-top: 4px; }
@@ -194,6 +253,15 @@ footer p + p { margin-top: 4px; }
         <li><i style="--c: var(--b4)"></i><span><b>9–10 Sharply opposed:</b> accusations, moral labels, or claims that one text contradicts another.</span></li>
       </ul>
 
+      <h3>What the page adds</h3>
+      <ul>
+        <li>The phrases the model quoted are highlighted in the headlines and summaries, coloured by the kind of difference, so its reading can be checked against the text.</li>
+        <li>Outlet pairs: for two outlets that appear together in several groups, the median spread of those groups.</li>
+        <li>Left and right: outlets carry a rough lean (from AllSides and Ad Fontes Media ratings, as in the game). The model is never told it. Comparing groups that have both a left- and a right-leaning outlet with groups that don't shows whether its scores follow that axis.</li>
+        <li>Read twice: a story that grows while on the page is analysed again. How often the new reading lands in the same band as the old is a rough check on how steady the model is.</li>
+        <li>Polarized pairs are two-article rounds built from the most left- and most right-leaning outlets in a group, so they score higher by design. They can be shown apart from standard groups.</li>
+      </ul>
+
       <h3>What it does not do</h3>
       <ul>
         <li>It doesn't open the articles or read beyond the headline and summary.</li>
@@ -215,36 +283,64 @@ footer p + p { margin-top: 4px; }
   <p class="dateline">Framing analysis</p>
   <h1>How the newsrooms frame the same story</h1>
   <p class="lede">For each group of articles about one event, an AI model reads the headlines and summaries, scores how far apart the framings are, and suggests possible reasons. Scores run from 0, where outlets describe the event in much the same tone, to 10, where the framings are sharply opposed.</p>
-  <p class="caveat">These are readings of the text shown, not verdicts on any outlet. The model can be wrong, and "possibly" in a reason marks a guess. Outlet names are shown here, which is why this page is kept apart from the game.</p>
+  <p class="caveat">These are readings of the text shown, not verdicts on any outlet. The model can be wrong, and "possibly" in a reason marks a guess. Outlet names are shown here, which is why this page is kept apart from the game until a story is over.</p>
 </header>
 
 <main class="wrap">
-  <section class="controls" aria-label="Choose what to show">
-    <label class="field">Show
-      <select id="source"></select>
-    </label>
-    <label class="field">Sort
-      <select id="sort">
-        <option value="score">Most different first</option>
-        <option value="similar">Most alike first</option>
-        <option value="newest">Newest first</option>
-      </select>
-    </label>
+  <div class="controls-row" role="group" aria-label="Choose what to show">
+      <label class="field">Show
+        <select id="source"></select>
+      </label>
+      <div class="field">Groups
+        <div class="seg" id="type" role="group" aria-label="Kind of round">
+          <button type="button" data-v="all">All</button>
+          <button type="button" data-v="std">Standard</button>
+          <button type="button" data-v="polar">Polarized</button>
+        </div>
+      </div>
+      <label class="field">Sort
+        <select id="sort">
+          <option value="score">Most different first</option>
+          <option value="similar">Most alike first</option>
+          <option value="newest">Newest first</option>
+        </select>
+      </label>
+      <label class="field grow">Search
+        <input type="search" id="q" placeholder="Headlines, topics, reasons…" autocomplete="off">
+      </label>
+      <div class="field">View
+        <div class="seg" id="view" role="group" aria-label="Layout">
+          <button type="button" data-v="cards">Cards</button>
+          <button type="button" data-v="compact">Compact</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="controls" aria-label="Filters">
     <div class="field">Spread
       <div class="bands" id="bands" role="group" aria-label="Filter by score"></div>
+    </div>
+    <div class="field">Kind of difference
+      <div class="chips" id="kinds" role="group" aria-label="Filter by kind of difference"></div>
+    </div>
+    <div class="field" id="topics-field">Topic
+      <div class="chips" id="topics" role="group" aria-label="Filter by topic"></div>
     </div>
   </section>
 
   <section class="overview" id="overview" aria-label="Overview"></section>
 
   <p class="count" id="count" aria-live="polite"></p>
+  <p class="legend" id="legend" aria-label="Highlight colours"></p>
   <ol class="rounds" id="rounds" aria-label="Analysed groups"></ol>
+  <ol class="rows" id="rows" aria-label="Analysed groups" hidden></ol>
   <p class="empty" id="empty" hidden>Nothing analysed matches this view yet. Groups are analysed a few at a time, so a fresh edition can take a run or two to appear here.</p>
 </main>
 
 <footer class="wrap">
   <p>Headlines and summaries come from each outlet's public RSS feed and link back to the original.</p>
   <p>Scores and reasons are written by an AI model from those texts alone. They are not checked by a person.</p>
+  <p><a href="./">Play News Match</a></p>
 </footer>
 
 <script>
@@ -259,6 +355,18 @@ const BANDS = [
 ];
 // A median can fall between bands (4.5), so a score belongs to the first band it doesn't exceed.
 const bandOf = (score) => BANDS.find((b) => score <= b.hi) || BANDS[BANDS.length - 1];
+const bandIndex = (score) => BANDS.indexOf(bandOf(score));
+// The kinds of difference the prompt asks for; anything else counts as "other".
+const KINDS = [
+  { key: 'word choice', cls: 'k-word' },
+  { key: 'emphasis', cls: 'k-emph' },
+  { key: 'omission', cls: 'k-omit' },
+  { key: 'sourcing', cls: 'k-src' },
+  { key: 'loaded label', cls: 'k-label' },
+  { key: 'other', cls: 'k-other' },
+];
+const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const kindOf = (label) => KINDS.find((k) => norm(k.key) === norm(label)) || KINDS[KINDS.length - 1];
 // "Claude Sonnet 5.5" for "claude-sonnet-5-5"; other providers' model ids are shown as they are.
 const modelName = (id) => {
   const m = /^claude-([a-z]+)-(\d+)(?:-(\d+))?$/.exec(String(id || ''));
@@ -268,7 +376,9 @@ const modelName = (id) => {
 // The label under an analysis, or '' for one saved without its model.
 const analysedBy = (rec) => (rec && rec.model
   ? `Analysed by ${modelName(rec.model)}${rec.effort ? ` (${rec.effort} effort)` : ''}` : '');
-const bandIndex = (score) => BANDS.indexOf(bandOf(score));
+const usable = (rec) => rec && !rec.error && rec.result && typeof rec.result.bias_score === 'number';
+const plural = (n, word) => `${n} ${n === 1 ? word : word.endsWith('y') ? word.slice(0, -1) + 'ies' : word + 's'}`;
+const shortDate = (iso) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 
 const $ = (id) => document.getElementById(id);
 
@@ -299,16 +409,22 @@ const el = (tag, cls, text) => {
 };
 // "[outlet]" marks where an outlet named itself in the text; show it as a chip, never as HTML.
 function withMasks(node, text) {
-  text.split('[outlet]').forEach((part, i) => {
+  String(text).split('[outlet]').forEach((part, i) => {
     if (i) node.append(el('span', 'mask', 'outlet'));
     if (part) node.append(part);
   });
   return node;
 }
 
-// Every archived round: { id, month, entry, live, status: 'ok' | 'failed' | 'none', rec, result, earlier }.
-// `earlier` marks an analysis made for an earlier version of the story (the archive's `supersedes`).
-const state = { rounds: [], names: {}, byKey: {}, months: [], band: null };
+// Every archived round: { id, month, entry, live, status: 'ok' | 'failed' | 'none', rec, result,
+// earlier, reads, kinds, topics, text, sides, polar }. `earlier` marks an analysis made for an earlier
+// version of the story (the archive's `supersedes`); `reads` holds every usable analysis of the
+// story, newest first.
+const state = {
+  rounds: [], names: {}, lean: {}, byKey: {}, months: [],
+  show: 'current', type: 'all', sort: 'score', q: '', band: null, kind: null, topic: null, view: 'cards',
+  round: null, jumped: false,
+};
 
 async function getJSON(url) {
   const r = await fetch(url, { cache: 'no-cache' });
@@ -317,17 +433,16 @@ async function getJSON(url) {
 }
 
 // Outlet labels in the analysis may be ids ("dailymail") or names ("Daily Mail"); match them to ids.
-const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 function outletId(label) {
-  const key = norm(label);
-  return state.byKey[key] || null;
+  return state.byKey[norm(label)] || null;
 }
+const outletName = (id) => state.names[id] || id;
+const sideOf = (id) => ((state.lean[id] || 0) > 0 ? 'right' : (state.lean[id] || 0) < 0 ? 'left' : 'centre');
 
 async function load() {
   let live = { rounds: [], polarized: [], outlets: {} };
   try { live = await getJSON('rounds.json'); } catch (err) { console.warn(err); }
   const liveIds = new Set([...live.rounds, ...(live.polarized || [])].map((r) => r.id));
-  state.names = Object.fromEntries(Object.entries(live.outlets || {}).map(([id, o]) => [id, o.name]));
 
   let index;
   try { index = await getJSON('archive/index.json'); } catch (err) {
@@ -336,6 +451,12 @@ async function load() {
     return;
   }
   state.months = index.months || [];
+  // Names and leans: the archive index lists every outlet; an older index only has the months,
+  // so the current edition's outlets fill in what they can.
+  for (const [id, o] of Object.entries({ ...(live.outlets || {}), ...(index.outlets || {}) })) {
+    state.names[id] = o.name;
+    if (typeof o.lean === 'number') state.lean[id] = o.lean;
+  }
 
   const docs = await Promise.all(state.months.map(async (m) => {
     const archive = await getJSON(`archive/${m}.json`);
@@ -357,7 +478,6 @@ async function load() {
   // A round that replaced earlier versions of its story may only have an analysis under one of
   // their ids, possibly in another month's file.
   const analyses = Object.assign({}, ...docs.map((d) => d.analysis.analyses));
-  const usable = (rec) => rec && !rec.error && rec.result && typeof rec.result.bias_score === 'number';
   // Scores run 0-10. analyze_bias.py rescales older 0-100 ones in the files (marking them
   // "scale": 10), but one added by a run of an older script may not be rescaled yet.
   for (const rec of Object.values(analyses)) {
@@ -368,32 +488,101 @@ async function load() {
   }
   for (const { m, archive } of docs) {
     for (const [rid, entry] of Object.entries(archive.rounds)) {
+      const reads = [rid, ...(entry.supersedes || [])]
+        .filter((id) => usable(analyses[id]))
+        .map((id) => ({ id, rec: analyses[id] }))
+        .sort((a, b) => String(b.rec.analysed_at || '').localeCompare(String(a.rec.analysed_at || '')));
       let rec = analyses[rid];
       let earlier = false;
       if (!usable(rec)) {
-        const old = (entry.supersedes || []).find((id) => usable(analyses[id]));
-        if (old) { rec = analyses[old]; earlier = true; }
+        const old = reads[0];
+        if (old) { rec = old.rec; earlier = true; }
       }
       const status = usable(rec) ? 'ok' : rec ? 'failed' : 'none';
-      state.rounds.push({ id: rid, month: m, entry, live: liveIds.has(rid), status, rec, result: rec && rec.result, earlier });
+      const result = rec && rec.result;
+      const it = { id: rid, month: m, entry, live: liveIds.has(rid), status, rec, result, earlier, reads };
+      it.polar = entry.kind === 'polar';
+      it.topics = entry.topic || [];
+      it.kinds = new Set((result && result.differences || []).map((d) => kindOf(d.kind).key));
+      const sides = new Set(entry.articles.map((a) => sideOf(a.outlet)));
+      it.sides = sides;
+      it.text = [
+        ...it.topics,
+        ...entry.articles.flatMap((a) => [outletName(a.outlet), a.title, a.summary]),
+        result && result.score_reason, result && result.summary,
+        ...(result && result.differences || []).flatMap((d) => [d.observation, d.quote]),
+      ].filter(Boolean).join('\n').toLowerCase();
+      state.rounds.push(it);
     }
   }
 
+  readHash();
+  // A link to one round: show whatever list holds it.
+  if (state.round) {
+    const it = state.rounds.find((r) => r.id === state.round);
+    if (it && !(state.show === 'current' ? it.live : state.show === 'all' || state.show === `month:${it.month}`)) {
+      state.show = it.live ? 'current' : 'all';
+    }
+  }
   buildControls();
   render();
 }
 
+// ------------------------------------------------------------------ URL state
+const HASH_KEYS = ['show', 'type', 'sort', 'q', 'band', 'kind', 'topic', 'view', 'round'];
+const DEFAULTS = { show: 'current', type: 'all', sort: 'score', q: '', band: null, kind: null, topic: null, view: 'cards', round: null };
+function readHash() {
+  const p = new URLSearchParams(location.hash.replace(/^#/, ''));
+  for (const k of HASH_KEYS) {
+    if (!p.has(k)) { state[k] = DEFAULTS[k]; continue; }
+    const v = p.get(k);
+    state[k] = k === 'band' ? (/^[0-4]$/.test(v) ? Number(v) : null) : v;
+  }
+  if (!['all', 'std', 'polar'].includes(state.type)) state.type = 'all';
+  if (!['score', 'similar', 'newest'].includes(state.sort)) state.sort = 'score';
+  if (!['cards', 'compact'].includes(state.view)) state.view = 'cards';
+  if (state.kind && !KINDS.some((k) => k.key === state.kind)) state.kind = null;
+  state.q = state.q.trim().toLowerCase();
+}
+function hashFor(over = {}) {
+  const p = new URLSearchParams();
+  const s = { ...state, ...over };
+  for (const k of HASH_KEYS) {
+    if (s[k] !== DEFAULTS[k] && s[k] !== null && s[k] !== '') p.set(k, String(s[k]));
+  }
+  const str = p.toString();
+  return str ? `#${str}` : '';
+}
+function writeHash() {
+  const h = hashFor();
+  if (h !== location.hash) history.replaceState(null, '', h || location.pathname + location.search);
+}
+window.addEventListener('hashchange', () => { readHash(); state.jumped = false; syncControls(); render(); });
+
+// ------------------------------------------------------------------ controls
 function buildControls() {
   const source = $('source');
   const options = [
     ['current', 'Current edition'],
     ['all', 'Whole archive'],
-    ...state.months.map((m) => [`month:${m}`, `Archive: ${m}`]),
+    ...state.months.slice().sort().reverse().map((m) => [`month:${m}`, `Archive: ${m}`]),
   ];
   for (const [value, label] of options) source.append(new Option(label, value));
-  source.value = 'current';
-  source.addEventListener('change', render);
-  $('sort').addEventListener('change', render);
+  source.addEventListener('change', () => { state.show = source.value; render(); });
+  $('sort').addEventListener('change', () => { state.sort = $('sort').value; render(); });
+  let timer;
+  $('q').addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { state.q = $('q').value.trim().toLowerCase(); render(); }, 150);
+  });
+  for (const id of ['type', 'view']) {
+    $(id).addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      state[id] = btn.dataset.v;
+      render();
+    });
+  }
 
   const bands = $('bands');
   const all = el('button', 'band-chip', 'All');
@@ -403,7 +592,7 @@ function buildControls() {
     const btn = el('button', 'band-chip');
     btn.type = 'button';
     btn.style.setProperty('--c', b.color);
-    btn.append(el('span', 'dot'), `${b.lo}–${b.hi} ${b.name}`);
+    btn.append(el('span', 'dot'), `${b.lo}–${b.hi} ${b.name}`, el('span', 'n'));
     btn.dataset.band = i;
     bands.append(btn);
   });
@@ -413,25 +602,67 @@ function buildControls() {
     state.band = btn.dataset.band === undefined ? null : Number(btn.dataset.band);
     render();
   });
+
+  const kinds = $('kinds');
+  const any = el('button', 'band-chip', 'Any');
+  any.type = 'button';
+  kinds.append(any);
+  for (const k of KINDS) {
+    const btn = el('button', `band-chip ${k.cls}`);
+    btn.type = 'button';
+    btn.style.setProperty('--c', 'var(--k)');
+    btn.append(el('span', 'dot'), k.key, el('span', 'n'));
+    btn.dataset.kind = k.key;
+    kinds.append(btn);
+  }
+  kinds.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    state.kind = btn.dataset.kind || null;
+    render();
+  });
+  $('topics').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    state.topic = btn.dataset.topic || null;
+    render();
+  });
+  syncControls();
 }
 
+// Put the state into the menus and boxes (after a hash change, or on load).
+function syncControls() {
+  if ([...$('source').options].some((o) => o.value === state.show)) $('source').value = state.show;
+  else state.show = $('source').value;
+  $('sort').value = state.sort;
+  if ($('q').value.trim().toLowerCase() !== state.q) $('q').value = state.q;
+}
+
+// ------------------------------------------------------------------ selection
 // The rounds the Show menu selects, analysed or not.
 function inView() {
-  const source = $('source').value;
   return state.rounds.filter((it) => {
-    if (source === 'current') return it.live;
-    if (source.startsWith('month:')) return it.month === source.slice(6);
+    if (state.show === 'current') return it.live;
+    if (state.show.startsWith('month:')) return it.month === state.show.slice(6);
     return true;
   });
 }
 
-function visible() {
-  let items = inView().filter((it) => it.status === 'ok');
-  if (state.band !== null) items = items.filter((it) => bandIndex(it.result.bias_score) === state.band);
-  const sort = $('sort').value;
+// Does a round pass the filters, ignoring the one named in `skip` (for a chip's count)?
+function matches(it, skip) {
+  if (skip !== 'type' && state.type !== 'all' && (state.type === 'polar') !== it.polar) return false;
+  if (skip !== 'band' && state.band !== null && bandIndex(it.result.bias_score) !== state.band) return false;
+  if (skip !== 'kind' && state.kind && !it.kinds.has(state.kind)) return false;
+  if (skip !== 'topic' && state.topic && !it.topics.includes(state.topic)) return false;
+  if (skip !== 'q' && state.q && !it.text.includes(state.q)) return false;
+  return true;
+}
+
+function visible(skip) {
+  const items = inView().filter((it) => it.status === 'ok' && matches(it, skip));
   const byScore = (a, b) => b.result.bias_score - a.result.bias_score;
-  if (sort === 'score') items.sort(byScore);
-  else if (sort === 'similar') items.sort((a, b) => -byScore(a, b));
+  if (state.sort === 'score') items.sort((a, b) => byScore(a, b) || b.entry.first_seen.localeCompare(a.entry.first_seen));
+  else if (state.sort === 'similar') items.sort((a, b) => -byScore(a, b) || b.entry.first_seen.localeCompare(a.entry.first_seen));
   else items.sort((a, b) => b.entry.first_seen.localeCompare(a.entry.first_seen));
   return items;
 }
@@ -442,11 +673,9 @@ function median(values) {
   const mid = Math.floor(s.length / 2);
   return s.length % 2 ? s[mid] : Math.round((s[mid - 1] + s[mid]) / 2);
 }
+const scoresOf = (items) => items.map((it) => it.result.bias_score);
 
-function outletName(id) {
-  return state.names[id] || id;
-}
-
+// ------------------------------------------------------------------ statistics
 // Per outlet, across the groups shown: how often it appears, and how often its framing was singled out.
 function outletStats(items) {
   const stats = {};
@@ -460,8 +689,9 @@ function outletStats(items) {
       // the story, or a mislabelled reply, can name one that isn't there.
       if (!id || !present.has(id)) continue;
       singled.add(id);
-      const s = (stats[id] ||= { appears: 0, singled: 0, kinds: {} });
-      s.kinds[d.kind || 'other'] = (s.kinds[d.kind || 'other'] || 0) + 1;
+      const s = stats[id];
+      const k = kindOf(d.kind).key;
+      s.kinds[k] = (s.kinds[k] || 0) + 1;
     }
     for (const id of singled) stats[id].singled += 1;
   }
@@ -471,29 +701,100 @@ function outletStats(items) {
     .sort((a, b) => b.share - a.share || b.singled - a.singled || b.appears - a.appears);
 }
 
+// Pairs of outlets that appear together, with the median spread of the groups they share.
+function pairStats(items, minTogether) {
+  const pairs = {};
+  for (const it of items) {
+    const ids = [...new Set(it.entry.articles.map((a) => a.outlet))].sort();
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        const key = `${ids[i]}|${ids[j]}`;
+        (pairs[key] ||= { a: ids[i], b: ids[j], scores: [] }).scores.push(it.result.bias_score);
+      }
+    }
+  }
+  return Object.values(pairs)
+    .filter((p) => p.scores.length >= minTogether)
+    .map((p) => ({ ...p, n: p.scores.length, median: median(p.scores) }))
+    .sort((a, b) => b.median - a.median || b.n - a.n);
+}
+
+// How the newest reading of a story compares with the one before it, in bands.
+function agreement(items) {
+  const out = { stories: 0, same: 0, adjacent: 0, apart: 0 };
+  for (const it of items) {
+    if (it.earlier || it.reads.length < 2) continue;
+    const prev = it.reads.find((r) => r.id !== it.id);
+    if (!prev) continue;
+    out.stories += 1;
+    const d = Math.abs(bandIndex(it.result.bias_score) - bandIndex(prev.rec.result.bias_score));
+    if (d === 0) out.same += 1;
+    else if (d === 1) out.adjacent += 1;
+    else out.apart += 1;
+  }
+  return out;
+}
+
+// Periods for the trend: days when the view spans three weeks or less, else weeks from Monday.
+function trendBuckets(items) {
+  if (items.length < 2) return [];
+  const times = items.map((it) => Date.parse(it.entry.first_seen));
+  const span = (Math.max(...times) - Math.min(...times)) / 86400000;
+  const byWeek = span > 21;
+  const buckets = {};
+  for (const it of items) {
+    const d = new Date(it.entry.first_seen);
+    const day = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    if (byWeek) day.setUTCDate(day.getUTCDate() - ((day.getUTCDay() + 6) % 7));
+    const key = day.toISOString().slice(0, 10);
+    (buckets[key] ||= { key, when: day, scores: [] }).scores.push(it.result.bias_score);
+  }
+  return Object.values(buckets)
+    .sort((a, b) => a.key.localeCompare(b.key))
+    .map((b) => ({ ...b, n: b.scores.length, median: median(b.scores), byWeek }));
+}
+
+// ------------------------------------------------------------------ overview
 function renderOverview(items) {
   const box = $('overview');
   box.textContent = '';
   if (!items.length) return;
 
-  const scores = items.map((it) => it.result.bias_score);
+  const scores = scoresOf(items);
   const summary = el('div', 'panel');
   summary.append(el('h2', '', 'In this view'));
   const med = median(scores);
-  summary.append(el('p', 'stat-line', `${items.length} analysed group${items.length === 1 ? '' : 's'}`));
-  summary.append(el('p', 'stat-line', `Median spread ${med} (${bandOf(med).name.toLowerCase()})`));
+  summary.append(el('p', 'stat-line', `${plural(items.length, 'analysed group')}, median spread ${med} (${bandOf(med).name.toLowerCase()}).`));
   const stats = outletStats(items);
   const top = stats.find((s) => s.appears >= 3 && s.singled > 0);
   if (top) {
-    summary.append(el('p', 'stat-line',
-      `${outletName(top.id)} is named in differences in ${top.singled} of the ${top.appears} groups it appears in, ` +
-      `most often for ${Object.entries(top.kinds).sort((a, b) => b[1] - a[1])[0][0]}.`));
+    const line = el('p', 'stat-line');
+    line.append(el('b', '', outletName(top.id)), ` is named in differences in ${top.singled} of the ${top.appears} groups it appears in, ` +
+      `most often for ${Object.entries(top.kinds).sort((a, b) => b[1] - a[1])[0][0]}.`);
+    summary.append(line);
+  }
+  // Left vs right, over standard groups only: polarized pairs always have both sides.
+  const std = items.filter((it) => !it.polar);
+  const both = std.filter((it) => it.sides.has('left') && it.sides.has('right'));
+  const rest = std.filter((it) => !(it.sides.has('left') && it.sides.has('right')));
+  if (both.length >= 3 && rest.length >= 3) {
+    const line = el('p', 'stat-line');
+    line.append('Standard groups with both a left- and a right-leaning outlet: median ', el('b', '', String(median(scoresOf(both)))),
+      ` (${both.length}). Without: median `, el('b', '', String(median(scoresOf(rest)))), ` (${rest.length}). The model isn't told the leanings.`);
+    summary.append(line);
+  }
+  const agree = agreement(items);
+  if (agree.stories >= 2) {
+    const line = el('p', 'stat-line');
+    line.append(`${plural(agree.stories, 'story')} read again after growing: `, el('b', '', `${agree.same} in the same band`),
+      `, ${agree.adjacent} one band apart, ${agree.apart} further.`);
+    summary.append(line);
   }
   const all = inView();
   const unanalysed = all.filter((it) => it.status === 'none').length;
   const failed = all.filter((it) => it.status === 'failed').length;
   if (failed || unanalysed) {
-    summary.append(el('p', 'stat-line', `${unanalysed} group${unanalysed === 1 ? '' : 's'} with no analysis yet` +
+    summary.append(el('p', 'stat-line', `${plural(unanalysed, 'group')} with no analysis yet` +
       (failed ? `, ${failed} with a reply that could not be read.` : '.')));
   }
 
@@ -508,7 +809,7 @@ function renderOverview(items) {
     col.style.setProperty('--c', bandOf(i).color);
     const bar = el('i');
     bar.style.height = `${(100 * n) / peak}%`;
-    bar.title = `${i}: ${n}`;
+    bar.title = `Spread ${i}: ${plural(n, 'group')}`;
     col.append(bar, el('span', '', `${i}`));
     bars.append(col);
   });
@@ -518,37 +819,186 @@ function renderOverview(items) {
   table.append(el('h2', '', 'Outlets named in differences'));
   const t = el('table');
   const head = el('tr');
-  head.append(...[['Outlet', ''], ['Groups', 'num'], ['Named in', 'num'], ['Share of groups', '']].map(([h, c]) => el('th', c, h)));
+  head.append(...[['Outlet', ''], ['Groups', 'num'], ['Named in', 'num'], ['Mostly for', '']].map(([h, c]) => el('th', c, h)));
   t.append(head);
   for (const s of stats.slice(0, 10)) {
     const tr = el('tr');
-    const share = el('td');
+    const share = el('td', 'kinds');
+    share.append(Object.entries(s.kinds).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, n]) => `${k} ${n}`).join(' · ') || '—');
     const meter = el('div', 'meter');
     const fill = el('i');
     fill.style.width = `${Math.round(100 * s.share)}%`;
+    meter.title = `Named in ${Math.round(100 * s.share)}% of its groups`;
     meter.append(fill);
     share.append(meter);
-    tr.append(el('td', '', outletName(s.id)), el('td', 'num', String(s.appears)), el('td', 'num', String(s.singled)), share);
+    const name = el('td', '', outletName(s.id));
+    if (sideOf(s.id) !== 'centre') name.append(el('span', 'side', sideOf(s.id)));
+    tr.append(name, el('td', 'num', String(s.appears)), el('td', 'num', String(s.singled)), share);
     t.append(tr);
   }
   table.append(t);
   if (!stats.length) table.append(el('p', 'stat-line', 'No outlets to show yet.'));
 
-  box.append(summary, hist, table);
+  const pairsBox = el('div', 'panel');
+  pairsBox.append(el('h2', '', 'Outlet pairs furthest apart'));
+  const minTogether = items.length >= 30 ? 3 : 2;
+  const pairs = pairStats(items, minTogether).slice(0, 10);
+  if (pairs.length) {
+    const pt = el('table');
+    const ph = el('tr');
+    ph.append(...[['Pair', ''], ['Together', 'num'], ['Median', 'num'], ['', '']].map(([h, c]) => el('th', c, h)));
+    pt.append(ph);
+    for (const p of pairs) {
+      const tr = el('tr');
+      const meter = el('div', 'meter');
+      meter.style.setProperty('--c', bandOf(p.median).color);
+      const fill = el('i');
+      fill.style.width = `${10 * p.median}%`;
+      meter.append(fill);
+      meter.title = `${bandOf(p.median).name}, over ${plural(p.n, 'group')}`;
+      const cell = el('td');
+      cell.append(meter);
+      cell.style.minWidth = '90px';
+      tr.append(el('td', '', `${outletName(p.a)} · ${outletName(p.b)}`), el('td', 'num', String(p.n)), el('td', 'num', String(p.median)), cell);
+      pt.append(tr);
+    }
+    pairsBox.append(pt, el('p', 'note', `Pairs that appear together in at least ${minTogether} of the groups shown, by the median spread of those groups.`));
+  } else {
+    pairsBox.append(el('p', 'stat-line', 'No two outlets appear together often enough yet.'));
+  }
+
+  box.append(summary, hist, table, pairsBox);
+
+  const buckets = trendBuckets(items);
+  if (buckets.length >= 2) {
+    const trend = el('div', 'panel wide');
+    trend.append(el('h2', '', buckets[0].byWeek ? 'Median spread by week' : 'Median spread by day'));
+    const strip = el('div', 'trend');
+    for (const b of buckets) {
+      const col = el('div');
+      col.style.setProperty('--c', bandOf(b.median).color);
+      const bar = el('i');
+      bar.style.height = `${10 * b.median}%`;
+      const label = b.byWeek ? `w/c ${shortDate(b.when)}` : shortDate(b.when);
+      bar.title = `${label}: median ${b.median} (${bandOf(b.median).name.toLowerCase()}), ${plural(b.n, 'group')}`;
+      const n = el('span');
+      n.append(label, document.createElement('br'), `${b.n}`);
+      bar.append(el('em', '', String(b.median)));
+      col.append(bar, n);
+      strip.append(col);
+    }
+    trend.append(strip, el('p', 'note', 'By the day the story was first seen. The number under each bar is how many groups it covers.'));
+    box.append(trend);
+  }
+}
+
+// ------------------------------------------------------------------ chips
+function renderChips() {
+  const countsFor = (skip, keyOf) => {
+    const counts = {};
+    for (const it of visible(skip)) for (const k of keyOf(it)) counts[k] = (counts[k] || 0) + 1;
+    return counts;
+  };
+  const bandCounts = countsFor('band', (it) => [bandIndex(it.result.bias_score)]);
+  for (const btn of $('bands').querySelectorAll('button')) {
+    const i = btn.dataset.band;
+    const pressed = i === undefined ? state.band === null : Number(i) === state.band;
+    btn.setAttribute('aria-pressed', String(pressed));
+    if (i !== undefined) btn.querySelector('.n').textContent = String(bandCounts[i] || 0);
+  }
+  const kindCounts = countsFor('kind', (it) => [...it.kinds]);
+  for (const btn of $('kinds').querySelectorAll('button')) {
+    const k = btn.dataset.kind;
+    btn.setAttribute('aria-pressed', String(k ? state.kind === k : state.kind === null));
+    if (k) btn.querySelector('.n').textContent = String(kindCounts[k] || 0);
+  }
+  // Topics: the words that name the most groups in this view, plus the chosen one. Words that
+  // name exactly the same groups ("stephen", "miller") make one chip; the first word is its key.
+  const groupsOf = {};
+  for (const it of visible('topic')) {
+    for (const w of it.topics) if (w.length >= 3) (groupsOf[w] ||= []).push(it.id);
+  }
+  const byGroups = {};
+  for (const [w, ids] of Object.entries(groupsOf)) {
+    if (ids.length < 2 && w !== state.topic) continue;
+    const key = ids.slice().sort().join(',');
+    (byGroups[key] ||= { words: [], n: ids.length }).words.push(w);
+  }
+  const topics = Object.values(byGroups).sort((a, b) => b.n - a.n || a.words[0].localeCompare(b.words[0]));
+  const chosen = topics.findIndex((t) => t.words.includes(state.topic));
+  const shown = topics.slice(0, 14);
+  if (chosen >= 14) shown.push(topics[chosen]);
+  if (state.topic && chosen < 0) shown.push({ words: [state.topic], n: 0 });
+  const box = $('topics');
+  box.textContent = '';
+  $('topics-field').hidden = !shown.length;
+  const any = el('button', 'band-chip', 'Any');
+  any.type = 'button';
+  any.setAttribute('aria-pressed', String(state.topic === null));
+  box.append(any);
+  for (const t of shown) {
+    const btn = el('button', 'band-chip');
+    btn.type = 'button';
+    btn.dataset.topic = t.words.includes(state.topic) ? state.topic : t.words[0];
+    btn.append(t.words.join(' '), el('span', 'n', String(t.n)));
+    btn.setAttribute('aria-pressed', String(t.words.includes(state.topic)));
+    box.append(btn);
+  }
+  for (const btn of $('type').querySelectorAll('button')) btn.setAttribute('aria-pressed', String(btn.dataset.v === state.type));
+  for (const btn of $('view').querySelectorAll('button')) btn.setAttribute('aria-pressed', String(btn.dataset.v === state.view));
+}
+
+// ------------------------------------------------------------------ one round
+// Where the model's quotes fall in a text: [{ start, end, hit }], without overlaps.
+function quoteRanges(text, hits) {
+  const fold = (s) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').toLowerCase();
+  let low = fold(text);
+  if (low.length !== text.length) low = text;  // a rare case change altered the length; match as is
+  const out = [];
+  for (const hit of hits) {
+    const q = fold(String(hit.quote || '')).replace(/^["'\s]+|["'\s.,;:!?…]+$/g, '');
+    if (q.length < 3) continue;
+    const i = low.indexOf(q);
+    if (i < 0) continue;
+    const end = i + q.length;
+    if (out.some((r) => i < r.end && end > r.start)) continue;
+    out.push({ start: i, end, hit });
+    hit.found = true;
+  }
+  return out.sort((a, b) => a.start - b.start);
+}
+
+// The text with the quoted phrases marked, coloured by the kind of difference.
+function highlighted(node, text, hits) {
+  let pos = 0;
+  for (const r of quoteRanges(text, hits)) {
+    withMasks(node, text.slice(pos, r.start));
+    const kind = kindOf(r.hit.kind);
+    const mark = el('mark', `hl ${kind.cls}`);
+    mark.title = `${kind.key}: ${r.hit.observation || ''}`;
+    withMasks(mark, text.slice(r.start, r.end));
+    node.append(mark);
+    pos = r.end;
+  }
+  withMasks(node, text.slice(pos));
+  return node;
 }
 
 function renderRound(it) {
   const { result, entry } = it;
   const band = bandOf(result.bias_score);
-  const li = el('li', 'round');
+  const card = el('article', 'round');
+  card.dataset.id = it.id;
 
   const top = el('div', 'round-top');
   const score = el('div', 'score');
   score.style.setProperty('--c', band.color);
+  score.title = 'How far apart the most and least loaded framings are, from 0 to 10';
   score.append(el('b', '', String(result.bias_score)), el('small', '', band.name));
   const body = el('div');
   const when = new Date(entry.first_seen);
-  const meta = el('p', 'meta', `${when.toLocaleDateString(undefined, { dateStyle: 'medium' })} · ${entry.articles.length} articles`);
+  const meta = el('p', 'meta', `${when.toLocaleDateString(undefined, { dateStyle: 'medium' })} · ${plural(entry.articles.length, 'article')}` +
+    (it.polar ? ' · polarized pair' : ''));
   const tags = el('div', 'tags');
   if (it.live) tags.append(el('span', 'tag live', 'On the page now'));
   if (result.possible_bias) tags.append(el('span', 'tag', `bias: ${result.possible_bias}`));
@@ -557,35 +1007,59 @@ function renderRound(it) {
   if (it.earlier) tags.append(el('span', 'tag', 'earlier version analysed'));
   const by = analysedBy(it.rec);
   if (by) tags.append(el('span', 'tag', by));
-  body.append(meta, el('p', 'topic', (entry.topic || []).join(' · ') || 'Group ' + it.id));
+  const link = el('a', 'tag', 'Link to this story');
+  link.href = hashFor({ round: it.id });
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    state.round = it.id;
+    state.jumped = false;
+    writeHash();
+    jumpToRound();
+  });
+  tags.append(link);
+  body.append(meta, el('p', 'topic', it.topics.join(' · ') || 'Group ' + it.id));
   body.append(withMasks(el('p', 'reason'), result.score_reason || ''), tags);
   top.append(score, body);
 
+  // The texts the model read, with its quotes marked: a quote is looked for in its outlet's
+  // headline first, then in the summary.
+  const diffs = (result.differences || []).map((d) => ({ ...d, found: false }));
   const list = el('ul', 'articles');
   for (const a of entry.articles) {
+    const hits = diffs.filter((d) => outletId(d.outlet) === a.outlet);
     const row = el('li');
-    const link = el('a');
-    link.href = a.url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    withMasks(link, a.title);
-    row.append(el('span', 'who', outletName(a.outlet)), link);
+    const who = el('span', 'who', outletName(a.outlet));
+    if (sideOf(a.outlet) !== 'centre') who.append(el('span', 'side', sideOf(a.outlet)));
+    const text = el('div');
+    const titleLink = el('a');
+    titleLink.href = a.url;
+    titleLink.target = '_blank';
+    titleLink.rel = 'noopener noreferrer';
+    highlighted(titleLink, a.title || '', hits);
+    text.append(titleLink);
+    if (a.published) {
+      text.append(el('span', 'when', new Date(a.published).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })));
+    }
+    if (a.summary) text.append(highlighted(el('p', 'sum'), a.summary, hits.filter((d) => !d.found)));
+    row.append(who, text);
     list.append(row);
   }
 
   const more = el('details');
-  more.append(el('summary', '', `What stood out (${(result.differences || []).length}) and the detail`));
+  more.append(el('summary', '', `What stood out (${diffs.length}) and the detail`));
   const detail = el('div', 'detail');
   if (result.summary) detail.append(withMasks(el('p'), result.summary));
-  if ((result.differences || []).length) {
+  if (diffs.length) {
     const h = el('div');
     h.append(el('h3', '', 'Differences'));
     const ul = el('ul', 'diff');
-    for (const d of result.differences) {
+    for (const d of diffs) {
+      const kind = kindOf(d.kind);
       const li2 = el('li');
-      li2.append(el('span', 'kind', d.kind || 'other'), ' ', el('span', 'outlet', outletName(outletId(d.outlet)) || d.outlet || 'outlet'),
+      li2.append(el('span', `kind ${kind.cls}`, kind.key), ' ', el('span', 'outlet', outletName(outletId(d.outlet)) || d.outlet || 'outlet'),
         ': ', withMasks(el('span'), d.observation || ''));
-      if (d.quote) li2.append(' ', withMasks(el('q'), d.quote));
+      const quote = String(d.quote || '').trim().replace(/^["“”]+|["“”]+$/g, '');  // <q> adds its own marks
+      if (quote) li2.append(' ', withMasks(el('q'), quote));
       ul.append(li2);
     }
     h.append(ul);
@@ -599,29 +1073,116 @@ function renderRound(it) {
     h.append(ul);
     detail.append(h);
   }
+  const others = it.reads.filter((r) => r.rec !== it.rec);
+  if (others.length) {
+    const h = el('div');
+    h.append(el('h3', '', 'Other readings of this story'));
+    const ul = el('ul', 'reads');
+    for (const r of others) {
+      const s = r.rec.result.bias_score;
+      const li2 = el('li');
+      li2.append(el('b', '', `${s} ${bandOf(s).name}`), ` · ${r.rec.analysed_at ? shortDate(r.rec.analysed_at) : ''}` +
+        (r.rec.model ? ` · ${modelName(r.rec.model)}${r.rec.effort ? ` (${r.rec.effort})` : ''}` : '') +
+        (r.id === it.id ? '' : ' · an earlier version of the story'));
+      ul.append(li2);
+    }
+    h.append(ul);
+    detail.append(h);
+  }
   more.append(detail);
 
-  li.append(top, list, more);
+  card.append(top, list, more);
+  return card;
+}
+
+function renderCompactRow(it) {
+  const { result, entry } = it;
+  const band = bandOf(result.bias_score);
+  const li = el('li', 'row');
+  li.dataset.id = it.id;
+  const main = el('button', 'row-main');
+  main.type = 'button';
+  const mini = el('span', 'mini', String(result.bias_score));
+  mini.style.setProperty('--c', band.color);
+  mini.title = band.name;
+  const title = el('span', 'title');
+  title.append(it.topics.join(' · ') || 'Group ' + it.id);
+  title.append(el('small', '', entry.articles.map((a) => outletName(a.outlet)).join(', ') + (it.polar ? ' · polarized pair' : '')));
+  const dots = el('span', 'kdots');
+  for (const k of KINDS) if (it.kinds.has(k.key)) { const d = el('i', k.cls); d.title = k.key; dots.append(d); }
+  main.append(mini, el('span', 'date', shortDate(entry.first_seen)), title, dots);
+  main.setAttribute('aria-expanded', 'false');
+  main.addEventListener('click', () => toggleRow(li, it));
+  li.append(main);
   return li;
 }
 
-function render() {
-  const items = visible();
-  renderOverview(items);
-  const ol = $('rounds');
-  ol.textContent = '';
-  items.forEach((it) => ol.append(renderRound(it)));
-  $('empty').hidden = items.length > 0;
-  const n = items.length;
-  $('count').textContent = n
-    ? `Showing ${n} analysed group${n === 1 ? '' : 's'}.`
-    : '';
-  for (const btn of $('bands').querySelectorAll('button')) {
-    const pressed = btn.dataset.band === undefined ? state.band === null : Number(btn.dataset.band) === state.band;
-    btn.setAttribute('aria-pressed', String(pressed));
+function toggleRow(li, it, open) {
+  const isOpen = li.hasAttribute('open');
+  const next = open === undefined ? !isOpen : open;
+  if (next === isOpen) return;
+  if (next) { li.setAttribute('open', ''); li.append(renderRound(it)); }
+  else { li.removeAttribute('open'); li.querySelector('.round')?.remove(); }
+  li.querySelector('.row-main').setAttribute('aria-expanded', String(next));
+}
+
+// Scroll to the round the URL names, once, opening it where needed.
+function jumpToRound() {
+  if (!state.round || state.jumped) return;
+  const holder = document.querySelector(`#rounds [data-id="${CSS.escape(state.round)}"], #rows [data-id="${CSS.escape(state.round)}"]`);
+  if (!holder) return;
+  state.jumped = true;
+  const it = state.rounds.find((r) => r.id === state.round);
+  if (holder.classList.contains('row')) toggleRow(holder, it, true);
+  const card = holder.classList.contains('round') ? holder : holder.querySelector('.round');
+  card.classList.add('target');
+  card.querySelector('details').open = true;
+  card.scrollIntoView({ block: 'start' });
+}
+
+function renderLegend() {
+  const box = $('legend');
+  box.textContent = '';
+  box.append('Highlighted: the phrases the model quoted, by kind of difference.');
+  for (const k of KINDS) {
+    const item = el('span', k.cls);
+    item.append(el('i'), k.key);
+    box.append(item);
   }
 }
 
+function render() {
+  writeHash();
+  const items = visible();
+  renderChips();
+  renderOverview(items);
+  const cards = $('rounds');
+  const rows = $('rows');
+  cards.textContent = '';
+  rows.textContent = '';
+  cards.hidden = state.view !== 'cards';
+  rows.hidden = state.view !== 'compact' || !items.length;
+  $('legend').hidden = !items.length;
+  if (state.view === 'cards') {
+    for (const it of items) {
+      const li = el('li');
+      li.dataset.id = it.id;
+      li.append(renderRound(it));
+      cards.append(li);
+    }
+  } else {
+    for (const it of items) rows.append(renderCompactRow(it));
+  }
+  $('empty').hidden = items.length > 0;
+  const total = inView().filter((it) => it.status === 'ok').length;
+  const n = items.length;
+  $('count').textContent = n
+    ? (n === total ? `Showing ${plural(n, 'analysed group')}.` : `Showing ${n} of ${plural(total, 'analysed group')}.`)
+    : '';
+  jumpToRound();
+}
+
+renderLegend();
 load().catch((err) => {
   $('count').textContent = "Couldn't load the analysis.";
   console.error(err);

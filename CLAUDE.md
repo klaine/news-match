@@ -59,11 +59,27 @@ file in the repo root holds that domain for Pages: keep it.
   after the page loads, and like the analysis page falls back to an analysis made for an id in the
   round's `supersedes`.
 - Analysis page: `analysis.html` shows the analyses on their own, for the current edition or any
-  archived month, with sort and score-band filters. It isn't linked from the game page. It reads
-  `rounds.json`, `archive/index.json` (the months, written by `write_archive` so the page can find
-  them), `archive/YYYY-MM.json` and `analysis/YYYY-MM.json`. A round with no analysis of its own
-  shows the one made for an id in its `supersedes`, tagged "earlier version analysed". Any
-  `[outlet]` in the model's text is rendered as a chip, like in the game.
+  archived month. The game links to it only from the framing panel, once a story is over (it
+  names the outlets). It reads `rounds.json`, `archive/index.json` (the months, and every
+  outlet's name and `lean`, written by `write_archive`), `archive/YYYY-MM.json` and
+  `analysis/YYYY-MM.json`. A round with no analysis of its own shows the one made for an id in
+  its `supersedes`, tagged "earlier version analysed". Any `[outlet]` in the model's text is
+  rendered as a chip, like in the game.
+  - Filters: standard groups or polarized pairs (`type`), score band, kind of difference, topic
+    word (words that name exactly the same groups share one chip) and a text search; each chip
+    shows how many groups it would leave. Cards or a compact one-line view. The whole state is in
+    the URL hash (`readHash`, `hashFor`), and `#round=<id>` scrolls to that story and opens it,
+    switching Show to the list that holds it.
+  - Each card shows every article's headline and summary with the phrases the model quoted
+    highlighted (`quoteRanges`, `highlighted`), coloured by the kind of difference (`KINDS`): the
+    headline is searched first, then the summary. Outlets carry a `left`/`right` badge from
+    `lean`. The detail lists other readings of the same story (its `supersedes` ids).
+  - Overview: median spread; the outlet most often named and for what; standard groups with both
+    a left- and a right-leaning outlet against those without (the model isn't told leanings);
+    how often a story read again landed in the same band as before (`agreement`); a histogram;
+    outlets named in differences; outlet pairs by the median spread of the groups they share
+    (`pairStats`); and the median by day, or by week when the view spans more than three weeks
+    (`trendBuckets`).
 - Headlines are shown in capitals everywhere (cards, results, saved image), through `headline()`,
   because some outlets capitalise every word of a title and that alone would give them away. The
   `[outlet]` mask keeps its spelling so it still renders as a chip.
@@ -88,7 +104,8 @@ file in the repo root holds that domain for Pages: keep it.
   something else (Jordan, Chad, Georgia), because a wrong place splits real stories. To test a
   change, run the old and new script on the same fetched feeds and diff the groups.
 - `LEAN` scores each outlet from -3 (most left) to 3 (most right), broadly AllSides' and Ad Fontes
-  Media's ratings; `side_of` reduces that to right, left, or centre (0; unlisted outlets).
+  Media's ratings; `side_of` reduces that to right, left, or centre (0; unlisted outlets). It is
+  written as `lean` on each outlet in `rounds.json` and `archive/index.json` for the analysis page.
 - Picking a round (`pick_articles`): at most `MAX_PER_ROUND` (4) articles. First the most central
   right-leaning and left-leaning ones, then random others, seeded by the group so an unchanged group
   gives the same round. Wire copy (`WIRE_OVERLAP`, the same AP headline at several outlets) is
