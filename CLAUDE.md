@@ -15,9 +15,9 @@ file in the repo root holds that domain for Pages: keep it.
   how to tune it. It refuses to overwrite `rounds.json` when fewer than `MIN_ROUNDS_TO_WRITE`
   rounds come out (exit 1), so a network outage never publishes an empty game.
 - `rounds.json` is generated but committed, because Pages serves it.
-  `.github/workflows/refresh.yml` regenerates it every three hours (at :17) and commits it when it
-  changed, which is nearly every run because it records when it was built. It isn't more often
-  because GitHub's schedules are best-effort and a skipped run costs its whole interval.
+  `.github/workflows/refresh.yml` regenerates it every six hours (at :17) and commits it when it
+  changed, which is nearly every run because it records when it was built. GitHub's schedules are
+  best-effort, so a skipped run costs its whole interval.
   The same run also commits `archive/` and `analysis/` (below). Its steps: fetch, analyse (can
   fail without stopping the commit), commit (rebased on the branch first, in case something landed
   meanwhile).
@@ -31,7 +31,7 @@ file in the repo root holds that domain for Pages: keep it.
   this, so it never writes. `--no-archive` skips it for test runs.
 - Bias analysis: `analyze_bias.py` sends archived rounds that have no entry in
   `analysis/YYYY-MM.json` to an AI model. Rounds on the page now come first, then newest first, at
-  most 20 per scheduled run (a manual run can set `analysis_limit`). A round that has left the page
+  most 40 per scheduled run (a manual run can set `analysis_limit`). A round that has left the page
   is skipped when an id in its `supersedes` was analysed (an earlier version of the story is close
   enough); a round on the page is analysed as shown, so a live story that grows is analysed again.
   The provider is the repository variable `ANALYSIS_PROVIDER`: `opencode` (default, OpenCode Go at
