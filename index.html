@@ -864,6 +864,7 @@ async function showFraming(round) {
   const facts = result.shared_facts || [];
   if (diffs.length || facts.length) {
     const more = el('details');
+    more.open = true;
     more.append(el('summary', '', diffs.length ? `What stood out (${diffs.length})` : 'What they agree on'));
     if (diffs.length) {
       const ul = el('ul');
