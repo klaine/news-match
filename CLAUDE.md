@@ -40,12 +40,18 @@ file in the repo root holds that domain for Pages: keep it.
   variable `ANTHROPIC_EFFORT`: `low` to `max`, unset keeps the model's default, recorded as
   `effort` on each analysis). With a key
   set but no model, the step lists the models that key can use and does nothing. Without the key
-  the step does nothing. Each analysis has `bias_score` (0-100: how far apart the most and least
-  loaded framings in the group are) and `score_reason` (a short text on the possible reasons). A
+  the step does nothing. Each analysis has `bias_score` (an integer 0-10: how far apart the most and least
+  loaded framings in the group are; the bands are 0-2, 3-4, 5-6, 7-8, 9-10) and `score_reason`
+  (a short text on the possible reasons). Records say `"scale": 10`. Scores were 0-100 before;
+  `migrate_scores` rescales any record without that mark at the start of every run (rounded,
+  halves up, the old score kept as `bias_score_100`), and both pages do the same in memory for
+  one not yet rescaled. A score outside 0-10 counts as a bad reply. A
   reply that doesn't parse or lacks those fields is sent back once to correct; if it still fails,
   it is stored as an error and not retried: delete that entry to retry it. The game shows a
   story's analysis (`showFraming`, the `#framing` panel under the board) only once it is checked
-  or skipped, because it names the outlets and would give the answers away. It loads
+  or skipped, because it names the outlets and would give the answers away. Both pages, and the
+  saved image, label an analysis with the model that made it (`analysedBy`, from the record's
+  `model` and `effort`). It loads
   `archive/index.json` and the newest two months' `analysis/` and `archive/` files once, a moment
   after the page loads, and like the analysis page falls back to an analysis made for an id in the
   round's `supersedes`.

@@ -156,7 +156,7 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 .framing h3 { margin: 0 0 4px; font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .framing .gist { font-size: 15px; }
 .framing .why { margin-top: 6px; font-size: 14px; color: var(--muted); }
-.framing .tag { display: inline-block; margin-top: 8px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); font-size: 12px; color: var(--muted); }
+.framing .tag { display: inline-block; margin: 8px 6px 0 0; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); font-size: 12px; color: var(--muted); }
 .framing details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; font-size: 14px; }
 .framing summary { padding: 2px 0; font-weight: 650; }
 /* An expandable section: a chevron that turns, and a Show/Hide pill, so it reads as a toggle. */
@@ -791,14 +791,31 @@ function endRound(skipped) {
 // analyze_bias.py's analyses, shown under a story once it is checked or skipped (they name the
 // outlets, so never before). Bands match the scale in its prompt and analysis.html.
 const BANDS = [
-  { lo: 0, hi: 20, name: 'Same tone', color: 'var(--ok)' },
-  { lo: 21, hi: 40, name: 'Small differences', color: 'var(--w1)' },
-  { lo: 41, hi: 60, name: 'Clear differences', color: 'var(--w4)' },
-  { lo: 61, hi: 80, name: 'Loaded framing', color: 'var(--w0)' },
-  { lo: 81, hi: 100, name: 'Sharply opposed', color: 'var(--bad)' },
+  { lo: 0, hi: 2, name: 'Same tone', color: 'var(--ok)' },
+  { lo: 3, hi: 4, name: 'Small differences', color: 'var(--w1)' },
+  { lo: 5, hi: 6, name: 'Clear differences', color: 'var(--w4)' },
+  { lo: 7, hi: 8, name: 'Loaded framing', color: 'var(--w0)' },
+  { lo: 9, hi: 10, name: 'Sharply opposed', color: 'var(--bad)' },
 ];
-const bandOf = (score) => BANDS.find((b) => score >= b.lo && score <= b.hi) || BANDS[0];
+const bandOf = (score) => BANDS.find((b) => score <= b.hi) || BANDS[BANDS.length - 1];
 const usable = (rec) => rec && !rec.error && rec.result && typeof rec.result.bias_score === 'number';
+// "Claude Sonnet 5.5" for "claude-sonnet-5-5"; other providers' model ids are shown as they are.
+const modelName = (id) => {
+  const m = /^claude-([a-z]+)-(\d+)(?:-(\d+))?$/.exec(String(id || ''));
+  if (!m) return String(id || '');
+  return `Claude ${m[1][0].toUpperCase()}${m[1].slice(1)} ${m[2]}${m[3] ? '.' + m[3] : ''}`;
+};
+// The label under an analysis, or '' for one saved without its model.
+const analysedBy = (rec) => (rec && rec.model
+  ? `Analysed by ${modelName(rec.model)}${rec.effort ? ` (${rec.effort} effort)` : ''}` : '');
+// Scores run 0-10. analyze_bias.py rescales older 0-100 ones in the files (marking them
+// "scale": 10), but one added by a run of an older script may not be rescaled yet.
+const toTen = (rec) => {
+  if (usable(rec) && rec.scale !== 10) {
+    rec.result = { ...rec.result, bias_score: Math.round(rec.result.bias_score / 10) };
+    rec.scale = 10;
+  }
+};
 
 // A story on the page was first seen this month or, around a month's start, the one before, so
 // only the newest two months of the archive are loaded. The archive gives each round's
@@ -820,6 +837,7 @@ function loadAnalyses() {
     const supersedes = {};
     for (const [an, ar] of docs) {
       Object.assign(analyses, an.analyses);
+      Object.values(an.analyses || {}).forEach(toTen);
       for (const [id, r] of Object.entries(ar.rounds || {})) supersedes[id] = r.supersedes || [];
     }
     return { analyses, supersedes };
@@ -861,19 +879,21 @@ async function showFraming(round) {
     return;
   }
   const { result } = found.rec;
-  cur.framing = { result, earlier: found.earlier };  // for Save image
+  const by = analysedBy(found.rec);
+  cur.framing = { result, earlier: found.earlier, by };  // for Save image
   const band = bandOf(result.bias_score);
   box.className = 'framing';
 
   const score = el('div', 'score');
   score.style.setProperty('--c', band.color);
-  score.title = 'How far apart the most and least loaded framings are, from 0 to 100';
+  score.title = 'How far apart the most and least loaded framings are, from 0 to 10';
   score.append(el('b', '', String(result.bias_score)), el('small', '', band.name));
   const body = el('div');
   body.append(el('h3', '', 'How they framed it'));
   if (result.summary) body.append(masked('p', 'gist', result.summary));
   if (result.score_reason) body.append(masked('p', 'why', result.score_reason));
   if (found.earlier) body.append(el('span', 'tag', 'Analysed from an earlier version of this story'));
+  if (by) body.append(el('span', 'tag', by));
   const top = el('div', 'framing-top');
   top.append(score, body);
   box.replaceChildren(top);
@@ -1246,7 +1266,7 @@ function renderStory() {
 
 // The framing panel for the image, laid out as a list of things to draw at offsets from its top
 // left corner, so its height is known before the canvas is sized.
-function layoutFraming(ctx, { result, earlier }, open, W) {
+function layoutFraming(ctx, { result, earlier, by }, open, W) {
   const PAD = 26;
   const BADGE = 104;
   const T = {
@@ -1272,6 +1292,11 @@ function layoutFraming(ctx, { result, earlier }, open, W) {
   if (earlier) {
     y += 8;
     ops.push({ kind: 'label', str: 'Analysed from an earlier version of this story', f: T.fine, x: tx, y, plain: true });
+    y += T.fine.lh;
+  }
+  if (by) {
+    y += earlier ? 4 : 8;
+    ops.push({ kind: 'label', str: by, f: T.fine, x: tx, y, plain: true });
     y += T.fine.lh;
   }
   y = Math.max(y, PAD + 92) + 18;

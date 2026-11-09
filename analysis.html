@@ -87,7 +87,7 @@ select { padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radiu
 .stat-line { font-size: 15px; }
 .stat-line + .stat-line { margin-top: 8px; }
 .stat-line b { font-weight: 700; }
-.hist { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; align-items: end; height: 130px; margin-top: 10px; }
+.hist { display: grid; grid-template-columns: repeat(11, 1fr); gap: 6px; align-items: end; height: 130px; margin-top: 10px; }
 .hist div { position: relative; height: 100%; display: flex; align-items: end; }
 .hist i { display: block; width: 100%; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--c); }
 .hist span { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -161,17 +161,17 @@ footer p + p { margin-top: 4px; }
         <li><b>Read the feeds</b><span>Each outlet's RSS headline and summary. The outlet's name is hidden in the text.</span></li>
         <li><b>Group the same story</b><span>Articles about one event are matched by their wording, one per outlet.</span></li>
         <li><b>Ask the model</b><span>The group's headlines, summaries, outlet names and times go to an AI model, told to use only that text.</span></li>
-        <li><b>Score and explain</b><span>It lists what the outlets agree on and how they differ, quoting the words, and gives a 0–100 spread score with reasons.</span></li>
+        <li><b>Score and explain</b><span>It lists what the outlets agree on and how they differ, quoting the words, and gives a 0–10 spread score with reasons.</span></li>
         <li><b>Check and keep</b><span>A reply that won't parse is sent back once. Each result is saved with the model and time.</span></li>
       </ol>
 
       <h3>What the score means</h3>
       <ul class="bands-list">
-        <li><i style="--c: var(--b0)"></i><span><b>0–20 Same tone:</b> the outlets describe the event in much the same tone.</span></li>
-        <li><i style="--c: var(--b1)"></i><span><b>21–40 Small differences:</b> small differences in emphasis or wording.</span></li>
-        <li><i style="--c: var(--b2)"></i><span><b>41–60 Clear differences:</b> clear differences in word choice, emphasis or what is included.</span></li>
-        <li><i style="--c: var(--b3)"></i><span><b>61–80 Loaded framing:</b> loaded language, labels or omissions put one outlet far from the others.</span></li>
-        <li><i style="--c: var(--b4)"></i><span><b>81–100 Sharply opposed:</b> accusations, moral labels, or claims that one text contradicts another.</span></li>
+        <li><i style="--c: var(--b0)"></i><span><b>0–2 Same tone:</b> the outlets describe the event in much the same tone.</span></li>
+        <li><i style="--c: var(--b1)"></i><span><b>3–4 Small differences:</b> small differences in emphasis or wording.</span></li>
+        <li><i style="--c: var(--b2)"></i><span><b>5–6 Clear differences:</b> clear differences in word choice, emphasis or what is included.</span></li>
+        <li><i style="--c: var(--b3)"></i><span><b>7–8 Loaded framing:</b> loaded language, labels or omissions put one outlet far from the others.</span></li>
+        <li><i style="--c: var(--b4)"></i><span><b>9–10 Sharply opposed:</b> accusations, moral labels, or claims that one text contradicts another.</span></li>
       </ul>
 
       <h3>What it does not do</h3>
@@ -190,7 +190,7 @@ footer p + p { margin-top: 4px; }
 <header class="top wrap">
   <p class="dateline">Framing analysis</p>
   <h1>How the newsrooms frame the same story</h1>
-  <p class="lede">For each group of articles about one event, an AI model reads the headlines and summaries, scores how far apart the framings are, and suggests possible reasons. Scores run from 0, where outlets describe the event in much the same tone, to 100, where the framings are sharply opposed.</p>
+  <p class="lede">For each group of articles about one event, an AI model reads the headlines and summaries, scores how far apart the framings are, and suggests possible reasons. Scores run from 0, where outlets describe the event in much the same tone, to 10, where the framings are sharply opposed.</p>
   <p class="caveat">These are readings of the text shown, not verdicts on any outlet. The model can be wrong, and "possibly" in a reason marks a guess. Outlet names are shown here, which is why this page is kept apart from the game.</p>
 </header>
 
@@ -227,13 +227,23 @@ footer p + p { margin-top: 4px; }
 'use strict';
 // Bands match the scale in analyze_bias.py's prompt.
 const BANDS = [
-  { lo: 0, hi: 20, name: 'Same tone', color: 'var(--b0)' },
-  { lo: 21, hi: 40, name: 'Small differences', color: 'var(--b1)' },
-  { lo: 41, hi: 60, name: 'Clear differences', color: 'var(--b2)' },
-  { lo: 61, hi: 80, name: 'Loaded framing', color: 'var(--b3)' },
-  { lo: 81, hi: 100, name: 'Sharply opposed', color: 'var(--b4)' },
+  { lo: 0, hi: 2, name: 'Same tone', color: 'var(--b0)' },
+  { lo: 3, hi: 4, name: 'Small differences', color: 'var(--b1)' },
+  { lo: 5, hi: 6, name: 'Clear differences', color: 'var(--b2)' },
+  { lo: 7, hi: 8, name: 'Loaded framing', color: 'var(--b3)' },
+  { lo: 9, hi: 10, name: 'Sharply opposed', color: 'var(--b4)' },
 ];
-const bandOf = (score) => BANDS.find((b) => score >= b.lo && score <= b.hi) || BANDS[0];
+// A median can fall between bands (4.5), so a score belongs to the first band it doesn't exceed.
+const bandOf = (score) => BANDS.find((b) => score <= b.hi) || BANDS[BANDS.length - 1];
+// "Claude Sonnet 5.5" for "claude-sonnet-5-5"; other providers' model ids are shown as they are.
+const modelName = (id) => {
+  const m = /^claude-([a-z]+)-(\d+)(?:-(\d+))?$/.exec(String(id || ''));
+  if (!m) return String(id || '');
+  return `Claude ${m[1][0].toUpperCase()}${m[1].slice(1)} ${m[2]}${m[3] ? '.' + m[3] : ''}`;
+};
+// The label under an analysis, or '' for one saved without its model.
+const analysedBy = (rec) => (rec && rec.model
+  ? `Analysed by ${modelName(rec.model)}${rec.effort ? ` (${rec.effort} effort)` : ''}` : '');
 const bandIndex = (score) => BANDS.indexOf(bandOf(score));
 
 const $ = (id) => document.getElementById(id);
@@ -304,6 +314,14 @@ async function load() {
   // their ids, possibly in another month's file.
   const analyses = Object.assign({}, ...docs.map((d) => d.analysis.analyses));
   const usable = (rec) => rec && !rec.error && rec.result && typeof rec.result.bias_score === 'number';
+  // Scores run 0-10. analyze_bias.py rescales older 0-100 ones in the files (marking them
+  // "scale": 10), but one added by a run of an older script may not be rescaled yet.
+  for (const rec of Object.values(analyses)) {
+    if (usable(rec) && rec.scale !== 10) {
+      rec.result = { ...rec.result, bias_score: Math.round(rec.result.bias_score / 10) };
+      rec.scale = 10;
+    }
+  }
   for (const { m, archive } of docs) {
     for (const [rid, entry] of Object.entries(archive.rounds)) {
       let rec = analyses[rid];
@@ -438,16 +456,16 @@ function renderOverview(items) {
   const hist = el('div', 'panel hist-wrap');
   hist.append(el('h2', '', 'How different the framings are'));
   const bars = el('div', 'hist');
-  const counts = Array.from({ length: 10 }, () => 0);
-  for (const s of scores) counts[Math.min(9, Math.floor(s / 10))] += 1;
+  const counts = Array.from({ length: 11 }, () => 0);  // one bar per score, 0 to 10
+  for (const s of scores) counts[Math.min(10, Math.max(0, Math.round(s)))] += 1;
   const peak = Math.max(1, ...counts);
   counts.forEach((n, i) => {
     const col = el('div');
-    col.style.setProperty('--c', bandOf(i * 10 + 5).color);  // the bar's middle: 20 and 21 are in different bands
+    col.style.setProperty('--c', bandOf(i).color);
     const bar = el('i');
     bar.style.height = `${(100 * n) / peak}%`;
-    bar.title = `${i * 10}–${i * 10 + 9}: ${n}`;
-    col.append(bar, el('span', '', `${i * 10}`));
+    bar.title = `${i}: ${n}`;
+    col.append(bar, el('span', '', `${i}`));
     bars.append(col);
   });
   hist.append(bars);
@@ -493,6 +511,8 @@ function renderRound(it) {
   if (result.same_event === false) tags.append(el('span', 'tag', 'may not be one event'));
   if (result.partial) tags.append(el('span', 'tag', 'partly read'));
   if (it.earlier) tags.append(el('span', 'tag', 'earlier version analysed'));
+  const by = analysedBy(it.rec);
+  if (by) tags.append(el('span', 'tag', by));
   body.append(meta, el('p', 'topic', (entry.topic || []).join(' · ') || 'Group ' + it.id));
   body.append(withMasks(el('p', 'reason'), result.score_reason || ''), tags);
   top.append(score, body);

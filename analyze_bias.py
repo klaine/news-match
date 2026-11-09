@@ -36,6 +36,7 @@ USER_AGENT = "news-match/1.0"
 # thinking counts against it too, and more of it at a higher effort.
 MAX_REPLY_TOKENS = 6000
 EFFORTS = ("low", "medium", "high", "xhigh", "max")
+SCALE = 10  # bias_score runs from 0 to SCALE; each record says so in "scale"
 RETRY_DELAYS = (2, 4, 8, 16)  # seconds, for rate limits and server errors
 RETRYABLE = (429, 500, 502, 503, 504, 529)
 
@@ -62,13 +63,13 @@ Use only the text you are given. Look for differences in word choice, emphasis, 
 who is quoted, and loaded labels. Quote the words you rely on. Say what the texts show and how
 strongly. Where a reason is a guess, say "possibly" rather than stating it as fact.
 
-Score bias_score from 0 to 100 for how far apart the most and least loaded framings in the group
+Score bias_score from 0 to 10 for how far apart the most and least loaded framings in the group
 are, judged from the texts only:
-- 0-20: the outlets describe the event in much the same tone.
-- 21-40: small differences in emphasis or wording.
-- 41-60: clear differences in word choice, emphasis or what is included.
-- 61-80: loaded language, labels or omissions that put one outlet far from the others.
-- 81-100: sharply opposed framing, such as accusations, moral labels, or claims that one
+- 0-2: the outlets describe the event in much the same tone.
+- 3-4: small differences in emphasis or wording.
+- 5-6: clear differences in word choice, emphasis or what is included.
+- 7-8: loaded language, labels or omissions that put one outlet far from the others.
+- 9-10: sharply opposed framing, such as accusations, moral labels, or claims that one
   outlet's text contradicts another's.
 
 Reply with only one JSON object and no other text. Every string must be valid JSON: escape any
@@ -78,7 +79,7 @@ double quote inside a string as \\" and never join quoted strings with semicolon
  "differences": [{"outlet": "outlet label", "kind": "word choice | emphasis | omission | sourcing | loaded label | other",
                   "observation": "what differs and why it matters", "quote": "one quoted phrase"}],
  "possible_bias": "none apparent | slight | notable | unclear",
- "bias_score": an integer from 0 to 100,
+ "bias_score": an integer from 0 to 10,
  "score_reason": "two or three sentences: the possible reasons for the differences (for example the outlet's audience or editorial line, sourcing, or wire copy), and which outlets, if any, seem to show strong framing, with the evidence",
  "summary": "one sentence"}"""
 
@@ -186,6 +187,46 @@ def ask(provider, base, headers, model, turns, effort=""):
     return reply["choices"][0]["message"]["content"]
 
 
+def read_score(raw):
+    """bias_score as an integer from 0 to 10. Raises ValueError, with what to tell the model, for
+    anything else, such as a score on the old 0-100 scale."""
+    try:
+        score = float(raw)
+    except (TypeError, ValueError):
+        raise ValueError("bias_score is missing or not a number")
+    if not 0 <= score <= SCALE:
+        raise ValueError(f"bias_score must be from 0 to {SCALE}")
+    return int(score + 0.5)
+
+
+def migrate_scores(analysis_dir):
+    """Rescale analyses scored 0-100 (before the scale became 0-10) to 0-10, rounded to the
+    nearest integer, halves up, keeping the old score as bias_score_100. Run on every run, so an
+    analysis that a run of an older script adds is converted by the next one."""
+    if not os.path.isdir(analysis_dir):
+        return 0
+    changed = 0
+    for name in sorted(os.listdir(analysis_dir)):
+        if not re.fullmatch(r"\d{4}-\d{2}\.json", name):
+            continue
+        path = os.path.join(analysis_dir, name)
+        doc = read_json(path, {"analyses": {}})
+        n = 0
+        for rec in doc["analyses"].values():
+            result = rec.get("result")
+            if rec.get("scale") == SCALE or not isinstance(result, dict) \
+                    or not isinstance(result.get("bias_score"), (int, float)):
+                continue
+            result["bias_score_100"] = result["bias_score"]
+            result["bias_score"] = int(result["bias_score"] / 10 + 0.5)
+            rec["scale"] = SCALE
+            n += 1
+        if n:
+            write_json(path, doc)
+            changed += n
+    return changed
+
+
 def partial_fields(text):
     """The score and reason from a reply that isn't valid JSON, or (None, why) if they can't be read."""
     score = re.search(r'"bias_score"\s*:\s*"?(-?\d+(?:\.\d+)?)', text)
@@ -194,14 +235,18 @@ def partial_fields(text):
         return None, "the reply was not a JSON object and has no bias_score"
     if not reason or not reason.group(1).strip():
         return None, "the reply was not a JSON object and has no score_reason"
-    value = {"bias_score": min(100, max(0, int(round(float(score.group(1)))))),
+    try:
+        bias = read_score(score.group(1))
+    except ValueError as e:
+        return None, str(e)
+    value = {"bias_score": bias,
              "score_reason": reason.group(1).replace('\\"', '"').strip(), "partial": True}
     return value, None
 
 
 def check_reply(text):
-    """(result, None) when the reply is the JSON object we asked for, with bias_score clamped to
-    0-100; otherwise (None, what is wrong), which is sent back to the model once."""
+    """(result, None) when the reply is the JSON object we asked for, with bias_score an integer
+    from 0 to 10; otherwise (None, what is wrong), which is sent back to the model once."""
     text = (text or "").strip()
     value = None
     for candidate in (text, text[text.find("{"): text.rfind("}") + 1] if "{" in text else ""):
@@ -215,9 +260,9 @@ def check_reply(text):
         # what the page needs, so take those from the text and mark the result as partial.
         return partial_fields(text)
     try:
-        value["bias_score"] = min(100, max(0, int(round(float(value["bias_score"])))))
-    except (KeyError, TypeError, ValueError):
-        return None, "bias_score is missing or not a number"
+        value["bias_score"] = read_score(value.get("bias_score"))
+    except ValueError as e:
+        return None, str(e)
     if not isinstance(value.get("score_reason"), str) or not value["score_reason"].strip():
         return None, "score_reason is missing"
     return value, None
@@ -243,6 +288,9 @@ def main():
     if effort and effort not in EFFORTS:
         print(f"unknown ANTHROPIC_EFFORT {effort!r}; use one of: {', '.join(EFFORTS)}", file=sys.stderr)
         return 1
+    migrated = migrate_scores(args.analysis_dir)
+    if migrated:
+        print(f"rescaled {migrated} analysis score(s) from 0-100 to 0-{SCALE}")
     if not key:
         print(f"{cfg['key_env']} is not set; skipping the bias analysis ({provider}).")
         return 0
@@ -307,7 +355,7 @@ def main():
         except (KeyError, IndexError, TypeError) as e:
             print(f"unexpected reply shape from {provider}: {e!r}", file=sys.stderr)
             return 1
-        base_record = {"provider": provider, "model": model, "analysed_at": stamp}
+        base_record = {"provider": provider, "model": model, "analysed_at": stamp, "scale": SCALE}
         if effort:
             base_record["effort"] = effort
         if result is None:
