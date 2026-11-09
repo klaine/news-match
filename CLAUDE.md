@@ -49,7 +49,10 @@ file in the repo root holds that domain for Pages: keep it.
   reply that doesn't parse or lacks those fields is sent back once to correct; if it still fails,
   it is stored as an error and not retried: delete that entry to retry it. The game shows a
   story's analysis (`showFraming`, the `#framing` panel under the board) only once it is checked
-  or skipped, because it names the outlets and would give the answers away. Both pages, and the
+  or skipped, because it names the outlets and would give the answers away. In its "What
+  stood out" list each difference names the outlet with a dot in that article's card colour
+  (`articleByLabel`), the kind as a label pill, and the quote on its own line; the fine print and
+  the model tags make a footer. Both pages, and the
   saved image, label an analysis with the model that made it (`analysedBy`, from the record's
   `model` and `effort`). It loads
   `archive/index.json` and the newest two months' `analysis/` and `archive/` files once, a moment
