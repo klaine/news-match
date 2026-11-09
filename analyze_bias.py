@@ -6,7 +6,8 @@ Usage: ANALYSIS_PROVIDER=opencode OPENCODE_API_KEY=... OPENCODE_MODEL=... python
 
 Providers (ANALYSIS_PROVIDER, default "opencode"):
   opencode   OpenCode Go, OPENCODE_API_KEY and OPENCODE_MODEL
-  anthropic  the Claude API, ANTHROPIC_API_KEY and ANTHROPIC_MODEL
+  anthropic  the Claude API, ANTHROPIC_API_KEY and ANTHROPIC_MODEL; optional ANTHROPIC_EFFORT
+             (low, medium, high, xhigh or max; unset leaves the model's default)
 Optional base URL overrides: OPENCODE_BASE_URL, ANTHROPIC_BASE_URL.
 
 Standard library only. Only rounds without an analysis are sent: the ones in the current
@@ -31,8 +32,10 @@ from datetime import datetime, timezone
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USER_AGENT = "news-match/1.0"
-# Long enough for the full JSON: a 1024-token limit cut replies off before the score.
-MAX_REPLY_TOKENS = 3000
+# Long enough for the full JSON: a 1024-token limit cut replies off before the score. Claude's
+# thinking counts against it too, and more of it at a higher effort.
+MAX_REPLY_TOKENS = 6000
+EFFORTS = ("low", "medium", "high", "xhigh", "max")
 RETRY_DELAYS = (2, 4, 8, 16)  # seconds, for rate limits and server errors
 RETRYABLE = (429, 500, 502, 503, 504, 529)
 
@@ -163,14 +166,18 @@ def list_models(provider, base, headers):
     return [m["id"] for m in call(base, headers, "/models", method="GET").get("data", [])]
 
 
-def ask(provider, base, headers, model, turns):
-    """The model's reply as text, given the conversation so far as (role, text) turns."""
+def ask(provider, base, headers, model, turns, effort=""):
+    """The model's reply as text, given the conversation so far as (role, text) turns. effort is
+    sent to Claude only when set."""
     messages = [{"role": role, "content": text} for role, text in turns]
     if provider == "anthropic":
-        reply = call(base, headers, "/messages", {
+        body = {
             # No temperature: some Claude models reject it.
             "model": model, "max_tokens": MAX_REPLY_TOKENS, "system": SYSTEM, "messages": messages,
-        })
+        }
+        if effort:
+            body["output_config"] = {"effort": effort}
+        reply = call(base, headers, "/messages", body)
         return "".join(b.get("text", "") for b in reply["content"] if b.get("type") == "text")
     reply = call(base, headers, "/chat/completions", {
         "model": model, "temperature": 0.2, "max_tokens": MAX_REPLY_TOKENS,
@@ -232,6 +239,10 @@ def main():
     key = os.environ.get(cfg["key_env"], "").strip()
     model = os.environ.get(cfg["model_env"], "").strip()
     base = os.environ.get(cfg["base_env"], cfg["base"]).rstrip("/")
+    effort = os.environ.get("ANTHROPIC_EFFORT", "").strip().lower() if provider == "anthropic" else ""
+    if effort and effort not in EFFORTS:
+        print(f"unknown ANTHROPIC_EFFORT {effort!r}; use one of: {', '.join(EFFORTS)}", file=sys.stderr)
+        return 1
     if not key:
         print(f"{cfg['key_env']} is not set; skipping the bias analysis ({provider}).")
         return 0
@@ -265,7 +276,7 @@ def main():
     if not todo:
         print("nothing new to analyse")
         return 0
-    print(f"analysing {len(todo)} round(s) with {provider} / {model}")
+    print(f"analysing {len(todo)} round(s) with {provider} / {model}" + (f", effort {effort}" if effort else ""))
 
     for rid in todo:
         month, entry = archive[rid]
@@ -274,14 +285,14 @@ def main():
         stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         turns = [("user", prompt_for(entry))]
         try:
-            text = ask(provider, base, headers, model, turns)
+            text = ask(provider, base, headers, model, turns, effort)
             result, problem = check_reply(text)
             if result is None:
                 # Send it back once with what was wrong; most replies that fail are close to valid.
                 turns += [("assistant", text), ("user",
                            f"That reply was not valid in the required shape ({problem}). "
                            "Reply again with only the corrected JSON object.")]
-                text = ask(provider, base, headers, model, turns)
+                text = ask(provider, base, headers, model, turns, effort)
                 result, problem = check_reply(text)
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:300]
@@ -297,6 +308,8 @@ def main():
             print(f"unexpected reply shape from {provider}: {e!r}", file=sys.stderr)
             return 1
         base_record = {"provider": provider, "model": model, "analysed_at": stamp}
+        if effort:
+            base_record["effort"] = effort
         if result is None:
             record = {**base_record, "error": problem, "raw": text[:4000]}
         else:

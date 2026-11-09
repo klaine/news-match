@@ -36,7 +36,9 @@ file in the repo root holds that domain for Pages: keep it.
   enough); a round on the page is analysed as shown, so a live story that grows is analysed again.
   The provider is the repository variable `ANALYSIS_PROVIDER`: `opencode` (default, OpenCode Go at
   `https://opencode.ai/zen/go/v1`, secret `OPENCODE_API_KEY`, variable `OPENCODE_MODEL`) or
-  `anthropic` (the Claude API, secret `ANTHROPIC_API_KEY`, variable `ANTHROPIC_MODEL`). With a key
+  `anthropic` (the Claude API, secret `ANTHROPIC_API_KEY`, variable `ANTHROPIC_MODEL`, optional
+  variable `ANTHROPIC_EFFORT`: `low` to `max`, unset keeps the model's default, recorded as
+  `effort` on each analysis). With a key
   set but no model, the step lists the models that key can use and does nothing. Without the key
   the step does nothing. Each analysis has `bias_score` (0-100: how far apart the most and least
   loaded framings in the group are) and `score_reason` (a short text on the possible reasons). A
