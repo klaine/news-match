@@ -93,7 +93,8 @@ file in the repo root holds that domain for Pages: keep it.
   say so and have no guesses.
 - Save image (`renderStory`, `saveImage`) draws the current story on a canvas with its own fixed
   layout, so a phone gets lines too: the date, cards, outlets, the lines made so far and, once
-  checked or skipped, the answers, in the page's current light or dark colours (read from the CSS
+  checked or skipped, the answers and the framing analysis (`layoutFraming`, `drawFraming`: as on the
+  page, its list only when open), in the page's current light or dark colours (read from the CSS
   variables), 2400px wide. It's encoded as a JPEG synchronously, so on touch devices
   `navigator.share` still runs inside the tap and opens the share sheet. Elsewhere it downloads
   `news-match-<date>-story-<n>.jpg`. Keep the canvas look in step with the CSS when changing either.
