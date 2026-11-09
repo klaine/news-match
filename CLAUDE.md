@@ -64,6 +64,11 @@ file in the repo root holds that domain for Pages: keep it.
 - Headlines are shown in capitals everywhere (cards, results, saved image), through `headline()`,
   because some outlets capitalise every word of a title and that alone would give them away. The
   `[outlet]` mask keeps its spelling so it still renders as a chip.
+- Light and dark: both pages key their dark colours on `data-theme` on the root, set by a small
+  script in `<head>` before the first paint from `theme` in the store (shared by both pages) or,
+  unset, the system setting. The round sun/moon button in the header corner (`#theme`) flips it
+  and saves it. There is no `prefers-color-scheme` block in the CSS: the script is the one place
+  that decides.
 - Outlets and their feeds are the `OUTLETS` list. Column 4 holds names masked as `[outlet]` in every
   article. Column 5 holds names masked only in the outlet's own articles, for ambiguous ones like
   "The Times". The page renders `[outlet]` as a chip.
