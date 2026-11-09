@@ -41,8 +41,12 @@ file in the repo root holds that domain for Pages: keep it.
   the step does nothing. Each analysis has `bias_score` (0-100: how far apart the most and least
   loaded framings in the group are) and `score_reason` (a short text on the possible reasons). A
   reply that doesn't parse or lacks those fields is sent back once to correct; if it still fails,
-  it is stored as an error and not retried: delete that entry to retry it. The page doesn't show
-  the analysis, because it names the outlets and would give the answers away.
+  it is stored as an error and not retried: delete that entry to retry it. The game shows a
+  story's analysis (`showFraming`, the `#framing` panel under the board) only once it is checked
+  or skipped, because it names the outlets and would give the answers away. It loads
+  `archive/index.json` and the newest two months' `analysis/` and `archive/` files once, a moment
+  after the page loads, and like the analysis page falls back to an analysis made for an id in the
+  round's `supersedes`.
 - Analysis page: `analysis.html` shows the analyses on their own, for the current edition or any
   archived month, with sort and score-band filters. It isn't linked from the game page. It reads
   `rounds.json`, `archive/index.json` (the months, written by `write_archive` so the page can find

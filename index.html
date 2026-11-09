@@ -147,6 +147,31 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 .status { font-size: 14px; color: var(--muted); }
 .status b { color: var(--text); }
 
+/* The AI framing analysis of the story, shown once it is checked or skipped. */
+.framing { margin: 18px 0 6px; padding: 16px 20px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+.framing-top { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; align-items: start; }
+.framing .score { border-radius: 10px; padding: 8px 6px; text-align: center; color: #fff; background: var(--c); }
+.framing .score b { display: block; font-size: 28px; line-height: 1; font-weight: 750; font-variant-numeric: tabular-nums; }
+.framing .score small { display: block; margin-top: 4px; font-size: 11px; font-weight: 650; line-height: 1.2; }
+.framing h3 { margin: 0 0 4px; font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.framing .gist { font-size: 15px; }
+.framing .why { margin-top: 6px; font-size: 14px; color: var(--muted); }
+.framing .tag { display: inline-block; margin-top: 8px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); font-size: 12px; color: var(--muted); }
+.framing details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; font-size: 14px; }
+.framing summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.framing ul { margin: 8px 0 4px; padding-left: 18px; }
+.framing li + li { margin-top: 6px; }
+.framing .who { font-weight: 650; }
+.framing .kind { color: var(--muted); font-size: 12.5px; }
+.framing .fine { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+.framing.empty { padding: 12px 20px; font-size: 14px; color: var(--muted); }
+@media (max-width: 640px) {
+  .framing { padding: 14px 14px 12px; }
+  .framing-top { grid-template-columns: 74px minmax(0, 1fr); gap: 12px; }
+  .framing .score b { font-size: 22px; }
+  .framing .score small { font-size: 10px; }
+}
+
 .end { max-width: 760px; padding: 8px 0 20px; }
 .end .rows { max-width: 560px; }
 .end h2 { margin: 0; font-size: clamp(26px, 4vw, 36px); letter-spacing: -.03em; line-height: 1.1; }
@@ -266,6 +291,7 @@ footer p + p { margin-top: 4px; }
       <button class="btn" id="save" title="Save this story as a JPEG image">Save image</button>
       <span class="status" id="status" aria-live="polite"></span>
     </div>
+    <section class="framing" id="framing" aria-label="Framing analysis" hidden></section>
   </section>
 
   <section class="end" id="end" hidden>
@@ -374,6 +400,7 @@ async function load() {
   $('mode-note').hidden = false;
   renderModes();
   newGame();
+  setTimeout(loadAnalyses, 1500);  // ready by the first Check
 }
 
 // The stories each mode plays. rounds.json has no polarized list in editions made before it.
@@ -468,6 +495,7 @@ function startRound() {
   $('clear').hidden = false;
   $('skip').hidden = false;
   $('next').hidden = true;
+  $('framing').hidden = true;
   renderDots();
   update();
   window.scrollTo({ top: Math.min(window.scrollY, $('game').offsetTop - 12) });
@@ -738,6 +766,126 @@ function endRound(skipped) {
   }
   renderDots();
   update();
+  showFraming(cur.round);
+}
+
+// ------------------------------------------------------------------ framing analysis
+
+// analyze_bias.py's analyses, shown under a story once it is checked or skipped (they name the
+// outlets, so never before). Bands match the scale in its prompt and analysis.html.
+const BANDS = [
+  { lo: 0, hi: 20, name: 'Same tone', color: 'var(--ok)' },
+  { lo: 21, hi: 40, name: 'Small differences', color: 'var(--w1)' },
+  { lo: 41, hi: 60, name: 'Clear differences', color: 'var(--w4)' },
+  { lo: 61, hi: 80, name: 'Loaded framing', color: 'var(--w0)' },
+  { lo: 81, hi: 100, name: 'Sharply opposed', color: 'var(--bad)' },
+];
+const bandOf = (score) => BANDS.find((b) => score >= b.lo && score <= b.hi) || BANDS[0];
+const usable = (rec) => rec && !rec.error && rec.result && typeof rec.result.bias_score === 'number';
+
+// A story on the page was first seen this month or, around a month's start, the one before, so
+// only the newest two months of the archive are loaded. The archive gives each round's
+// `supersedes`, for a round whose analysis was made for an earlier version of the story.
+let framingData = null;
+function loadAnalyses() {
+  framingData ||= (async () => {
+    const get = async (url) => {
+      const r = await fetch(url, { cache: 'no-cache' });
+      if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+      return r.json();
+    };
+    const months = ((await get('archive/index.json')).months || []).slice().sort().slice(-2);
+    const docs = await Promise.all(months.map((m) => Promise.all([
+      get(`analysis/${m}.json`).catch(() => ({ analyses: {} })),
+      get(`archive/${m}.json`).catch(() => ({ rounds: {} })),
+    ])));
+    const analyses = {};
+    const supersedes = {};
+    for (const [an, ar] of docs) {
+      Object.assign(analyses, an.analyses);
+      for (const [id, r] of Object.entries(ar.rounds || {})) supersedes[id] = r.supersedes || [];
+    }
+    return { analyses, supersedes };
+  })().catch((err) => { console.warn(err); return { analyses: {}, supersedes: {} }; });
+  return framingData;
+}
+
+function analysisFor(round, fd) {
+  const own = fd.analyses[round.id];
+  if (usable(own)) return { rec: own, earlier: false };
+  const old = (fd.supersedes[round.id] || []).find((id) => usable(fd.analyses[id]));
+  return old ? { rec: fd.analyses[old], earlier: true } : null;
+}
+
+// Labels in the analysis may be outlet ids ("dailymail") or names ("Daily Mail").
+function labelOutlet(label) {
+  const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const key = norm(label);
+  const id = Object.keys(data.outlets).find((o) => norm(o) === key || norm(outletName(o)) === key);
+  return id ? outletName(id) : label || 'An outlet';
+}
+
+const masked = (tag, cls, text) => {
+  const node = el(tag, cls);
+  setMasked(node, String(text || ''));
+  return node;
+};
+
+async function showFraming(round) {
+  const box = $('framing');
+  box.className = 'framing empty';
+  box.replaceChildren(el('p', '', 'Loading the framing analysis…'));
+  box.hidden = false;
+  const fd = await loadAnalyses();
+  if (!cur || cur.round !== round || !cur.checked) return;  // moved on meanwhile
+  const found = analysisFor(round, fd);
+  if (!found) {
+    box.replaceChildren(el('p', '', 'No framing analysis for this story yet.'));
+    return;
+  }
+  const { result } = found.rec;
+  const band = bandOf(result.bias_score);
+  box.className = 'framing';
+
+  const score = el('div', 'score');
+  score.style.setProperty('--c', band.color);
+  score.title = 'How far apart the most and least loaded framings are, from 0 to 100';
+  score.append(el('b', '', String(result.bias_score)), el('small', '', band.name));
+  const body = el('div');
+  body.append(el('h3', '', 'How they framed it'));
+  if (result.summary) body.append(masked('p', 'gist', result.summary));
+  if (result.score_reason) body.append(masked('p', 'why', result.score_reason));
+  if (found.earlier) body.append(el('span', 'tag', 'Analysed from an earlier version of this story'));
+  const top = el('div', 'framing-top');
+  top.append(score, body);
+  box.replaceChildren(top);
+
+  const diffs = result.differences || [];
+  const facts = result.shared_facts || [];
+  if (diffs.length || facts.length) {
+    const more = el('details');
+    more.append(el('summary', '', diffs.length ? `What stood out (${diffs.length})` : 'What they agree on'));
+    if (diffs.length) {
+      const ul = el('ul');
+      for (const d of diffs) {
+        const li = el('li');
+        li.append(el('span', 'who', labelOutlet(d.outlet)), ' ', el('span', 'kind', `(${d.kind || 'other'})`), ': ',
+          masked('span', '', d.observation));
+        const quote = String(d.quote || '').trim().replace(/^["“”]+|["“”]+$/g, '');  // <q> adds its own marks
+        if (quote) li.append(' ', masked('q', '', quote));
+        ul.append(li);
+      }
+      more.append(ul);
+    }
+    if (facts.length) {
+      if (diffs.length) more.append(el('h3', '', 'Agreed on'));
+      const ul = el('ul');
+      for (const f of facts) ul.append(masked('li', '', f));
+      more.append(ul);
+    }
+    box.append(more);
+  }
+  box.append(el('p', 'fine', 'Written by an AI model from these headlines and summaries alone, not checked by a person. A high score means the framings differ, not which one is right.'));
 }
 
 $('check').addEventListener('click', () => endRound(false));
