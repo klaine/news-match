@@ -158,7 +158,24 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1.05; letter-spa
 .framing .why { margin-top: 6px; font-size: 14px; color: var(--muted); }
 .framing .tag { display: inline-block; margin-top: 8px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); font-size: 12px; color: var(--muted); }
 .framing details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; font-size: 14px; }
-.framing summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.framing summary { padding: 2px 0; font-weight: 650; }
+/* An expandable section: a chevron that turns, and a Show/Hide pill, so it reads as a toggle. */
+summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; user-select: none; -webkit-user-select: none; }
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: ""; flex: none; width: 7px; height: 7px; margin: 0 2px 0 3px;
+  border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); transition: transform .15s;
+}
+details[open] > summary::before { transform: translateY(-2px) rotate(45deg); }
+summary::after {
+  content: "Show"; margin-left: auto; padding: 2px 11px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--muted);
+}
+details[open] > summary::after { content: "Hide"; }
+summary:hover { color: var(--accent); }
+summary:hover::after { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); color: var(--text); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { summary::before { transition: none; } }
 .framing ul { margin: 8px 0 4px; padding-left: 18px; }
 .framing li + li { margin-top: 6px; }
 .framing .who { font-weight: 650; }
