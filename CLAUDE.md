@@ -15,9 +15,10 @@ file in the repo root holds that domain for Pages: keep it.
   how to tune it. It refuses to overwrite `rounds.json` when fewer than `MIN_ROUNDS_TO_WRITE`
   rounds come out (exit 1), so a network outage never publishes an empty game.
 - `rounds.json` is generated but committed, because Pages serves it.
-  `.github/workflows/refresh.yml` regenerates it every six hours (at :17) and commits it when it
+  `.github/workflows/refresh.yml` regenerates it hourly (at :17) and commits it when it
   changed, which is nearly every run because it records when it was built. GitHub's schedules are
-  best-effort, so a skipped run costs its whole interval.
+  best-effort: most hourly runs are dropped and the rest start late, so asking hourly is what
+  gets a few runs a day. The page never promises a refresh interval.
   The same run also commits `archive/` and `analysis/` (below). Its steps: fetch, analyse (can
   fail without stopping the commit), commit (rebased on the branch first, in case something landed
   meanwhile).
