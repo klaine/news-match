@@ -1144,6 +1144,57 @@
    },
    "scale": 10
   },
+  "0b1d748ace": {
+   "analysed_at": "2026-11-12T11:19:23Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline leads with the nickname 'Danny Tommo' in quotation marks and calls him an 'Activist' without a political qualifier. This may make the case read as a stunt by a personality, and the quotes add a faintly mocking distance.",
+      "outlet": "dailymail",
+      "quote": "'Danny Tommo' pleads guilty"
+     },
+     {
+      "kind": "word choice",
+      "observation": "It calls the vessel a 'migrant boat' and does not mention that people were on board or were rescued. This frames the object by who was on it and leaves out the human stakes that the Guardian includes.",
+      "outlet": "dailymail",
+      "quote": "slashed a migrant boat with a knife"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "It describes him as a 'Far-right activist' in both headline and summary. This is a political label that the Mail omits. It is a descriptive label rather than an insult, but it places him on the political spectrum.",
+      "outlet": "guardian",
+      "quote": "Far-right activist Daniel Thomas"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "It adds that he acted 'after watching occupants being helped by rescue services' and calls the vessel an 'inflatable dinghy'. These details bring in the rescue and the people aboard, which the Mail summary leaves out.",
+      "outlet": "guardian",
+      "quote": "after watching occupants being helped by rescue services"
+     },
+     {
+      "kind": "omission",
+      "observation": "It names Portsmouth Crown Court as the venue but does not mention the rescue or the occupants. The Guardian gives a different set of details, so each piece emphasises different facts.",
+      "outlet": "dailymail",
+      "quote": "at Portsmouth Crown Court"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "Both outlets report the same facts and neither quotes sources. The Mail's nickname headline and 'migrant boat' wording are somewhat more informal and possibly aimed at a tabloid audience, while the Guardian's 'Far-right' label and rescue detail are more explicit framing. Neither text makes an overt moral judgement, so the framing differences are modest and the Guardian's label is the most evaluative element.",
+    "shared_facts": [
+     "The defendant is Daniel Thomas, 37, also known as Danny Tommo.",
+     "He has pleaded guilty or admitted criminal damage.",
+     "The damage was done by slashing a boat with a knife in the English Channel.",
+     "The boat was an inflatable craft carrying migrants."
+    ]
+   },
+   "scale": 10
+  },
   "0b440ce76c": {
    "analysed_at": "2026-11-09T00:55:03Z",
    "model": "claude-sonnet-5-5",
@@ -1661,6 +1712,71 @@
    },
    "scale": 10
   },
+  "1167fb1a91": {
+   "analysed_at": "2026-11-12T11:18:04Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "The headline states as settled that the board 'Moves to Oust' Huang and that he 'Faces Allegation' of an affair. The body describes him as 'embroiled in a Chinese spy scandal', which presents the spy link more firmly than the other outlets do.",
+      "outlet": "breitbart",
+      "quote": "Nvidia Board Moves to Oust Jensen Huang"
+     },
+     {
+      "kind": "omission",
+      "observation": "Breitbart names the other woman, Kimberly Powell, and her job title. The other three outlets do not name her, which may be a deliberate privacy choice or a sourcing difference. Breitbart's detail on the affair is more specific and more sensational.",
+      "outlet": "breitbart",
+      "quote": "Kimberly Powell, the company's vice president of health care"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Breitbart cites five anonymous former or current Nvidia employees, a larger and more specific anonymous source base than CBS's two sources. The claims are presented with more confidence.",
+      "outlet": "breitbart",
+      "quote": "according to five people who worked at Nvidia and spoke on condition of anonymity"
+     },
+     {
+      "kind": "word choice",
+      "observation": "CBS attributes the claim to sources and frames the spy link as what U.S. intelligence 'believe', which keeps the claim attributed rather than asserted.",
+      "outlet": "cbs",
+      "quote": "a woman U.S. intelligence agencies believe was a Chinese asset"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "France 24 adds an analytical or editorial framing, calling the affair a 'major weakness' and tying it to the lack of a succession plan. This moves the story from reporting toward commentary on the company's governance.",
+      "outlet": "france24",
+      "quote": "The scandal has revealed a major weakness at the heart of the chipmaker"
+     },
+     {
+      "kind": "word choice",
+      "observation": "France 24 frames the board's decision as open ('weighing up whether or not'), which is the most cautious of the headlines about the board's action.",
+      "outlet": "france24",
+      "quote": "Nvidia board weighing up whether or not to oust CEO Jensen Huang"
+     },
+     {
+      "kind": "word choice",
+      "observation": "DW hedges with 'reportedly' in the headline and 'reports of an affair' in the summary, and it names the suspected spy link as 'suspected', which is measured. It adds the framing that the company would lose 'the co-founder who built it'.",
+      "outlet": "dw",
+      "quote": "Nvidia board reportedly weighs ousting Huang amid alleged affairs with exec and suspected Chinese spy"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in certainty and detail rather than in opposed tone. Breitbart's headline is the most definitive and its spy framing the most assertive, which possibly reflects a tabloid-style editorial approach that favours sensational detail, such as naming the second woman. CBS, DW and France 24 hedge with attribution or 'reportedly', and France 24 adds some analytical commentary, but none of them reads as strongly loaded, so Breitbart is the only outlet that seems to show notably stronger framing.",
+    "shared_facts": [
+     "Nvidia's board is reportedly preparing or weighing whether to oust CEO Jensen Huang",
+     "Huang is said to have had a second extramarital affair",
+     "The affair allegations involve a woman linked to China or a suspected Chinese spy or asset",
+     "The reports rely on anonymous or unnamed sources",
+     "Nvidia's succession planning or leadership change is the central issue"
+    ],
+    "summary": "All four outlets report that Nvidia's board is weighing ousting Huang over a second affair linked to a suspected Chinese spy, but Breitbart asserts the board's move and the spy link most firmly, while the others hedge with attribution."
+   },
+   "scale": 10
+  },
   "11db7c3b82": {
    "analysed_at": "2026-11-11T15:17:31Z",
    "effort": "high",
@@ -2085,6 +2201,58 @@
      "Trump's comments were presented as a shift from his hardline immigration stance."
     ],
     "summary": "All three outlets report Trump saying his deportation policy may have been too tough, but Breitbart frames it as a possible amnesty concession, CBS as a contradiction with the Miller promotion, and ABC in neutral terms tied to voters."
+   },
+   "scale": 10
+  },
+  "168d9ac21c": {
+   "analysed_at": "2026-11-12T11:20:29Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "omission",
+      "observation": "The Breitbart article does not mention Hegseth, his team, or the reprimand by the sentinel. The Guardian's main news hook is therefore absent, and the piece presents the event only as a ceremony honouring veterans.",
+      "outlet": "breitbart",
+      "quote": "President Donald Trump honored America's veterans on Wednesday"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "The headline frames the event around Trump as an honourer of veterans, a favourable, presidency-centred angle. It is a value-laden framing rather than a neutral description of what happened.",
+      "outlet": "breitbart",
+      "quote": "Trump Honors America's Veterans with Wreath-Laying"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Guardian leads with the reprimand of Hegseth and his team by a cemetery guard and points to video as evidence. This puts the official's conduct, not the ceremony, at the centre of the story.",
+      "outlet": "guardian",
+      "quote": "Hegseth and team reprimanded by Arlington national cemetery guard – video"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The Guardian summary gives no quotes from Hegseth, the guard, or cemetery officials, and does not say what the reprimand was about. The story rests on the video, so the reason for the rebuke is left unexplained.",
+      "outlet": "guardian",
+      "quote": "were reprimanded by a US sentinel at Arlington national cemetery"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The Guardian describes the event as a 'commemoration' and gives the reprimand neutral, factual wording. It does not use loaded terms about Trump or Hegseth, so its critical angle comes from what it chooses to report rather than from adjectives.",
+      "outlet": "guardian",
+      "quote": "after the Veterans Day commemoration that Donald Trumped attended"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The main difference is what each outlet includes. Breitbart omits the reprimand of Hegseth's team entirely and frames the event as Trump honouring veterans, which possibly reflects an audience that favours a presidency-positive narrative. The Guardian reports the reprimand with video but gives no direct quotes or explanation, so its framing is critical through selection rather than loaded wording. The gap is clear but neither summary uses strongly loaded language, and each is a short summary, so the comparison is limited.",
+    "shared_facts": [
+     "The event was a Veterans Day commemoration at Arlington National Cemetery in Virginia on 11 November, which was a Wednesday.",
+     "Donald Trump attended the event and took part in a wreath-laying at the Tomb of the Unknown Soldier (Breitbart) or the commemoration (Guardian).",
+     "Defense secretary Pete Hegseth and members of his team were present at the Arlington commemoration, according to the Guardian.",
+     "A US sentinel or cemetery guard reprimanded Hegseth and his team, and video of the incident was published."
+    ],
+    "summary": "Both outlets cover the same Veterans Day event at Arlington with Trump present, but Breitbart frames it as a veterans-honouring ceremony and omits the reprimand, while the Guardian leads with the reprimand of Hegseth's team."
    },
    "scale": 10
   },
@@ -3495,6 +3663,58 @@
    },
    "scale": 10
   },
+  "24e174d96f": {
+   "analysed_at": "2026-11-12T11:19:30Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "The headline and summary use a narrative, sentimental frame, describing the event as a \"hours-long goodbye\" and a \"long goodbye\". This presents the sinking as an emotional farewell rather than a planned action.",
+      "outlet": "nypost",
+      "quote": "It was a long goodbye."
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The piece is written in the past tense as a completed event and stresses the ship's history and the drawn-out nature of its ending. It gives no details about the reef's purpose or location.",
+      "outlet": "nypost",
+      "quote": "Historic SS United States sinks after hours-long goodbye"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The Guardian frames the sinking in neutral, forward-looking terms as a planned reef project. It gives the location (Destin, Florida) and the reef's purpose.",
+      "outlet": "guardian",
+      "quote": "to become the world's largest artificial reef"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "The phrase \"long-running wrangle\" casts the dispute over the ship's fate as a quarrel or squabble. This is mildly informal and somewhat editorial, though not strongly loaded.",
+      "outlet": "guardian",
+      "quote": "ending long-running wrangle over its fate"
+     },
+     {
+      "kind": "omission",
+      "observation": "The Guardian names the specific location, Destin, which the NY Post does not. Neither summary quotes any officials, owners, or local people, so the sourcing is thin on both sides.",
+      "outlet": "guardian",
+      "quote": "off the coast of Destin, Florida"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The two outlets differ mainly in tone and timing: the NY Post writes a retrospective, emotional account (\"long goodbye\"), while the Guardian writes a preview with a neutral reef framing, plus one mildly editorial phrase (\"wrangle\"). The differences are in wording and emphasis, possibly reflecting a tabloid versus broadsheet style or the difference in publication time, and neither outlet shows strong or hostile framing. The summaries are too short to show much sourcing or deeper omission.",
+    "shared_facts": [
+     "The SS United States is being sunk off the Florida coast.",
+     "The sinking is meant to create an artificial reef.",
+     "The ship's fate had been disputed for a long time.",
+     "The event is described as historic or significant."
+    ],
+    "summary": "The NY Post frames the SS United States sinking as an emotional, historic farewell, while the Guardian presents it neutrally as a planned artificial reef that ends a long dispute, with only mild differences in wording."
+   },
+   "scale": 10
+  },
   "24ef658373": {
    "analysed_at": "2026-11-10T07:15:21Z",
    "effort": "high",
@@ -4396,6 +4616,59 @@
    },
    "scale": 10
   },
+  "2d616c2d30": {
+   "analysed_at": "2026-11-12T11:17:57Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline calls the survival \"miraculously,\" a more emotive word than the neutral wording of the other outlets. The story also centres on the baby's release from hospital and his homecoming, which shifts focus from the crime to a feel-good angle.",
+      "outlet": "nypost",
+      "quote": "miraculously released from hospital"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The summary and headline lead with the baby's recovery and the \"buried alive\" detail. The father's guilt is hedged with \"allegedly\", which is appropriate, but the framing is more sensational than the NYT's.",
+      "outlet": "nypost",
+      "quote": "allegedly by his own father"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The NYT uses the neutral \"Missing Baby Is Rescued\" and describes a rescue by investigators. It places the baby in \"the woods\" and mentions only that the father was \"in police custody\", with no charge stated in the summary, which is the most restrained framing.",
+      "outlet": "nyt",
+      "quote": "His father was in police custody."
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Euronews attributes the survival explanation to the local sheriff, using the hedge \"probably\". This is a sourced explanation rather than the outlet's own claim, though it adds a medical-style detail the other outlets omit.",
+      "outlet": "euronews",
+      "quote": "according to the local sheriff"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "NBC attributes the account to police (\"police said\") and gives precise details such as the age and the wire crate. Its headline states the charge plainly, which is factual but gives the criminal allegation prominence.",
+      "outlet": "nbc",
+      "quote": "police said"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The outlets agree on the core facts and differ mainly in tone and emphasis. The NY Post's \"miraculously\" and its homecoming angle are the most emotive framing, while the NYT is the most neutral; the differences are likely driven by tabloid style and wire-style sourcing, not by any clear editorial stance. The evidence is modest, so the bias is slight.",
+    "shared_facts": [
+     "An infant, Koah Sharp, was found alive in South Carolina after about 24 hours of being buried.",
+     "He was buried in a wire or dog crate wrapped in a towel.",
+     "The baby was found on Tuesday, November 11.",
+     "The father is in custody and has been charged with attempted murder.",
+     "The baby was about 11 months old (NBC)."
+    ],
+    "summary": "All four outlets report the same rescue and the father's attempted-murder charge, but the NY Post uses the most emotive framing and the NYT the most restrained."
+   },
+   "scale": 10
+  },
   "2e62abab2b": {
    "analysed_at": "2026-11-09T16:19:00Z",
    "effort": "high",
@@ -5041,6 +5314,70 @@
    },
    "scale": 10
   },
+  "325eeafb35": {
+   "analysed_at": "2026-11-12T11:20:45Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "Describes Huang as \"embroiled in a Chinese spy scandal\", a loaded label that presents the spy matter as an established scandal. The Guardian keeps the spy link as an allegation about the woman.",
+      "outlet": "breitbart",
+      "quote": "embroiled in a Chinese spy scandal"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The headline says the board \"Moves to Oust\" Huang, which frames a board deliberation as a completed action. The Guardian says the board is \"reportedly deciding whether\" to oust him.",
+      "outlet": "breitbart",
+      "quote": "Nvidia Board Moves to Oust Jensen Huang"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The headline calls the second affair an \"Allegation\", but the summary states as fact that Huang \"had an extramarital relationship\". The hedge is dropped in the body.",
+      "outlet": "breitbart",
+      "quote": "also had an extramarital relationship with Kimberly Powell"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Relies on five anonymous former or current employees for the affair claim and names the other person. The summary gives no on-record response from Huang or Nvidia, though the text is short and may be truncated.",
+      "outlet": "breitbart",
+      "quote": "according to five people who worked at Nvidia and spoke on condition of anonymity"
+     },
+     {
+      "kind": "omission",
+      "observation": "Notes that the CEO himself admitted a relationship with the woman, which Breitbart's summary does not mention. Breitbart presents the affair as an allegation, while the Guardian reports an admission.",
+      "outlet": "guardian",
+      "quote": "CEO admitted to having a relationship with a woman who is alleged to be a Chinese spy"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Includes the market reaction with the stock price plunge and the Wednesday board meeting timing. Breitbart omits both, which shifts the emphasis toward personal scandal.",
+      "outlet": "guardian",
+      "quote": "as stock price plunges"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Repeatedly marks claims as reported or alleged (\"reportedly\", \"according to reports\", \"alleged\"), a more cautious attribution style.",
+      "outlet": "guardian",
+      "quote": "according to reports"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The Guardian uses hedged attribution and keeps the spy claim as an allegation, while Breitbart uses a loaded label (\"embroiled in a Chinese spy scandal\"), states a disputed affair as fact in the body, and presents a board deliberation as a completed move. Breitbart's framing is likely shaped by a sensational or editorial emphasis on personal scandal, though the short summaries limit how far this can be judged. The gap is in tone and attribution rather than accusation, so the score is moderate.",
+    "shared_facts": [
+     "Nvidia's board met or was deciding whether to oust CEO Jensen Huang",
+     "Huang is linked to a woman alleged to be a Chinese spy",
+     "Reports allege a second relationship involving Huang, which is the extramarital relationship allegation",
+     "The matter is tied to a tumultuous period for Nvidia"
+    ],
+    "summary": "Breitbart frames the Nvidia story as a spy scandal with a board move to oust Huang and states the affair as fact, while the Guardian reports the same events with hedged attribution and adds the admission and market reaction."
+   },
+   "scale": 10
+  },
   "3261db9ea5": {
    "analysed_at": "2026-11-12T03:04:09Z",
    "effort": "high",
@@ -5511,6 +5848,64 @@
    },
    "scale": 10
   },
+  "3762a519e3": {
+   "analysed_at": "2026-11-12T11:18:39Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "The headline centers one lawmaker's emotional reaction and her traffic excuse, a personal and tabloid-style angle. The body is a short vote summary that does not show the wider Democratic criticism that the other outlets lead with.",
+      "outlet": "nypost",
+      "quote": "gets emotional as she blames rush hour traffic"
+     },
+     {
+      "kind": "other",
+      "observation": "The summary frames the effort as 'Rep. Thomas Massie's (R-Ky.) impeachment effort', which differs from the other outlets' Hegseth-centered framing. This may be a labeling or sourcing difference, and it is unclear from the text alone whether it is accurate or confusing.",
+      "outlet": "nypost",
+      "quote": "Rep. Thomas Massie's (R-Ky.) impeachment effort"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "'Lambast' and 'outrage' are strong words that show Democrats attacking their own colleagues. The framing centers intra-party anger more than the vote itself.",
+      "outlet": "guardian",
+      "quote": "Democrats lambast absent peers"
+     },
+     {
+      "kind": "word choice",
+      "observation": "'Backlash' and 'sharp criticism' describe the reaction in fairly neutral terms, with added context about the recent election victories. This is the most measured framing of the group, though it still reports the criticism prominently.",
+      "outlet": "nyt",
+      "quote": "Democrats Face Backlash After Missing Hegseth Impeachment Vote"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "'Squandering' implies the absent Democrats wasted a chance, which is an evaluative judgment rather than a neutral description of the vote. The headline's 'Many blamed traffic' is more neutral, but the summary's verb is loaded.",
+      "outlet": "abc",
+      "quote": "squandering Hegseth's impeachment attempt"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The headline foregrounds the traffic explanation offered by several lawmakers, possibly to give readers a sense of the lawmakers' own reasons. It is still a factual report, not a claim that the excuse is false.",
+      "outlet": "abc",
+      "quote": "Many blamed traffic"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The shared facts are consistent across all four outlets, so the differences are mainly in tone and focus. The NY Post leans on a personal, tabloid angle about one lawmaker's emotion, and ABC's summary uses the loaded verb 'squandering', while the Guardian's 'lambast' and 'outrage' stress intra-party anger. The NYT's 'backlash' is the most neutral. These may reflect outlet style or audience expectations, but the texts alone do not show intent, and the framing differences are clear but not extreme.",
+    "shared_facts": [
+     "Eleven Democrats missed a key procedural vote on impeaching Defense Secretary Pete Hegseth.",
+     "The absences helped Republicans block or shelve the impeachment effort.",
+     "The vote took place Tuesday evening, and the margin was narrow (211-204, or seven votes).",
+     "The absences drew sharp criticism from Democrats and others, about a week after the party's election victories (NYT)."
+    ],
+    "summary": "All four outlets report the same facts about eleven absent Democrats and the failed Hegseth impeachment vote, but they differ in tone, from the NY Post's personal angle and ABC's 'squandering' to the NYT's more measured 'backlash'."
+   },
+   "scale": 10
+  },
   "3762a9e416": {
    "analysed_at": "2026-11-09T16:19:29Z",
    "effort": "high",
@@ -5861,6 +6256,64 @@
      "The visit took place in North Sinai, Egypt, and was reported on 10 November 2026."
     ],
     "summary": "All three outlets report Hamilton's visit to the Egyptian side of the Rafah crossing to discuss Gaza aid, but Daily Mail links it to his earlier political remark, Al Jazeera foregrounds an Egyptian official's account, and the Guardian gives the most neutral description."
+   },
+   "scale": 10
+  },
+  "3bff090248": {
+   "analysed_at": "2026-11-12T11:17:08Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline uses the violent word \"slaughtered\" for the bear attack. The other three outlets use neutral verbs such as \"killed\" or \"deaths\", so this is the most emotionally charged framing in the group.",
+      "outlet": "dailymail",
+      "quote": "were slaughtered by grizzly mama bear and her three cubs"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Daily Mail frames the bears as a family unit (a mama bear and three cubs) and adds a location detail (\"about 620 miles north of Vancouver\") and a family-reporting detail. These are absent from the other summaries, which focus on the bears' count and the DNA link. Possibly this suits a narrative or human-interest angle.",
+      "outlet": "dailymail",
+      "quote": "found near a trailer about 620 miles north of Vancouver last week"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "CBS is the only outlet to say the bears were killed for public safety, which puts the official response at the center of the story. The other outlets do not mention the reason for the bears' deaths.",
+      "outlet": "cbs",
+      "quote": "All four bears were killed to protect the public."
+     },
+     {
+      "kind": "word choice",
+      "observation": "Sky says the bears were \"captured\" and were \"responsible for killing\" the pair. This is a different action from the \"killed\" wording used by CBS and the headline of Sky itself, and it is more restrained, attributing responsibility without a verb of violence.",
+      "outlet": "sky",
+      "quote": "Four grizzly bears captured in Canada were responsible for killing a mother and daughter"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Fox uses the hedged verb \"links\" and attributes the claim to \"officials said\", which is closer to the wording of the DNA evidence than CBS's \"DNA confirms\". The Fox summary does not mention the bears' fate.",
+      "outlet": "fox",
+      "quote": "DNA evidence linked four grizzly bears to the deaths"
+     },
+     {
+      "kind": "word choice",
+      "observation": "CBS's headline states the conclusion flatly (\"DNA confirms\") rather than attributing the finding to officials, which is stronger than Fox's \"links\" and Sky's \"officials have said\".",
+      "outlet": "cbs",
+      "quote": "4 grizzly bears killed mom and daughter in Canada, DNA confirms"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The main differences come from wording and detail choices rather than opposed claims. The Daily Mail uses the loaded verb \"slaughtered\" and adds unverified-looking family details, which possibly reflects a tabloid style aimed at readers who want dramatic narrative. CBS emphasizes the official culling rationale, while Sky uses the most neutral verbs and Fox hedges with \"links\". None of the outlets contradicts another, so the spread is moderate.",
+    "shared_facts": [
+     "DNA evidence linked four grizzly bears to the deaths of a mother and daughter in Canada.",
+     "The deaths occurred near Bella Coola, British Columbia, according to Fox and the wording of the others is consistent with that.",
+     "The victims are a mother and daughter, named as Jennifer or Jenny Balcarras and Selah Reed in the outlets that name them.",
+     "Officials are the source of the DNA finding."
+    ],
+    "summary": "All four outlets report the same DNA-based finding that four grizzlies killed a mother and daughter in British Columbia, but the Daily Mail uses the most violent wording and extra family details, while Sky and Fox are more restrained."
    },
    "scale": 10
   },
@@ -6508,6 +6961,70 @@
      "The remarks were made on ABC's \"This Week\" (Articles 1 and 3)"
     ],
     "summary": "All four outlets report that Jeffries backs impeaching Hegseth, but the New York Post frames it as gloating while the Guardian stresses Jeffries's strong stance and NBC and Sky stay largely neutral."
+   },
+   "scale": 10
+  },
+  "41e73fe8f0": {
+   "analysed_at": "2026-11-12T11:16:59Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 7,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline frames the result as a 'humiliating blow' and a 'midterms disaster' for Trump. These are evaluative labels that cast the outcome as a defeat for the president, beyond what the race result itself states.",
+      "outlet": "dailymail",
+      "quote": "Trump suffers another humiliating blow in midterms disaster"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The summary mocks the losing candidate by saying Hyde-Smith 'nearly declared victory' and that 'Colom proved her wrong.' This personal, gloating tone is absent from the other outlets.",
+      "outlet": "dailymail",
+      "quote": "But Colom proved her wrong."
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Breitbart calls the result a 'stunning loss' for the Republican incumbent and stresses that it gives Democrats their '55th seat.' The wording dramatizes the loss and centers the Senate-majority math, while the other outlets state the result more flatly.",
+      "outlet": "breitbart",
+      "quote": "a stunning loss in Mississippi"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The summary's focus on Democrats reaching a 55th seat puts the national chamber balance ahead of the state race itself. This is a different emphasis from NPR and ABC, which stay on the state contest.",
+      "outlet": "breitbart",
+      "quote": "gives Democrats their 55th seat in the U.S. Senate"
+     },
+     {
+      "kind": "word choice",
+      "observation": "ABC hedges with 'will win' and 'The Associated Press projects,' while NPR says Colom 'has won' on an AP call. ABC's wording is more cautious about the result, and its headline uses the neutral verb 'flips.'",
+      "outlet": "abc",
+      "quote": "Democrat Scott Colom will win the election"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "NPR attributes the result to 'a race call by the Associated Press' and gives no characterization of either candidate or of the wider political meaning. This is the most neutral, wire-style framing of the set.",
+      "outlet": "npr",
+      "quote": "according to a race call by the Associated Press"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Daily Mail stresses that the seat was flipped 'for the first time in four decades' and calls the win 'historic,' which adds a milestone framing that the other outlets omit.",
+      "outlet": "dailymail",
+      "quote": "makes historic win and flips Mississippi's Senate seat blue for the first time in four decades"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The Daily Mail headline and summary use strong evaluative language ('humiliating blow,' 'disaster,' 'proved her wrong') and tie the result to Trump, which suggests an editorial line hostile to the president and a tabloid style aimed at readers who want that framing. Breitbart's 'stunning loss' and national-seat emphasis show milder partisan framing, possibly reflecting its own audience. NPR and ABC stick closely to the AP call and read as the most neutral.",
+    "shared_facts": [
+     "Democrat Scott Colom defeated Republican Sen. Cindy Hyde-Smith in the Mississippi U.S. Senate race",
+     "The result came in the November 2026 midterm election",
+     "The outcome was reported through an Associated Press race call or projection",
+     "Colom's win flipped or took the seat for Democrats"
+    ],
+    "summary": "All four outlets report that Democrat Scott Colom beat Sen. Cindy Hyde-Smith, but the Daily Mail frames it as a humiliating blow to Trump with mocking language, Breitbart stresses the loss and Democrats' Senate count, and NPR and ABC report the AP call in neutral terms."
    },
    "scale": 10
   },
@@ -7946,6 +8463,52 @@
    },
    "scale": 10
   },
+  "4f8eab8f05": {
+   "analysed_at": "2026-11-12T11:19:45Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Fox describes the guard as 'sharply' reprimanding the group, and the headline stresses the sharpness of the rebuke. That adds a sense of confrontation that the other outlet does not use.",
+      "outlet": "fox",
+      "quote": "Army sentinel sharply reprimands Hegseth's group"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Fox ties the reprimand to 'laughter from Pete Hegseth's departing group,' which places the group's behaviour at the center of the story and casts them as the cause. It also highlights the video as evidence, which may draw readers toward a judgment about the group.",
+      "outlet": "fox",
+      "quote": "after laughter from Pete Hegseth's departing group"
+     },
+     {
+      "kind": "omission",
+      "observation": "NBC does not mention laughter or any behaviour by the group that prompted the reprimand. It presents the exchange as a request to keep a respectful atmosphere, which leaves the cause less specified.",
+      "outlet": "nbc",
+      "quote": "told the defense secretary and his companions to maintain a respectful atmosphere"
+     },
+     {
+      "kind": "word choice",
+      "observation": "NBC uses the formal title 'defense secretary' and the more neutral term 'guard' rather than 'sentinel.' Its headline puts Hegseth alongside 'others,' which is a more restrained framing of the group.",
+      "outlet": "nbc",
+      "quote": "Pete Hegseth and others reprimanded by guard"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "Both outlets report the same core event with similar facts, and the differences are mainly in wording and emphasis. Fox's 'sharply reprimands' and its attribution of the reprimand to the group's laughter may reflect a more dramatic, video-driven editorial approach, but the evidence is limited to two short summaries. NBC's wording is more neutral, though it leaves out what prompted the guard's request. Neither outlet shows strong framing.",
+    "shared_facts": [
+     "A sentinel or guard at the Tomb of the Unknown Soldier at Arlington National Cemetery reprimanded Pete Hegseth and his companions.",
+     "The incident happened on Veterans Day.",
+     "The guard asked the group to keep a respectful atmosphere or to show silence and respect.",
+     "Hegseth's group was leaving the site when the reprimand occurred."
+    ],
+    "summary": "Both outlets report that a Tomb of the Unknown Soldier guard reprimanded Hegseth's group on Veterans Day, but Fox frames it as a sharp rebuke prompted by laughter while NBC gives a more neutral account."
+   },
+   "scale": 10
+  },
   "5046d2165c": {
    "analysed_at": "2026-11-09T09:56:27Z",
    "model": "claude-sonnet-5-5",
@@ -8091,6 +8654,58 @@
      "Both headlines frame the story around the charge against him rather than any trial outcome."
     ],
     "summary": "Fox and NBC report the same charge against Dallas County investigator Jimmy Spurger in his wife's stabbing death, but Fox emphasizes the divorce timing and bloody scene while NBC keeps a neutral, procedural tone."
+   },
+   "scale": 10
+  },
+  "53587a4857": {
+   "analysed_at": "2026-11-12T11:17:33Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "Fox describes the guard as having 'sharply reprimands' the group in its headline, and it frames the group as having been the source of 'laughter' and as 'departing.' This gives the sentinel's action more force than the other outlets do.",
+      "outlet": "fox",
+      "quote": "sharply reprimands Hegseth's group"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The NYT headline says the soldier 'Shouts Toward Hegseth,' a more forceful verb than the neutral 'told' or 'reprimanded' in other texts. The NYT also adds a Pentagon spokesman's characterization that the sentinel 'reminded everyone to maintain decorum,' which softens the episode and gives the Pentagon's framing.",
+      "outlet": "nyt",
+      "quote": "Soldier Shouts Toward Hegseth"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "CBS centers the cause on the group's behavior, saying they were reprimanded 'for making noise' and headlining 'for noise.' This presents the issue as a noise violation, which is narrower than the respect framing used by others.",
+      "outlet": "cbs",
+      "quote": "reprimanded for noise at Tomb of Unknown Soldier"
+     },
+     {
+      "kind": "word choice",
+      "observation": "NBC uses the most neutral language, describing a guard who 'told' the group to 'maintain a respectful atmosphere' and naming the guard's Arlington affiliation. It includes no loaded verbs or characterizations.",
+      "outlet": "nbc",
+      "quote": "told the defense secretary and his companions to maintain a respectful atmosphere"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The NYT is the only text that quotes an official, a Pentagon spokesman. None of the texts quote the sentinel directly or give Hegseth's side, so the sourcing is thin overall, though the NYT's is the most explicit.",
+      "outlet": "nyt",
+      "quote": "reminded everyone to maintain decorum"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in verb and headline choice rather than in the core facts. Fox's 'sharply' and NYT's 'Shouts' push the sentinel's action in opposite directions, while CBS's 'for noise' shrinks the episode and NBC stays closest to neutral. The texts are short summaries, so these are impressions of framing, and the choices may reflect each outlet's house style or the wire-style copy, though this is a guess.",
+    "shared_facts": [
+     "The event happened on Veterans Day at the Tomb of the Unknown Soldier at Arlington National Cemetery.",
+     "A sentinel or guard reprimanded a group that included Defense Secretary Pete Hegseth.",
+     "The reprimand followed laughter or noise from the group.",
+     "The sentinel told the group to maintain respect or a respectful atmosphere at the site."
+    ],
+    "summary": "All four outlets agree that a Tomb of the Unknown Soldier guard reprimanded Hegseth's group for laughter or noise on Veterans Day, but they differ in tone, with Fox and NYT using more forceful verbs and CBS and NBC using milder framing."
    },
    "scale": 10
   },
@@ -8325,6 +8940,59 @@
      "The crowd was described as tens of thousands (except Al Jazeera, which says hundreds of thousands)"
     ],
     "summary": "All four outlets report the same large red-clad Amsterdam protest over Gaza, differing mainly in headline emphasis and in Al Jazeera's far higher crowd estimate."
+   },
+   "scale": 10
+  },
+  "55b5e5ef69": {
+   "analysed_at": "2026-11-12T11:17:42Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Frames the growth as a defence against economic weakness, crediting both AI and defence spending and linking the result to cost-of-living pressure. This adds a second driver and a household-finance angle that the other outlets do not use.",
+      "outlet": "dailymail",
+      "quote": "staves off cost-of-living slowdown"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Leads with the 'fastest pace for more than two years' comparison and the monthly September figure, giving a strongly positive, momentum-focused tone. It states the AI link as direct causation ('as the rollout of AI services increased activity').",
+      "outlet": "guardian",
+      "quote": "AI helps UK economy grow at fastest pace for more than two years"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Its headline pairs the 0.7% figure with a forward-looking warning ('slowdown looms'), making it the most pessimistic framing. The body is brief and cites only 'early official figures', so the warning is not explained within the text.",
+      "outlet": "sky",
+      "quote": "slowdown looms"
+     },
+     {
+      "kind": "omission",
+      "observation": "Describes the figure as 'in line with expectations', a neutral detail the others omit, and pairs it with a war-driven energy cost reference. Possibly the Iran war is included to give context, but it is named without elaboration.",
+      "outlet": "euronews",
+      "quote": "while the Iran war pushed up energy costs"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Attributes growth specifically to computer programming and consultancy, a sector-level detail that none of the other outlets provide, which makes the AI link more concrete.",
+      "outlet": "euronews",
+      "quote": "Computer programming and consultancy helped drive growth"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The articles agree on the core numbers and largely on AI as a driver, and differences are mostly in emphasis and headline tone. Sky's 'slowdown looms' is the most negative framing, and the Guardian's headline is the most celebratory, but neither is strongly loaded. The variation may reflect each outlet's house style and headline conventions, with possibly different wire copy or sources behind them, rather than any clear partisan slant.",
+    "shared_facts": [
+     "UK GDP grew 0.7% in the third quarter of 2026 (July to September).",
+     "The Office for National Statistics published the figures, which are described as early or first official estimates.",
+     "AI-related activity or investment contributed to the growth.",
+     "Growth in the second quarter was 0.5%, and the Q3 figure was the stronger of the two.",
+     "Energy or oil costs were high during the period."
+    ],
+    "summary": "All four outlets report the same 0.7% third-quarter growth driven partly by AI, but they differ in tone: the Guardian stresses speed and momentum, Sky stresses a looming slowdown, and the Mail and Euronews add defence, cost-of-living and energy context."
    },
    "scale": 10
   },
@@ -8590,6 +9258,63 @@
    },
    "scale": 10
   },
+  "58d6794963": {
+   "analysed_at": "2026-11-12T11:17:25Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "Calls Putin a \"Russian tyrant\", a moral label that the other outlets do not use. It frames the meeting through an evaluative judgment rather than neutral description.",
+      "outlet": "nypost",
+      "quote": "Russian tyrant Vladimir Putin"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Leads with the Abu Dhabi round and its difficulty (\"one of the toughest\") and does not mention the Moscow arrival or the Dublin leg, so the story is framed around friction in the talks.",
+      "outlet": "nypost",
+      "quote": "one of the toughest"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "The headline adds an interpretive angle that the Kremlin is \"sideline[ing] Europe\", which is an editorial characterization not used by the other outlets. It presents a contested point as fact.",
+      "outlet": "dailymail",
+      "quote": "with the Kremlin continuing to sideline Europe"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Quotes Kushner's post-meeting announcement about the Dublin trip, giving the envoys' own account a prominent place.",
+      "outlet": "dailymail",
+      "quote": "Kushner said that he and Witkoff will fly to Dublin"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Plain, factual reporting of the arrival (\"landed in Moscow on Thursday morning\") and describes Witkoff's role neutrally as the president's envoy.",
+      "outlet": "abc",
+      "quote": "landed in Moscow on Thursday morning"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Neutral wire-style headline and summary that describe the arrival and the Dublin meeting without adjectives or interpretation.",
+      "outlet": "bbc",
+      "quote": "US envoys arrive in Moscow for Ukraine talks"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The NY Post's \"Russian tyrant\" label is the most loaded wording, and the Daily Mail adds an editorial angle about the Kremlin sidelining Europe, so these two sit furthest from the plainer ABC and BBC copy. The gap is moderate because the texts are short and most facts overlap; the NY Post framing may reflect an opinion-leaning editorial line, and the Daily Mail framing may reflect a tabloid focus on Europe, though both are guesses from the headlines alone.",
+    "shared_facts": [
+     "Steve Witkoff and Jared Kushner, US envoys, are meeting Vladimir Putin in Russia on Thursday as part of Ukraine peace talks.",
+     "The envoys are scheduled to travel onward to Dublin to meet Ukrainian President Volodymyr Zelensky.",
+     "The talks concern ending the war in Ukraine."
+    ],
+    "summary": "All four outlets report the same Thursday Moscow meeting between Witkoff, Kushner and Putin, but the NY Post uses a moral label for Putin and the Daily Mail adds an interpretive Europe angle, while ABC and BBC stay neutral."
+   },
+   "scale": 10
+  },
   "598ff3e497": {
    "analysed_at": "2026-11-08T12:40:53Z",
    "model": "claude-sonnet-5-5",
@@ -8744,6 +9469,62 @@
    },
    "scale": 10
   },
+  "5a843981fe": {
+   "analysed_at": "2026-11-12T11:19:14Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "word choice",
+      "observation": "The headline uses the verb 'defends' and quotes Trump's self-description that he is making the world 'safer'. The framing presents the war through Trump's justification without flagging it as a contested claim.",
+      "outlet": "fox",
+      "quote": "Trump defends Iran war during Veterans Day address"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The summary highlights Trump's vow of 'total victory' and places it in the lead, giving the president's maximalist promise prominence. The text shows no counterpoint or sourcing beyond Trump's own remarks.",
+      "outlet": "fox",
+      "quote": "vowing \"total victory\" in his Veterans Day address"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The headline quotes Trump directly and attributes the timing claim to him. It stays close to his words and does not add evaluative language about the war or his claims.",
+      "outlet": "cbs",
+      "quote": "Trump says Iran war will be over \"when we want to end it\""
+     },
+     {
+      "kind": "omission",
+      "observation": "The summary is brief and neutral. It leaves out the 'safer' and 'total victory' claims that Fox foregrounds, so the tone is flatter, though this may simply reflect a shorter summary.",
+      "outlet": "cbs",
+      "quote": "President Trump spoke about the Iran war during a Veterans Day address"
+     },
+     {
+      "kind": "other",
+      "observation": "This is an opinion column, not a news report. It shifts the focus from Trump's remarks to the terms of a possible ceasefire and argues that terms favouring Tehran would set up a future conflict. It takes a clear policy position.",
+      "outlet": "wsj",
+      "quote": "A ceasefire on terms advantageous to Tehran would set the stage for the next conflict."
+     },
+     {
+      "kind": "loaded label",
+      "observation": "The phrase 'advantageous to Tehran' frames a hypothetical outcome in terms of who benefits. It is an evaluative judgement, and the genre is labelled 'Opinion', so it is expected rather than a hidden bias.",
+      "outlet": "wsj",
+      "quote": "It Matters How the Iran War Ends"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The main differences come from genre and emphasis. Fox, a news item, repeats Trump's self-assessment ('safer', 'total victory') in its headline and summary without an outside voice, which possibly reflects an editorial line that favours the administration's framing. CBS is the most neutral, using a direct quote. WSJ is an explicitly labelled opinion piece that makes a policy argument about ceasefire terms, so its stronger wording is expected for its genre and is not a hidden tilt. The texts are short, so these readings rest on headlines and summaries only and are not firm.",
+    "shared_facts": [
+     "Trump gave a Veterans Day address at Arlington National Cemetery that addressed the Iran war",
+     "Trump said the Iran conflict or war will end, and both Fox and CBS report his comments on when it ends",
+     "The Iran war is a live issue in November 2026, and how it ends is a matter of public debate"
+    ]
+   },
+   "scale": 10
+  },
   "5b7579101b": {
    "analysed_at": "2026-11-08T12:40:30Z",
    "model": "claude-sonnet-5-5",
@@ -8792,6 +9573,18 @@
      "The strikes came as Ukraine faced renewed attacks on its energy network"
     ],
     "summary": "All four outlets report Russian strikes on Ukrainian energy infrastructure with only modest framing differences, from outage figures (CBS, Al Jazeera) to civilian damage (Euronews) to Zelenskyy's accusation and talks context (DW)."
+   },
+   "scale": 10
+  },
+  "5bc1b37f97": {
+   "analysed_at": "2026-11-12T11:19:36Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "partial": true,
+    "score_reason": "The Mail piece is a first-person opinion column, and its headline and summary use strong evaluative language ('appalling', 'sordid', 'refuse to believe') that puts the writer's view in front of the reader. The Guardian report is closer to straight news: it attributes its strongest terms to Ross and includes the factual detail of the joke. Part of the gap is probably genre rather than politics, since an opinion column and a news report are expected to differ in tone."
    },
    "scale": 10
   },
@@ -11425,6 +12218,58 @@
    },
    "scale": 10
   },
+  "71afde8999": {
+   "analysed_at": "2026-11-12T11:20:07Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline leads with dramatic framing ('Extraordinary footage', 'terrifying moment') and centres the story on video, which shifts attention from the boy's condition to spectacle.",
+      "outlet": "dailymail",
+      "quote": "Extraordinary footage captures terrifying moment teens hang from speeding train"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The Mail states 'train surfing' as fact in its summary, while the Guardian attributes the claim to police with 'likely'. The Mail's 'teens' (plural) in the headline also goes beyond the single boy the Guardian describes.",
+      "outlet": "dailymail",
+      "quote": "after falling while train surfing across the Sydney Harbour Bridge"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Mail gives the medical detail 'induced coma', which the Guardian text does not mention. This adds a severity detail the Guardian omits.",
+      "outlet": "dailymail",
+      "quote": "left in induced coma and fighting for life"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The Guardian attributes the key facts to police ('police say', 'NSW...') and quotes Sydney Trains, giving an official source and a warning-focused angle rather than an emotional one.",
+      "outlet": "guardian",
+      "quote": "'You just don't mess or play with a 400-tonne train', Sydney Trains says"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Guardian lists specific injuries (head, chest and pelvis) and uses the measured term 'critical condition', giving a more clinical and hedged description.",
+      "outlet": "guardian",
+      "quote": "suffers multiple injuries to head, chest and pelvis"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The Daily Mail uses sensational wording ('Extraordinary', 'terrifying'), states the train-surfing cause without qualification, and centres its headline on footage, possibly to attract readers drawn to dramatic video. The Guardian hedges with 'likely', relies on police and rail-operator sources, and gives injury specifics, so it reads as more restrained. The gap is in tone and emphasis, not in the core facts, so it is moderate rather than severe.",
+    "shared_facts": [
+     "A 17-year-old boy fell from the outside of a train on the Sydney Harbour Bridge.",
+     "The fall happened while he was likely train surfing.",
+     "The boy is seriously injured and in critical condition, described as fighting for life.",
+     "The incident involved a speeding or moving train on the bridge."
+    ],
+    "summary": "Both outlets report the same serious train-surfing fall of a 17-year-old on the Sydney Harbour Bridge, but the Daily Mail frames it sensationally around footage and states the cause as fact, while the Guardian hedges and relies on official sources."
+   },
+   "scale": 10
+  },
   "71c6f36057": {
    "analysed_at": "2026-11-09T09:56:19Z",
    "model": "claude-sonnet-5-5",
@@ -12869,6 +13714,64 @@
    },
    "scale": 10
   },
+  "7c571562ad": {
+   "analysed_at": "2026-11-12T11:19:06Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 6,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline and summary use dramatic, emotive language (\"Fiery chaos erupts\", \"turned violent\") and frame the day around clashes. The other three outlets describe the event in neutral or civic terms.",
+      "outlet": "fox",
+      "quote": "Fiery chaos erupts across Spain"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Fox's headline generalises violence across Spain, but its summary describes only Barcelona's Paseo de Gracia. The wider scope in the headline is not supported by its own summary.",
+      "outlet": "fox",
+      "quote": "turned violent in Barcelona"
+     },
+     {
+      "kind": "omission",
+      "observation": "Fox never mentions housing or the cost of living, nor the election, which the other outlets treat as the core context. Its story is about disorder rather than the strike's cause.",
+      "outlet": "fox",
+      "quote": "protesters clash with police during massive nationwide strike"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The Guardian stresses scale and participation (\"Millions join\", \"high participation\") and frames the election as a risk (\"far right could gain power\"). This is more evaluative than the WSJ or DW, though still reported.",
+      "outlet": "guardian",
+      "quote": "election in which far right could gain power"
+     },
+     {
+      "kind": "other",
+      "observation": "DW gives a much lower figure for the street protests (\"Hundreds of thousands\") than the Guardian's \"Millions\" for the strike. The two may describe different things (strikers versus evening protesters), and the difference is not reconciled in the text.",
+      "outlet": "dw",
+      "quote": "Hundreds of thousands of citizens have hit the streets"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The WSJ is the most neutral, with a business-style framing built on cost of living. \"Hit\" is a mildly dramatic verb, but the tone is restrained.",
+      "outlet": "wsj",
+      "quote": "Spain Hit by General Strike"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The difference is mainly between Fox and the rest. Fox's headline and summary use emotive words such as \"Fiery chaos\" and \"turned violent\", and they leave out the housing cause that the other three outlets all report. The Guardian, DW and WSJ differ more modestly in scale figures and emphasis, which may reflect different sourcing or wire copy, but none of them uses loaded labels. Fox's violence claim is not contradicted by the other texts, which simply do not mention it.",
+    "shared_facts": [
+     "Spain held its first general strike in 14 years.",
+     "The strike and protests centred on housing and the rising cost of living.",
+     "The action took place weeks before a national election.",
+     "Protesters gathered in multiple cities across Spain."
+    ],
+    "summary": "All four outlets report Spain's first general strike in 14 years over housing and living costs before an election, but Fox alone frames the day around violent clashes in Barcelona and omits the cause."
+   },
+   "scale": 10
+  },
   "7cf269d2ea": {
    "analysed_at": "2026-11-10T07:15:56Z",
    "effort": "high",
@@ -13729,6 +14632,52 @@
    },
    "scale": 10
   },
+  "885851c251": {
+   "analysed_at": "2026-11-12T11:19:59Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline makes the most charged reading of Garcia's remarks the lead. It puts 'Shocking' and 'Clearly' in scare quotes and says Trump is 'Threatening Congress'. The framing is attributed to Garcia, but the headline itself presents the accusation as the story.",
+      "outlet": "breitbart",
+      "quote": "'Shocking' Trump Is 'Clearly' Threatening Congress"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The summary describes the White House letter as one that 'could be criminal' and calls Garcia's reaction 'shocking'. The article mostly relays Garcia's characterization and does not add the White House's stated rationale or a response from the administration.",
+      "outlet": "breitbart",
+      "quote": "a letter from the Trump White House stating that congressional investigations into the administration could be criminal is a \"shocking\""
+     },
+     {
+      "kind": "word choice",
+      "observation": "NPR's headline describes the letter neutrally as a 'White House warning' and frames the piece as an interview. The summary says the host 'asks' Garcia about his plans and the response, which keeps the piece in a question-and-answer format rather than an accusation.",
+      "outlet": "npr",
+      "quote": "Incoming House Oversight Committee chair Robert Garcia reacts to White House warning"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "NPR gives more weight to the White House's role as the source of the warning and to the upcoming oversight agenda. It does not put Garcia's most heated wording in the headline. The summary is too short to show whether the White House's side is included in the full piece.",
+      "outlet": "npr",
+      "quote": "about 2027 House Oversight plans to investigate the Trump administration and the response from White House"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "Both outlets cover the same interview and use similar underlying facts. The main difference is that Breitbart's headline and summary lead with Garcia's most charged language ('Shocking', 'Clearly', 'Threatening Congress'), which possibly reflects an editorial choice to highlight Democratic criticism of Trump. NPR's neutral 'warning' framing and question-led summary look more restrained. The summaries are short, so the full articles may differ, and the framing gap is moderate rather than extreme.",
+    "shared_facts": [
+     "Rep. Robert Garcia (D-CA) is the incoming chair of the House Oversight Committee.",
+     "Garcia was interviewed about his 2027 plans to investigate the Trump administration.",
+     "The White House sent a letter or warning saying congressional investigations into the administration could be criminal.",
+     "Garcia responded to that White House letter in the interview."
+    ],
+    "summary": "Breitbart frames Garcia's reaction to the White House letter as a headline accusation that Trump is threatening Congress, while NPR keeps the same interview in neutral, question-led terms."
+   },
+   "scale": 10
+  },
   "889d1edba5": {
    "analysed_at": "2026-11-09T22:17:50Z",
    "effort": "high",
@@ -13844,6 +14793,121 @@
    },
    "scale": 10
   },
+  "891ad60730": {
+   "analysed_at": "2026-11-12T11:18:48Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline makes Garcia's word \"Shocking\" the frame and says Trump is \"Clearly\" threatening Congress. The summary reports only Garcia's characterization and gives no White House response, so the piece reads as one side's accusation presented as fact.",
+      "outlet": "breitbart",
+      "quote": "'Shocking' Trump Is 'Clearly' Threatening Congress"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The headline frames the White House as warning against \"overreach\" and Garcia as a \"Top Dem\" who \"fires back\". The White House counsel is the named actor, and the framing favors the administration's position while casting Garcia as combative.",
+      "outlet": "fox",
+      "quote": "Top Dem on committee fires back after White House counsel warns against overreach"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The headline puts the White House warning first and states its legal implication directly. Garcia's counterpoint appears in the summary as the Constitution's grant of \"latitude to conduct investigations\", so both sides are included with fairly even weight.",
+      "outlet": "nbc",
+      "quote": "Investigating us may be a crime"
+     },
+     {
+      "kind": "other",
+      "observation": "The headline and summary are neutral and descriptive. They frame the piece as an interview in which Garcia \"reacts to\" the warning, with no evaluative adjectives, and they do not attribute a motive to either side.",
+      "outlet": "npr",
+      "quote": "Incoming House Oversight Committee chair Robert Garcia reacts to White House warning"
+     },
+     {
+      "kind": "other",
+      "observation": "Fox labels Garcia the \"ranking member\", while NBC, NPR and Breitbart call him the incoming chair. This is a difference in which role is emphasized, and possibly a question of timing, not a factual conflict.",
+      "outlet": "fox",
+      "quote": "House Committee on Oversight and Government Reform ranking member Rep. Robert Garcia"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The differences probably reflect editorial choices in headlines more than sourcing, since all four cover the same exchange. Breitbart's headline amplifies Garcia's attack with the quoted labels \"Shocking\" and \"Clearly\" and the claim that Trump is \"Threatening Congress\", and Fox's headline casts the White House as warning against \"overreach\" while Garcia \"fires back\". Each of these two headlines leans toward one side, but neither is contradicted by the other texts, and NBC and NPR stay closer to neutral.",
+    "shared_facts": [
+     "Rep. Robert Garcia (D-CA) is the Democrat leading the House Oversight Committee, either as incoming chair or as ranking member, depending on the outlet.",
+     "The White House sent a warning, through a letter or from counsel Will Scharf, that congressional investigations of the administration could be improper or criminal.",
+     "Garcia responded publicly and pushed back on the warning.",
+     "Garcia's planned 2027 oversight of the Trump administration is the context for the dispute."
+    ],
+    "summary": "All four outlets report the same White House warning and Garcia's response, but Breitbart's loaded headline and Fox's \"overreach\" framing each lean toward one side, while NBC and NPR describe the exchange more evenly."
+   },
+   "scale": 10
+  },
+  "893b74869c": {
+   "analysed_at": "2026-11-12T11:16:38Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "Calls him a \"far-right activist\" in both headline and summary, a political label the other outlets do not use. It places him on a specific end of the spectrum.",
+      "outlet": "guardian",
+      "quote": "Far-right activist Daniel Thomas admits criminal damage"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Adds that he changed his plea \"after watching occupants being helped by rescue services\", which puts the human consequences of the act at the centre. Other outlets omit this.",
+      "outlet": "guardian",
+      "quote": "after watching occupants being helped by rescue services"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Describes him as an \"anti-immigration activist\", a label that frames him by his political stance rather than his name. It is less charged than \"far-right\" but still characterises him.",
+      "outlet": "sky",
+      "quote": "Anti-migrant activist admits slashing boat with a knife"
+     },
+     {
+      "kind": "omission",
+      "observation": "Does not name him or give his age, and does not name the court, so the story is more generic.",
+      "outlet": "sky",
+      "quote": "An anti-immigration activist has pleaded guilty"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Leads with the nickname \"Danny Tommo\" in the headline, which reads as informal and somewhat mocking compared with a full name. It also calls the vessel a \"migrant boat\" in the headline.",
+      "outlet": "dailymail",
+      "quote": "'Danny Tommo' pleads guilty to criminal damage"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses the neutral \"Activist Daniel Thomas\" and \"migrant dinghy\", a plain and factual register. It is the most restrained of the set.",
+      "outlet": "bbc",
+      "quote": "Activist Daniel Thomas admits criminal damage after slashing migrant dinghy in Channel"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses the more descriptive \"inflatable dinghy\" rather than \"migrant boat\", which is neutral wording but shifts the focus to the object.",
+      "outlet": "guardian",
+      "quote": "slashing an inflatable dinghy with a knife"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in labels and emphasis rather than facts. The Guardian's \"far-right\" label and its focus on rescued occupants, and Sky's \"anti-immigration\" label, are the most framed choices; the Daily Mail's nickname headline is informal. The BBC is the most neutral. Possibly the differences reflect house style and audience expectations, and none of the outlets quotes a source, so the framing rests on the outlets' own wording.",
+    "shared_facts": [
+     "The activist, known as Danny Tommo and named Daniel Thomas (37), pleaded guilty to criminal damage.",
+     "He slashed a migrant boat or dinghy with a knife in the English Channel.",
+     "The plea was entered at Portsmouth Crown Court (Daily Mail, BBC)."
+    ],
+    "summary": "All four outlets report the same guilty plea over the knife attack on a Channel dinghy, but they differ in how they label Thomas, with the Guardian and Sky using political labels and the Daily Mail using a nickname, while the BBC stays closest to neutral."
+   },
+   "scale": 10
+  },
   "8a08b86256": {
    "analysed_at": "2026-11-12T03:04:36Z",
    "effort": "high",
@@ -13906,6 +14970,63 @@
      "Ranking member Garcia and the White House are in open dispute over the planned probes"
     ],
     "summary": "All four outlets report the same White House warning to incoming Democrats about possible criminality in planned probes, but Fox and the Guardian frame the dispute in opposite directions while CBS stays closest to the White House's own words."
+   },
+   "scale": 10
+  },
+  "8c03584d6c": {
+   "analysed_at": "2026-11-12T11:20:15Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline calls the rescue a \\\"Miracle\\\", an emotive label that frames the outcome as luck or divine intervention rather than a search result. The article gives no source for that framing.",
+      "outlet": "dailymail",
+      "quote": "Miracle as missing Aussie teen is found alive"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The summary says the boy was \\\"missing for a week\\\", while the headline says six days. The two figures are inconsistent and the longer one adds drama.",
+      "outlet": "dailymail",
+      "quote": "missing for a week after going camping with a friend"
+     },
+     {
+      "kind": "omission",
+      "observation": "The article does not mention the boy's age or that he has autism. Those details, which ABC includes, are absent, so the story is less specific about who he is.",
+      "outlet": "dailymail",
+      "quote": "A teenage boy who was missing"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The ABC summary gives the boy's age (17) and that he has autism. This is a factual, identifying detail that adds context about his vulnerability without using emotive language.",
+      "outlet": "abc",
+      "quote": "A 17-year-old boy with autism has been found alive"
+     },
+     {
+      "kind": "word choice",
+      "observation": "ABC uses neutral wording such as \\\"lost\\\" and \\\"found alive\\\" and places the event in \\\"eastern Australian woodlands\\\". It omits the camping trip and the specific Victorian location that Daily Mail gives.",
+      "outlet": "abc",
+      "quote": "found alive after six days lost in eastern Australian woodlands"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Neither summary quotes police, family, or search officials. Both rely on the bare facts, so the difference is in tone and detail rather than attributed voices.",
+      "outlet": "dailymail",
+      "quote": "has been found alive"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The main difference is tone. Daily Mail's \\\"Miracle\\\" headline and the inconsistent \\\"missing for a week\\\" wording give a more dramatic, tabloid-style framing, while ABC uses neutral language and includes the teen's age and autism. Possibly Daily Mail is aiming for emotional engagement with a general audience, and ABC for a plainer news register. The gap is modest because both report the same facts and neither makes accusations.",
+    "shared_facts": [
+     "A teenage boy went missing in the Australian bush after a camping trip with a friend.",
+     "He was found alive about six days after he vanished.",
+     "The search ended with the teen located alive in woodland or high-country terrain."
+    ],
+    "summary": "Both outlets report that a missing teen was found alive after about six days in Australian bush, but Daily Mail frames it as a \\\"Miracle\\\" with dramatic wording, while ABC gives a neutral account with the boy's age and autism."
    },
    "scale": 10
   },
@@ -15414,6 +16535,58 @@
    },
    "scale": 10
   },
+  "9a2d6b86cf": {
+   "analysed_at": "2026-11-12T11:18:22Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline states the spy claim as a label, \"Huang's China Spy Scandal\", while the summary hedges only once with \"alleged\". The headline presents the allegation more firmly than the other outlets do.",
+      "outlet": "breitbart",
+      "quote": "China Spy Scandal"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Breitbart is the only outlet to report a concrete development, the board hiring a former federal prosecutor to investigate, and to frame the company as trying to manage the fallout. This centres the story on the affair and the investigation rather than on the market reaction.",
+      "outlet": "breitbart",
+      "quote": "Nvidia Board Hires Former Prosecutor to Probe"
+     },
+     {
+      "kind": "word choice",
+      "observation": "NBC attributes the affair claims to \"reports\" and calls the woman a \"suspected Chinese spy\". This is the most careful attribution in the group, though its headline still uses the label \"China spy scandal\".",
+      "outlet": "nbc",
+      "quote": "suspected Chinese spy"
+     },
+     {
+      "kind": "word choice",
+      "observation": "France 24 says the affairs \"fuelled a market sell-off\", linking the scandal causally to the share drop. The summary also says \"two extramarital affairs\", a detail the other outlets do not state.",
+      "outlet": "france24",
+      "quote": "fuelled a market sell-off"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Guardian uses \"reportedly\" in its headline and adds governance analysis about voting rights and shareholding. Its rhetorical question, \"Too big – and too well-connected – to sack?\", adds commentary. The summary omits the spy allegation and does not mention the affair, which shifts focus to corporate power.",
+      "outlet": "guardian",
+      "quote": "Too big – and too well-connected – to sack?"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in word choice and emphasis. Breitbart's headline states the spy label most firmly and its framing centres on scandal, possibly reflecting a readership interested in the China angle. The Guardian's commentary and omission of the spy detail in its summary possibly reflect a governance-focused, live-blog approach. NBC and France 24 are the most neutral, with NBC's attribution most careful, though none of the framings is strongly loaded.",
+    "shared_facts": [
+     "Nvidia's board met or was meeting to consider CEO Jensen Huang's future or removal",
+     "The stock fell sharply after reports of Huang's extramarital relationship(s)",
+     "At least one of the relationships involved a woman alleged or suspected to be a Chinese spy",
+     "The scandal is hurting the chipmaker's market standing and raising leadership questions"
+    ],
+    "summary": "All four outlets report the same board review of Huang amid an affair and China-spy allegation that hit Nvidia's shares, but Breitbart's headline states the spy label most firmly while the Guardian focuses on governance and corporate power."
+   },
+   "scale": 10
+  },
   "9a3b34162d": {
    "analysed_at": "2026-11-09T00:56:02Z",
    "model": "claude-sonnet-5-5",
@@ -15633,6 +16806,62 @@
      "Walliams denies the allegations.",
      "The allegations come from an investigation involving ITV News, which the CBC and France24 articles name directly.",
      "The accounts concern sexual conduct, described as unwanted advances or preying for sex."
+    ]
+   },
+   "scale": 10
+  },
+  "9bf4ea42f4": {
+   "analysed_at": "2026-11-12T11:17:49Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "other",
+      "observation": "Says the nine family members 'filed suit' and asks a judge to block the arch, which describes a more active procedural role than the 'join' or 'seek to join' wording used by CBS, Breitbart and Fox. The filing status may be stated differently across outlets, and the Post's version is not confirmed by the other texts.",
+      "outlet": "nypost",
+      "quote": "The nine Kennedy family members who filed suit"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Adds a specific physical detail, the arch's height, which gives the story a concrete, striking scale. The other outlets do not give this figure.",
+      "outlet": "nypost",
+      "quote": "250-foot Arlington memorial arch"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Puts the family's stated rationale in the headline and quotes their claim that the arch 'will permanently cast a shadow' over the gravesites. This foregrounds the plaintiffs' emotional argument more than the others, though it is attributed rather than asserted by the outlet.",
+      "outlet": "breitbart",
+      "quote": "Saying It Would Shadow JFK's Gravesite"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Frames the lawsuit as aimed at stopping construction ('to Stop Trump's Arch'), a more oppositional wording than CBS's 'to block' or Fox's 'legal battle'.",
+      "outlet": "breitbart",
+      "quote": "Joins Lawsuit to Stop Trump's Arch"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses neutral, descriptive language ('large triumphal arch', 'legal battle') and does not add a rationale from the plaintiffs in the summary, so it reads as the most measured of the four.",
+      "outlet": "cbs",
+      "quote": "a large triumphal arch near Arlington National Cemetery"
+     },
+     {
+      "kind": "omission",
+      "observation": "Describes the arch as being built in 'Washington, D.C.' rather than near Arlington, and gives no reason or detail about the family's objection. This is a vaguer location and a thinner account of the stakes.",
+      "outlet": "fox",
+      "quote": "which he wants built in Washington, D.C."
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The four texts agree on the core facts and differ mainly in emphasis and detail. Breitbart shows the most advocacy-leaning framing, putting the family's gravesite argument in its headline and using 'Stop Trump's Arch', though the claim is attributed to the family. The NY Post's 'filed suit' and '250-foot' details, and Fox's vaguer location, may reflect differing sourcing or editorial choices, but none of the texts shows strong loaded language.",
+    "shared_facts": [
+     "Descendants of Robert F. Kennedy and Edward (Ted) Kennedy are part of a legal challenge to Trump's triumphal arch near Arlington National Cemetery.",
+     "The Kennedy family members are joining or seeking to join litigation aimed at blocking the arch.",
+     "The arch is a Trump project described as a large or triumphal arch."
     ]
    },
    "scale": 10
@@ -17337,6 +18566,56 @@
      "Thomas Markle, Meghan Markle's father, is in federal custody or has had his release revoked for violating pretrial release.",
      "The violation involves removal of an ankle monitor, which is described as allegedly done.",
      "A federal judge in Florida is involved in the revocation."
+    ]
+   },
+   "scale": 10
+  },
+  "b002d338c7": {
+   "analysed_at": "2026-11-12T11:20:22Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 6,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The summary mocks Ryan with a joking label, 'Noted feet aficionado,' and a quip that he 'has got to be beside himself.' This adds ridicule that the CBS text does not contain and frames a serious criminal allegation as a joke.",
+      "outlet": "breitbart",
+      "quote": "Noted feet aficionado Rex Ryan has got to be beside himself"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The headline reduces the incident to 'running over pedestrians' feet' and says 'Arrested,' while CBS describes a hit-and-run involving people. The Breitbart framing is more lurid and comedic, and it leaves out the hit-and-run element in the headline.",
+      "outlet": "breitbart",
+      "quote": "Arrested for Allegedly Running over Pedestrians’ Feet"
+     },
+     {
+      "kind": "omission",
+      "observation": "The Breitbart text gives no account of how Ryan came to police custody, no official or police source, and no reporter attribution. CBS states that he surrendered and attributes the account to authorities and a named reporter.",
+      "outlet": "breitbart",
+      "quote": "after allegedly running over the feet of two pedestrians in Nashville last week"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The CBS text attributes the allegations to authorities ('authorities said he struck two pedestrians') and names a reporter, which makes the sourcing explicit and keeps the account closer to a neutral news report.",
+      "outlet": "cbs",
+      "quote": "authorities said he struck two pedestrians"
+     },
+     {
+      "kind": "word choice",
+      "observation": "CBS uses the neutral formal label 'Former NFL head coach' and the procedural verb 'surrenders,' which describe the event without ridicule.",
+      "outlet": "cbs",
+      "quote": "turned himself in to Nashville police on Wednesday"
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The CBS text is a straightforward wire-style report that attributes the allegations to authorities and uses neutral procedural language. The Breitbart text is shorter and uses mocking humor ('feet aficionado') and a lurid headline, which possibly reflects an entertainment-driven or opinion-leaning style for its audience. The Breitbart framing is the one that stands apart, though the factual core of the two texts agrees.",
+    "shared_facts": [
+     "Rex Ryan, a former NFL head coach, is facing charges in Nashville.",
+     "The charges relate to allegations that he struck two pedestrians in a hit-and-run.",
+     "The incident happened in Nashville, and the reports describe it as allegations rather than proven facts."
     ]
    },
    "scale": 10
@@ -20583,6 +21862,56 @@
    },
    "scale": 10
   },
+  "d14800dbbd": {
+   "analysed_at": "2026-11-12T11:20:38Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline calls the remark a 'stunning' admission, a dramatic framing the ABC piece does not use. The word presents a measured interview answer as a shock.",
+      "outlet": "dailymail",
+      "quote": "stunningly admits"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The Mail puts 'resigned' in quotation marks and adds 'or bowed out of the 2024 election race', which centres a more dramatic term than the one ABC uses. This emphasis on the wording of a hypothetical may draw attention to the remark more than the substance.",
+      "outlet": "dailymail",
+      "quote": "would have 'resigned' - or bowed out of the 2024 election race"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Mail leads with a casual, self-deprecating quote about how Biden felt at the time, which gives the piece a more personal, colourful tone. The quote is not present in the ABC text.",
+      "outlet": "dailymail",
+      "quote": "I was feeling lousy"
+     },
+     {
+      "kind": "word choice",
+      "observation": "ABC describes the remark in plain terms ('says he wouldn't have run for a second term') and stays close to the factual claim. It uses no evaluative adjectives, so its tone is more neutral.",
+      "outlet": "abc",
+      "quote": "wouldn't have run for a second term in 2024 if he knew he had cancer"
+     },
+     {
+      "kind": "omission",
+      "observation": "ABC's summary frames the core claim around what Biden says he knew while president, and does not dramatise the wording. Neither article gives the wider context, such as the book's contents or any reaction from others, within the text provided.",
+      "outlet": "abc",
+      "quote": "Joe Biden says he didn't know he had cancer while he was president"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The two outlets report the same interview claim with similar core facts, so the gap is mainly tone. The Daily Mail uses more dramatic language ('stunningly admits', quoted 'resigned', a casual quote), which possibly reflects a tabloid style aimed at attention-driven readers, while ABC uses neutral, attributive wording. The evidence is limited to headlines and summaries, so the differences show emphasis rather than strong advocacy.",
+    "shared_facts": [
+     "Joe Biden said in an interview promoting his forthcoming book that he would not have pursued the 2024 race had he known he had cancer.",
+     "Biden says he did not know about the cancer diagnosis while he was president.",
+     "Biden is described as a former president in both pieces."
+    ]
+   },
+   "scale": 10
+  },
   "d17333dd87": {
    "analysed_at": "2026-11-09T00:55:54Z",
    "model": "claude-sonnet-5-5",
@@ -20758,6 +22087,70 @@
      "The ship's return and the FBI investigation are the central news events in both reports."
     ],
     "summary": "Both outlets report the FBI probe and the Galveston return of the MSC Seascape, but Fox frames the case more definitively and dramatically as a suspected homicide and guest death, while NBC hedges as a possible homicide and attributes the account to the cruise line."
+   },
+   "scale": 10
+  },
+  "d2220d68f5": {
+   "analysed_at": "2026-11-12T11:18:14Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline calls the rescue a 'Miracle', an emotive framing that the other outlets do not use. It adds drama to a rescue the other texts describe in neutral terms.",
+      "outlet": "dailymail",
+      "quote": "Miracle as missing Aussie teen is found alive"
+     },
+     {
+      "kind": "other",
+      "observation": "The summary says the boy was 'missing for a week', which conflicts with the headline's 'six days' and with the other outlets. This is an internal inconsistency in the factual account.",
+      "outlet": "dailymail",
+      "quote": "missing for a week after going camping"
+     },
+     {
+      "kind": "omission",
+      "observation": "The Daily Mail text does not mention the boy's autism, which the ABC and SCMP both state up front.",
+      "outlet": "dailymail",
+      "quote": "Aussie teen"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The headline leads with the boy's autism ('Autistic teen'), and the summary repeats it. This puts the disability first, while the ABC headline leaves it out.",
+      "outlet": "scmp",
+      "quote": "Autistic teen missing in Australian bushland"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "SCMP gives the most specific details: the police-identified first name 'William', the town of Walhalla, the distance from Melbourne and the day of disappearance. This reads as the most detailed and factual account.",
+      "outlet": "scmp",
+      "quote": "police identified only as William"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "The BBC summary centres on the boy's mother, quoting her joke that he is 'grounded for life'. This gives a light, personal tone and shifts attention from the rescue to family reaction. Its headline does not mention autism or a camping trip.",
+      "outlet": "bbc",
+      "quote": "grounded for life"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The ABC headline is the most neutral and descriptive, using 'lost' and 'woodlands' without emotive words. It does not name the location or the camping detail in the headline.",
+      "outlet": "abc",
+      "quote": "A missing teen is found alive after 6 days in the Australian woodlands"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in emphasis and tone rather than facts. The Daily Mail's 'Miracle' headline and its 'a week' error show the most dramatic framing, and the BBC's mother quote gives a lighter, personal tone; these choices may reflect each outlet's house style for human-interest stories. The ABC is the most neutral, and SCMP's emphasis on autism and detail appears to be a sourcing or style choice rather than strong framing.",
+    "shared_facts": [
+     "A teenage boy who had gone camping was missing for six days in eastern Australian bush or woodland and was found alive.",
+     "The search took place in the Victoria area of eastern Australia.",
+     "The boy was 17 years old, according to the ABC, SCMP and BBC texts.",
+     "The boy was camping with a friend when he disappeared."
+    ],
+    "summary": "All four outlets report that a 17-year-old boy was found alive after six days missing in Australian bush, but the Daily Mail uses dramatic 'Miracle' language and a conflicting duration, while the BBC focuses on his mother's quip and the ABC stays most neutral."
    },
    "scale": 10
   },
@@ -23139,6 +24532,64 @@
    },
    "scale": 10
   },
+  "e9d4bdcdf9": {
+   "analysed_at": "2026-11-12T11:16:46Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "Fox foregrounds Patel's rhetoric in its summary, presenting the story around 'a sharp warning' from the FBI director. It gives no UK police attribution and no detail on the investigation, so the framing leans on the official's tone.",
+      "outlet": "fox",
+      "quote": "drawing a sharp warning from FBI Director Kash Patel"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Fox's headline states the Russia spying claim flatly as 'spying for Russia', while its summary hedges with 'Russia-linked espionage probe'. The headline is more definitive than the body.",
+      "outlet": "fox",
+      "quote": "arrested in UK on suspicion of spying for Russia"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "CBS attributes the claim to the FBI in its headline ('FBI says') and quotes Patel's 'allegations of espionage'. It is the most careful attribution and points to a video report by Charlie D'Agata, but it omits the UK police role.",
+      "outlet": "cbs",
+      "quote": "\"allegations of espionage,\" FBI director Kash Patel said"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "NBC is the only outlet that cites British police and the counter-terrorism unit, and gives a specific location near Gloucester. This anchors the arrest in the UK authorities' account, which makes it the most sourced and specific text.",
+      "outlet": "nbc",
+      "quote": "\"as part of an investigation by Counter Terrorism Policing\""
+     },
+     {
+      "kind": "word choice",
+      "observation": "NBC's headline uses 'assisting Russian intelligence', a different and somewhat narrower label than the 'spying' wording used by the other outlets.",
+      "outlet": "nbc",
+      "quote": "on suspicion of assisting Russian intelligence"
+     },
+     {
+      "kind": "omission",
+      "observation": "WSJ alone reports that the 41-year-old was assigned to a NATO rapid reaction command structure in the UK. This is a material detail that the other outlets leave out. The WSJ headline uses neutral wording, 'Over Allegations of Spying'.",
+      "outlet": "wsj",
+      "quote": "assigned to a NATO rapid reaction command structure in the U.K."
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The four texts report the same core facts with modest differences. Fox's emphasis on Patel's 'sharp warning' and its flat headline are the most loaded, while NBC and WSJ add sourcing or detail and CBS attributes carefully. The differences likely reflect each outlet's wire or video sourcing and editorial choices about which official voice to lead with, rather than sharply opposed framing.",
+    "shared_facts": [
+     "A senior U.S. Army soldier was arrested in the United Kingdom on suspicion of spying or assisting Russian intelligence.",
+     "FBI Director Kash Patel commented on the arrest.",
+     "The probe is Russia-linked espionage.",
+     "The soldier is described as senior and was based in or around the UK."
+    ],
+    "summary": "All four outlets report the same arrest of a senior U.S. soldier in the UK over alleged Russia espionage, with Fox leaning hardest on the FBI director's warning and NBC and WSJ adding more sourcing and detail."
+   },
+   "scale": 10
+  },
   "ea5ffb0e41": {
    "analysed_at": "2026-11-09T09:56:11Z",
    "model": "claude-sonnet-5-5",
@@ -23700,6 +25151,52 @@
    },
    "scale": 10
   },
+  "ef4a73ef56": {
+   "analysed_at": "2026-11-12T11:16:53Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "emphasis",
+      "observation": "The headline and summary frame the event as a sentimental 'hours-long goodbye' and 'a long goodbye'. The summary never mentions the reef purpose, so the story reads more as a farewell than as a reef project.",
+      "outlet": "nypost",
+      "quote": "It was a long goodbye."
+     },
+     {
+      "kind": "word choice",
+      "observation": "Calls the years of dispute a 'long-running wrangle over its fate'. This is a mildly disparaging label for the debate, though it is still fairly neutral and does not take a side.",
+      "outlet": "guardian",
+      "quote": "ending long-running wrangle over its fate"
+     },
+     {
+      "kind": "omission",
+      "observation": "Includes the opposing view that activists wanted a museum, which the other outlets leave out. It names no activist and quotes no one, so the point is stated without a source.",
+      "outlet": "bbc",
+      "quote": "Activists wanted the historic liner to be turned into a museum"
+     },
+     {
+      "kind": "word choice",
+      "observation": "Uses more emotive wording, 'once the fastest ship on the seas' and 'slow final journey', which adds a tone of nostalgia and mourning. It does not mention the reef purpose in the summary.",
+      "outlet": "euronews",
+      "quote": "made a slow final journey beneath the waters"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The differences are mostly in tone: the NY Post and Euronews lean sentimental, and the Guardian's 'wrangle' is a mild label, while the BBC adds the museum argument. No article quotes a source in these summaries, and the outlets report the same basic facts, so the framing gap is small. The possible reasons (audience, editorial style, or the short summaries) are guesses.",
+    "shared_facts": [
+     "The SS United States is being sunk off the Florida coast (Guardian names Destin) to become an artificial reef.",
+     "The sinking happened on Wednesday, per Euronews.",
+     "The ship is described as historic, and the reef is described as the world's largest artificial reef (Guardian and BBC).",
+     "The sinking took hours, or was a slow final journey, per NY Post and Euronews."
+    ],
+    "summary": "All four outlets report the same sinking of the SS United States as an artificial reef off Florida, with mostly small differences in sentimental tone and in whether the museum debate is mentioned."
+   },
+   "scale": 10
+  },
   "ef4cf030df": {
    "analysed_at": "2026-11-09T16:19:57Z",
    "effort": "high",
@@ -23749,6 +25246,63 @@
      "The support includes home visits, health checks and medication reviews (Daily Mail) or extra support from the GP (Guardian)"
     ],
     "summary": "Both outlets report that GPs will give extra support to up to 300,000 vulnerable patients this winter under a £40m scheme aimed at keeping them out of hospital, with the Mail using more campaign-style wording and the Guardian placing it in NHS winter pressure."
+   },
+   "scale": 10
+  },
+  "efb67a1bab": {
+   "analysed_at": "2026-11-12T11:18:57Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 4,
+    "differences": [
+     {
+      "kind": "omission",
+      "observation": "Breitbart gives only the bare count and the FDNY attribution. It omits the trapped victims, the children, the rescue effort and the location, so it reads as the most stripped-down account. Its count of one dead is the lowest in the group, which may reflect an earlier update rather than a different reading of the facts.",
+      "outlet": "breitbart",
+      "quote": "1 Dead, 10 Injured After Brooklyn Building Collapses into Construction Site"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "ABC attributes its account to an FDNY dispatch and reports the highest toll, at least 4 dead. Its framing is procedural and neutral, with no emotional detail, so it sits close to the wire-style baseline.",
+      "outlet": "abc",
+      "quote": "according to an FDNY dispatch"
+     },
+     {
+      "kind": "loaded label",
+      "observation": "Dailymail uses the most emotive language in the group. Its headline combines 'Desperate search launched for survivors trapped under rubble' with the mayor 'rushes to scene' and foregrounds seven children. It also gives the most specific details (Bedford Avenue, Flatbush, around 4pm). This heightens urgency and places the mayor in the frame, which the other texts do not do.",
+      "outlet": "dailymail",
+      "quote": "Desperate search launched for survivors trapped under rubble as Mamdani rushes to scene"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "Dailymail gives the highest injury count (at least 17) and stresses that children were among them. Other outlets do not highlight children in the same way, which shifts emphasis toward the human cost.",
+      "outlet": "dailymail",
+      "quote": "including seven children"
+     },
+     {
+      "kind": "sourcing",
+      "observation": "Euronews builds its account around a resident's first-person account, Anderson Velez, whose children aged 2 and 7 were trapped. This personal sourcing adds human interest and emotional weight, though it is one family's report relayed through local media.",
+      "outlet": "euronews",
+      "quote": "their two children, aged 2 and 7, were among those trapped in the rubble"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The headline stresses that others are 'trapped in the rubble', which emphasises ongoing rescue more than the toll. It is less sensational than Dailymail's phrasing.",
+      "outlet": "euronews",
+      "quote": "while others are trapped in the rubble"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "The main differences are in casualty counts and in how much emotional detail each outlet includes. The count gaps (1, 2, at least 2, at least 4) probably reflect when each article was written and updated, not deliberate framing. Dailymail shows the strongest framing, with 'Desperate search' and the mayor's arrival in the headline plus the emphasis on children, while Breitbart is the flattest and most stripped of context. Euronews relies on a personal account, and ABC is the most neutral and procedural.",
+    "shared_facts": [
+     "A three-story building in Brooklyn collapsed into an adjoining construction or excavation site on Wednesday.",
+     "Multiple people were killed or injured, and the reported death toll is still rising or uncertain across the articles.",
+     "Workers or people were at or near the collapse site, and rescue work was under way.",
+     "Each outlet reports the collapse as a single event with dead and injured people."
+    ]
    },
    "scale": 10
   },
@@ -24076,6 +25630,69 @@
      "The ride drew backlash or protests in the streets.",
      "Both articles describe opposing demonstrators, using the terms counterprotesters or protesters."
     ]
+   },
+   "scale": 10
+  },
+  "f2fb0dad68": {
+   "analysed_at": "2026-11-12T11:17:17Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline places 'suddenly' in scare quotes, which casts doubt on the sudden death. None of the other headlines do this, and the body text does not give a reason for the doubt.",
+      "outlet": "nypost",
+      "quote": "‘suddenly’ dies at 66"
+     },
+     {
+      "kind": "omission",
+      "observation": "It says no cause of death was given. This leaves the death unexplained and can suggest mystery, while DW reports a specific cause. The gap is a factual conflict between the two texts that the excerpts cannot resolve.",
+      "outlet": "nypost",
+      "quote": "No cause of death for Alexander Darchiev was given by the Russian Foreign Ministry."
+     },
+     {
+      "kind": "sourcing",
+      "observation": "It attributes the death to a chronic illness, attributing the claim to the Foreign Ministry. This is the only text that gives a cause, which makes it the most concrete on the medical point.",
+      "outlet": "dw",
+      "quote": "died from a chronic illness at the age of 66"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "It frames Darchiev around a political mission, saying he was appointed by Putin to lead a rapprochement with the Trump administration. This foregrounds a political agenda, though the claim is attributed to no one.",
+      "outlet": "fox",
+      "quote": "had been appointed by Putin to lead a rapprochement with the Trump administration"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The headline uses 'dies suddenly' without quotation marks, reporting the word as fact rather than doubting it.",
+      "outlet": "fox",
+      "quote": "dies suddenly at 66"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "It gives neutral context, saying he was appointed 'as relations between the Kremlin and the White House warmed.' This describes the diplomatic backdrop without the framing of a mission assigned by Putin.",
+      "outlet": "nyt",
+      "quote": "as relations between the Kremlin and the White House warmed"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "It describes him as a 'long-time diplomat' and omits the US-Russia relations context that Fox and NYT include, so its framing is the most low-key of the four.",
+      "outlet": "dw",
+      "quote": "The long-time diplomat had been in the Washington post since early 2025."
+     }
+    ],
+    "possible_bias": "notable",
+    "same_event": true,
+    "score_reason": "The main differences are tone and what each outlet includes. The NYPost headline's scare quotes around 'suddenly' and its statement that no cause was given suggest skepticism about the official account, which may reflect a tabloid editorial habit. Fox adds a politically loaded framing of a Putin-assigned mission, while DW gives a specific cause that NYPost says was not given. The gaps are factual and the framing is not sharply opposed, so the score is moderate rather than high.",
+    "shared_facts": [
+     "Russian Ambassador to the US Alexander Darchiev died at age 66.",
+     "The Russian Foreign Ministry announced or confirmed the death.",
+     "Darchiev had been in the Washington post since 2025 (early 2025 per DW)."
+    ],
+    "summary": "All four outlets report the same death and ministry announcement, but NYPost's scare quotes and 'no cause given' framing cast doubt, Fox adds a political mission angle, and DW reports a cause the others leave out."
    },
    "scale": 10
   },
@@ -25161,6 +26778,18 @@
    },
    "scale": 10
   },
+  "fb21a03852": {
+   "analysed_at": "2026-11-12T11:18:31Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 5,
+    "partial": true,
+    "score_reason": "The differences probably come from editorial choices about emphasis and label use, not from disputed facts. CBC uses the most charged language, including a harsh label in the headline and 'resounding' loss framing, which may suit an audience that wants a sharp story. CBS mostly relays Republican self-description as 'fighter', so its framing is attributed, but it adopts the GOP's combative message. Fox focuses on Scalise's future and ABC is the most neutral, so the spread is real but moderate."
+   },
+   "scale": 10
+  },
   "fb9b137bab": {
    "analysed_at": "2026-11-08T17:39:40Z",
    "model": "claude-sonnet-5-5",
@@ -25460,6 +27089,64 @@
      "Erika Kirk criticized the jokes, according to NBC"
     ],
     "summary": "Both outlets report Chappelle's remark about feeling better after Charlie Kirk's killing and the criticism that followed, but Breitbart's 'Celebrating Charlie Kirk Murder' framing is considerably more loaded than NBC's sourced, quote-based account."
+   },
+   "scale": 10
+  },
+  "fe906836d3": {
+   "analysed_at": "2026-11-12T11:19:51Z",
+   "effort": "high",
+   "model": "claude-haiku-5-5",
+   "provider": "anthropic",
+   "result": {
+    "bias_score": 3,
+    "differences": [
+     {
+      "kind": "loaded label",
+      "observation": "The headline frames growth as something that 'staves off' a cost-of-living slowdown, which presents the economy as having been under threat and the figures as a defence against it. The Guardian does not use this framing.",
+      "outlet": "dailymail",
+      "quote": "staves off cost-of-living slowdown"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Mail puts defence spending alongside AI as a main driver of growth. The Guardian's text attributes growth to AI alone, so the Mail gives the government's defence spending more prominence in the story.",
+      "outlet": "dailymail",
+      "quote": "spending on AI and defence"
+     },
+     {
+      "kind": "omission",
+      "observation": "The Mail gives the prior quarter's figure (0.5% in Q2) and frames the result as growth that 'picked up'. It does not mention that this is the fastest expansion in about two and a half years, which the Guardian stresses.",
+      "outlet": "dailymail",
+      "quote": "Growth picked up to 0.7 per cent"
+     },
+     {
+      "kind": "emphasis",
+      "observation": "The Guardian leads with AI as the cause and with the 'fastest pace' comparison, a positive angle. Its headline makes AI the subject of the growth story.",
+      "outlet": "guardian",
+      "quote": "AI helps UK economy grow at fastest pace for more than two years"
+     },
+     {
+      "kind": "word choice",
+      "observation": "The phrase 'grew robustly' in quotation marks signals an official characterisation, and the Guardian adds that growth came 'despite high oil prices', which places the result against a headwind. The Mail does not mention oil prices.",
+      "outlet": "guardian",
+      "quote": "despite high oil prices"
+     },
+     {
+      "kind": "omission",
+      "observation": "The Guardian's summary does not mention defence spending or cost-of-living pressures. The summary is truncated, so this may reflect only what was shown rather than the full article.",
+      "outlet": "guardian",
+      "quote": "as the rollout of AI services increased activity"
+     }
+    ],
+    "possible_bias": "slight",
+    "same_event": true,
+    "score_reason": "Both outlets report the same ONS figures with mostly neutral wording, and they differ mainly in which driver they emphasise. The Mail's 'staves off' framing and its focus on defence spending are the most editorially shaped choices, while the Guardian's AI-centred and 'fastest pace' framing is a positive but largely factual emphasis. Neither text makes an accusation, and the gap between them is modest; the Guardian summary is truncated, so some omissions may not be real.",
+    "shared_facts": [
+     "UK GDP grew by 0.7% in the third quarter (July to September)",
+     "The Office for National Statistics published the figures",
+     "The rollout or spending on AI is cited as a driver of the growth",
+     "Both articles were published on 2026-11-12, within about two minutes of each other"
+    ],
+    "summary": "Both outlets report the same 0.7% third-quarter ONS growth figure, with the Mail framing it as protection against a cost-of-living slowdown driven by AI and defence and the Guardian framing it as AI-led growth at its fastest in two and a half years."
    },
    "scale": 10
   },
